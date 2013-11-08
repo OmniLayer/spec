@@ -5,3 +5,5 @@ Right now, there are two possible change mechanisms to the spec document:
 1. Developers can fork the repository, work on their own copy, push their proposed changes, and send a pull request accompanied with a post to bitcointalk. The Protocol Owner and the community reviews the changes, and when enough consensus has been generated, The Protocol Owner merges the changes back to the [parent repository on mastercoin-MSC](https://github.com/mastercoin-MSC/spec).
 
 2. Minor and/or non-breaking changes can be made directly on top of the mastercoin-MSC parent repository, by people who have push right to this repository. If you want to be included in this group, ask Willett.
+
+3. For sake of convenience, people who already have push access to the parent repository can work on branches instead of forks. This achieves the same purpose as option 1 above, in a manner that might be more convenient to some developers.
