@@ -5,7 +5,7 @@ vs1.1 (Smart Property Edition)
 
 dacoinminster (j DOT r DOT willett AT gmail.com)
 
-The Mastercoin Foundation - info@mastercoin.org - ![mastercoin.org](http://mastercoin.org)
+The Mastercoin Foundation - info@mastercoin.org - [mastercoin.org](http://mastercoin.org)
 
 # Summary
 
