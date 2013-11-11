@@ -34,7 +34,7 @@ Our claims are built on the following assumptions:
 
 The proposed protocol layers can be visualized as follows, with arrows representing users exchanging between currencies:
 
-![Mastercoin Protocol Layers](/images/layers.png) 
+![Mastercoin Protocol Layers](images/layers.png) 
 
 
 
@@ -75,7 +75,7 @@ Initially, the only valid Mastercoin transaction was a “simple send” (define
 
 For every 10 Mastercoins sold, an additional “dev Mastercoin” was also created, which are being awarded to the Exodus Address slowly over the years following the fundraiser. These delayed Mastercoins will ensure that we (the Mastercoin Foundation) have funding to complete the features desired by users. The reward is be structured so that we receive 50% of the reward by one year after the initial sale, 75% by a year later, 87.5% by a year later, and so on:
 
-![Reward Mastercoins](/images/reward-mastercoin-formula.png)
+![Reward Mastercoins](images/reward-mastercoin-formula.png)
 
 ## Hiding Mastercoin Protocol Data in the Block Chain
 
@@ -436,7 +436,7 @@ The most important (and most controversial) feature of Mastercoins is the built-
 
 So how do we drive the value of these GoldCoins to their target value, when demand for them may surge and decline? The price of GoldCoins is decided by the balance of supply and demand. Since we can’t control the demand for GoldCoins, we must control the supply. The key to accomplishing this is to use an escrow fund which holds Mastercoins, as shown below:
 
-![Mastercoin Protocol Layers](/images/stability_new.png) 
+![Mastercoin Protocol Layers](images/stability.png) 
 
 The escrow fund operates like a battery on the power grid, charging when there is excess energy then discharging where there isn't enough. When there are too few GoldCoins (GoldCoin price is too high), the escrow fund releases new GoldCoins, and the escrow-battery “charges” by holding Mastercoins in escrow. When there are too many GoldCoins (GoldCoin price is too low), the escrow fund purchases some of the excess GoldCoins, thereby “discharging” the escrow-battery as it releases the stored Mastercoins.
 
@@ -554,7 +554,7 @@ EXAMPLE:  The following provides example output for an obfuscated Mastercoin pac
 
 Once the obfuscated Mastercoin packet is prepared, the key identifier (02) is prefixed and a random byte compressed public key is then run across a check to ensure the key is a valid ECDSA point.  If the key fails this check, the last byte is simply rotated with a different random byte and tested again until the key forms a valid ECDSA point. 
 
-![Mastercoin Protocol Layers](/images/classb.png) 
+![Mastercoin Protocol Layers](images/classb_obfuscated.png) 
 
 These compressed public key 'packets' can then be included in one or multiple OP_CHECKMULTISIG output along with the senders public key.  A single transaction must be constructed satisfying the following requirements: 
 * Has a single or the largest input signed by the sending address
