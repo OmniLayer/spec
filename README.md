@@ -1,4 +1,4 @@
-﻿Mastercoin Complete Specification
+Mastercoin Complete Specification
 =================================
 
 vs1.2 (Tons of New Features Edition)
@@ -192,10 +192,12 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 
 1. Transaction type = 22 for accepting currency trade offer (32-bit unsigned integer, 4 bytes)
 2. Currency identifier you are purchasing = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
-3. Amount you are purchasing = 130,000,000 (1.30000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed number available for sale, but if it does, assume buyer is purchasing all of them)
+3. Amount you are purchasing = 130,000,000 (1.30000000 Mastercoins) (64-bit unsigned integer, 8 bytes)
 
 
 The reference address should point to the seller's address, to identify whose offer you are accepting.
+
+If you send an offer for more Mastercoins then are available by the time your transaction gets added to a block your amount bought will automatically adjusted to be the amount still available. When a Purchase Offer is sent to an address whos Selling Offer is all sold out the Purchase Offer should be invalidated. 
 
 Note: Make sure your total expenditures on bitcoin transaction fees while accepting the purchase meet the minimum fee requested!
 
