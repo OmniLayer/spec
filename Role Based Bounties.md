@@ -12,8 +12,8 @@ The reason an RBB exists is to complement the traditional bounty system. We want
 # How it works right now
 
 * The Foundation decides to allocate a new Role Based Bounty, and they choose a person to fulfill that role.
-* Each RBB has its own terms. Earlier and higher level RBBs get better terms. The these include a set USD amount set aside per month for this role. We pay out this on a bi-weekly schedule, usually via bitcoins (but we can pay via other means if needed).
-* [The specific terms are on this Google Spreadsheet](https://docs.google.com/spreadsheet/ccc?key=0AosWigpBxkwZdHhBaUtTZV9MWUpMVWV6U3VJV1RPbmc&usp=sharing#gid=0). The current terms are all identical and include 6000 monthly USD (paid usually in bitcoin), and some number of Dev MSC depending on the relative amount of MSC distributed that month.
+* [The specific terms are on this Google Spreadsheet](https://docs.google.com/spreadsheet/ccc?key=0AosWigpBxkwZdHhBaUtTZV9MWUpMVWV6U3VJV1RPbmc&usp=sharing#gid=0). The current terms are all identical and include 6000 monthly USD (paid usually in bitcoin), and some number of Dev MSC depending on the relative amount of MSC distributed that month. This will change for future hires that come into the project at a later phase.
+* The payment schedule is bi-weekly, usually via bitcoins (but we can pay via other means if needed e.g. wire transfer).
 * Each RBB also wins a proportional amount of the Dev MSCs. The amount they receive is proportional to the relative share of their USD/BTC allocation, out of all the Bounty BTC awarded that month. (David has a Google Spreadsheet for that).
 
 The following standard conditions apply to all RBBs:
