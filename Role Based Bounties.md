@@ -22,3 +22,7 @@ The following standard conditions apply to all RBBs:
 * We generally intend to keep RBBs on for a long time, typically a year or more. However note that just like most jobs, this is not a contractual obligation given the items above.
 * RBBs do not qualify to receive any other outstanding bounties in addition to what's already awarded to them via the RBB position.
 * RBBs may manage teams, and the team may qualify for outstanding bounties. Each team's budget should be managed independently of the team lead's personal funds. 
+
+# The Future
+
+Like everything else, we will decentralize any central control to the RBB protocol. All of the above will be codified in a Proof of Stake voting system, and it will become part of the official Mastercoin spec.
