@@ -1,4 +1,4 @@
-﻿Mastercoin Complete Specification
+Mastercoin Complete Specification
 =================================
 
 vs1.2 (Tons of New Features Edition)
@@ -91,6 +91,9 @@ Not every wallet lets you choose which address bitcoins come from when you make 
 
 Wallets which do not allow you to consolidate to one address and send from that address (such as online web wallet providers) will not work for Mastercoin unless they are modified to do so. For this reason, **attempting to purchase Mastercoins from an online web wallet will likely result in the permanent loss of those Mastercoins.**
 
+## Unlocking features
+
+Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
 ## Transferring Mastercoins (Simple Send)
 
@@ -104,7 +107,6 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 Note that the amount to transfer is multiplied by 100,000,000 before it is stored, which allows for Mastercoins to be sent with the same precision as bitcoins (eight decimal places). The reference payment (described earlier) determines the address receiving the Mastercoins.
 
 Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone. Otherwise Mastercoin transactions are not reversible.
-
 
 
 ## Marking an Address as “Savings”
