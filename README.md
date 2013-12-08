@@ -1,7 +1,7 @@
 Mastercoin Complete Specification
 =================================
 
-vs1.1 (Smart Property Edition)
+Beta Version 0.3 (Smart Property Edition)
 
 dacoinminster (j DOT r DOT willett AT gmail.com)
 
@@ -42,10 +42,10 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 # Document History
 
-1. Version 0.5 released 1/6/2012 (No packet definitions, overly-complicated currency stabilization)
-2. Version 0.7 released 7/29/2013 (Preview of 1.0, but without revealing the Exodus Address)
-3. Version 1.0 released 7/31/2013 (Version used during the fund-raiser)
-4. Version 1.1 (Smart Property. Also, improvements for easier parsing and better escrow fund health)
+1. Version 0.1 released 1/6/2012 (No packet definitions, overly-complicated currency stabilization)
+2. Version 0.19 released 7/29/2013 (Preview of 1.0, but without revealing the Exodus Address)
+3. Version 0.2 released 7/31/2013 (Version used during the fund-raiser)
+4. Version 0.3 (Smart Property. Also, improvements for easier parsing and better escrow fund health)
 
 
 Previous versions of this document can be found at https://sites.google.com/site/2ndbtcwpaper/
