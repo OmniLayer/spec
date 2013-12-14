@@ -4,8 +4,9 @@ Mastercoin Complete Specification
 Version 0.3.5 (Class C Data Storage Method "Proveably Prune-able Outputs" Edition)
 
 dacoinminster (j DOT r DOT willett AT gmail.com)
-
-The Mastercoin Foundation - info@mastercoin.org
+petertodd (https://github.com/petertodd)
+DavidJohnstonCEO (https://github.com/DavidJohnstonCEO)
+ripper234 (https://github.com/ripper234?source=c)
 
 # Summary
 
