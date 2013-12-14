@@ -1,7 +1,7 @@
 Mastercoin Complete Specification
 =================================
 
-Beta Version 0.3 (Smart Property Edition)
+Version 0.3.5 (Class C Data Storage Method "Proveably Prune-able Outputs" Edition)
 
 dacoinminster (j DOT r DOT willett AT gmail.com)
 
@@ -42,13 +42,13 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 # Document History
 
-1. Version 0.1 released 1/6/2012 (No packet definitions, overly-complicated currency stabilization)
-2. Version 0.19 released 7/29/2013 (Preview of 1.0, but without revealing the Exodus Address)
-3. Version 0.2 released 7/31/2013 (Version used during the fund-raiser)
-4. Version 0.3 (Smart Property. Also, improvements for easier parsing and better escrow fund health)
+1. Version 0.1 (previously 0.5) released 1/6/2012 (No packet definitions, overly-complicated currency stabilization)
+2. Version 0.1.9 (previously 0.7) released 7/29/2013 (Preview of 0.2, but without revealing the Exodus Address)
+3. Version 0.2 (previously 1.0) released 7/31/2013 (Version used during the fund-raiser)
+4. Version 0.3 previously 1.1) released 9/9/2013 (Smart Property. Also, improvements for easier parsing and better escrow fund health)
+5. Version 0.3.5 (previously 1.2) released 11/11/2013 (Added "Pay Dividend" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data.)
 
-
-Previous versions of this document can be found at https://sites.google.com/site/2ndbtcwpaper/
+Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
 # Mastercoin Design
 
