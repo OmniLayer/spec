@@ -54,11 +54,11 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 The “Mastercoins” protocol layer between the existing bitcoin protocol and users’ currencies is intended to be a base upon which anyone can build their own currency. The software implementing Mastercoins will contain simple tools which will allow anyone to design and release their own currency with their own rules without doing any software development.
 
-## The “Exodus Address”
+## Initial Token Distribution via the “Exodus Address”
 
 Perhaps you have heard of the “Genesis Block” which launched the bitcoin protocol. The Mastercoin protocol has a similar starting point in the block chain, called the “Exodus Address” - the bitcoin address from which the first Mastercoins were sold during the month of August 2013. The Exodus Address is: **[1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P](https://blockchain.info/address/1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P)**  
 
-Initial distribution of Mastercoins was essentially a fundraiser to provide money to pay developers to write the software which fully implements the protocol. The distribution was very simple, and proceeded as follows:
+Initial distribution of Mastercoins was essentially a kickstarter style period to provide funding to pay developers to write the software which fully implements the protocol. The distribution was very simple, and proceeded as follows:
 
 1. Anyone who sent bitcoins to the Exodus Address before August 31st, 2013 was recognized by the protocol as owning 100x that number of Mastercoins. For instance, if I sent 100 bitcoins to the Exodus Address before August 31st, my bitcoin address owns 10,000 Mastercoins after August 31st. 
 2. Early buyers got additional Mastercoins. In order to encourage adoption momentum, buyers got an additional 10% bonus Mastercoins if they made their purchase a week before the deadline, 20% extra if they purchased two weeks early, and so on, including partial weeks. Thus, if I sent 100 bitcoins to the exodus address 1.5 weeks before August 31st, the protocol recognized my bitcoin address as owning 11,500 Mastercoins (10000 + 15% bonus).
@@ -70,17 +70,33 @@ Note that anyone who purchased Mastercoins also received the same number of “T
 
 Initially, the only valid Mastercoin transaction was a “simple send” (defined later in this document), but the additional features described in this document are being implemented, and can be used once they are fully tested.
 
-## Dev Mastercoins
+## Development Mastercoins (Dev MSC)
 
-For every 10 Mastercoins sold, an additional “dev Mastercoin” was also created, which are being awarded to the Exodus Address slowly over the years following the fundraiser. These delayed Mastercoins will ensure that we (the Mastercoin Foundation) have funding to complete the features desired by users. The reward is be structured so that we receive 50% of the reward by one year after the initial sale, 75% by a year later, 87.5% by a year later, and so on:
+1. Generation Rate: For every 10 Mastercoins sold during the Exodus period, 1 additional “Dev MSC” was also generated, which are being awarded to the Exodus Address slowly over the years following the exodus period (these Dev MSC are interoperable and fungible with regular MSC). These Development Mastercoins will ensure that developers have a continuing incentive to maintaine, improve and add features to the Master Protocol implimentations desired by users. The reward is be structured so that we receive 50% of the reward by one year after the initial sale, 75% by a year later, 87.5% by a year later, and so on:
 
 ![Reward Mastercoins](images/reward-mastercoin-formula.png)
 
-## Hiding Mastercoin Protocol Data in the Block Chain
+2. Standard Distribution Rate Algorithm: The distribution of "Dev MSC", mirrors the amount of Dev MSC generated each 30.41 days. Further more these Dev MSC are distributed in proportion to the amount of BTC won by participants in Mastercoin development bounties completed during that 30.41 day period. The intension being, that the Mastercoin Foundation will handle this distribution process temporarilly until its operation can be transferred to the Mastercoin community via the Distributed Bounty system and the Proof of Stake concensus mechanism. During the temporary period of the Mastercoin Foudnation distributing the Dev MSC 50% of the normal distribution rate shall apply. When the Mastercoin community begins handling the Distribution of the Dev MSC all undistributed Dev MSC from the pervious period shall be transferred to the Decentralized system and concensus must be reached on the standard distribution rate algorithm for the new period going forward.   
+
+Simple Dev MSC Distribution Equation:  A / B = C * D = E
+(A) Amount of awards an individual earns in BTC during a 30.41 day period, divided by,
+(B) the total amount of BTC awarded during that 30.41 day period, equals
+(C) his or her individual award percentage, times
+(D) the total Dev MSC generated during that 30.41 day period, equals
+(E) the amount of Dev MSC awarded to the individual in addition to his BTC awards during the 30.41 day period.
+
+Example #1 (using round numbers): 
+A (100 BTC) / B (1,000 BTC) = C (10%) * D (1,000 MSC) = E (100 MSC)
+
+There are 56,316 Dev MSC that will ever be generated. 
+28,158 Dev MSC will be generated the first year or 2,346 MSC each 30.41 day period. 
+So if a developer won 10% of the bounties during this 30.41 day period he or she would be distributed 234.6 Dev MSC.
+
+## Embeding Mastercoin Protocol Data in the Block Chain
 
 Bitcoin has some little-known advanced features (such as scripting) which many people imagine will enable it to perform fancy new tricks someday. Mastercoin uses exactly NONE of those advanced features, because support for them is not guaranteed in the future, and Mastercoin doesn't need them anyway.
 
-Mastercoin was originally specified to hide data in the block chain using fake bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which hides data in a bitcoin multi-signature transaction (Class B). Once bitcoin miners start supporting the new OP_RETURN opcode, we'll be able to use that opcode to make Mastercoin data completely prunable (Class C).
+Mastercoin was originally specified to embed data in the block chain using fake bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which embeds data in a bitcoin multi-signature transaction (Class B). Once bitcoin miners start supporting the new OP_RETURN opcode, we'll be able to use that opcode to make Mastercoin data completely prunable (Class C).
 
 The technical details for both Class A and Class B transactions can be found in Appendix A. 
 
