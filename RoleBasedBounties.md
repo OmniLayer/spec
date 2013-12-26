@@ -21,7 +21,7 @@ The following standard conditions apply to all RBBs:
 * The position is "at will", meaning both the Foundation and the RBB can terminate the RBB position without any reason.
 * We do set a mutual 30 days notice period. Both the Foundation and the RBB are obligated not to terminate this RBB position without giving a 30 days notice.
 * We generally intend to keep RBBs on for a long time, typically a year or more. However note that just like most jobs, this is not a contractual obligation given the items above.
-* RBBs do not qualify to receive any other outstanding bounties in addition to what's already awarded to them via the RBB position.
+* RBBs qualify to receive other outstanding bounties, however the amount awarded to them via the RBB position in a given month will be deducted from the total value of other bounties received that month.  i.e. if a core developer contributes above and beyond and wins 10000 USD worth of bounties in a month, the 6000 USD from their RBB would subtracted from the award giving them 4000 USD in bounties and 6000 USD for the RBB for a total of 10000 USD.
 * RBBs may manage teams, and the team may qualify for outstanding bounties. Each team's budget should be managed independently of the team lead's personal funds. 
 
 # The Future
