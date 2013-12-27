@@ -1,4 +1,4 @@
-Mastercoin Complete Specification
+The Master Protocol / Mastercoin Complete Specification
 =================================
 
 Version 0.3.5 (previously version 1.2) Class C Data Storage Method "Provably Prune-able Outputs" Edition
@@ -50,13 +50,15 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
-# Mastercoin Design
+# The term "Master Protocol" applies to the spec and the clients that impliment its features. The term "Mastercoins" applies to the digital tokens that access the features of the Master Protocol clients.
 
-The “Mastercoins” protocol layer between the existing bitcoin protocol and users’ currencies is intended to be a base upon which anyone can build their own currency. The software implementing Mastercoins will contain simple tools which will allow anyone to design and release their own currency with their own rules without doing any software development.
+# Master Protocol Design
+
+The “Master Protocol” layer between the existing bitcoin protocol and users’ currencies is intended to be a base upon which anyone can build their own currency. The software implementing the Master Protocol will contain simple tools which will allow anyone to design and release their own currency with their own rules without doing any software development.
 
 ## Initial Token Distribution via the “Exodus Address”
 
-Perhaps you have heard of the “Genesis Block” which launched the bitcoin protocol. The Mastercoin protocol has a similar starting point in the block chain, called the “Exodus Address” - the bitcoin address from which the first Mastercoins were sold during the month of August 2013. The Exodus Address is: **[1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P](https://blockchain.info/address/1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P)**  
+Perhaps you have heard of the “Genesis Block” which launched the bitcoin protocol. The Master Protocol has a similar starting point in the block chain, called the “Exodus Address” - the bitcoin address from which the first Mastercoins were generated during the month of August 2013. The Exodus Address is: **[1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P](https://blockchain.info/address/1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P)**  
 
 Initial distribution of Mastercoins was essentially a kickstarter style period to provide funding to pay developers to write the software which fully implements the protocol. The distribution was very simple, and proceeded as follows:
 
@@ -70,13 +72,13 @@ Note that anyone who purchased Mastercoins also received the same number of “T
 
 Initially, the only valid Mastercoin transaction was a “simple send” (defined later in this document), but the additional features described in this document are being implemented, and can be used once they are fully tested.
 
-## Development Mastercoins (Dev MSC)
+## Development Mastercoins (Dev MSC), previously "Reward Mastercoins")
 
-1. Generation Rate: For every 10 Mastercoins sold during the Exodus period, 1 additional “Dev MSC” was also generated, which are being awarded to the Exodus Address slowly over the years following the exodus period (these Dev MSC are interoperable and fungible with regular MSC). These Development Mastercoins will ensure that developers have a continuing incentive to maintaine, improve and add features to the Master Protocol implimentations desired by users. The reward is be structured so that we receive 50% of the reward by one year after the initial sale, 75% by a year later, 87.5% by a year later, and so on:
+1. Generation Rate: For every 10 Mastercoins sold during the Exodus period, 1 additional “Dev MSC” was also generated, which are being awarded to the Exodus Address slowly over the years following the exodus period (these Dev MSC are interoperable and fungible with regular MSC). These Development Mastercoins will ensure that developers have a continuing incentive to maintain, improve and add features to the Master Protocol implimentations desired by users. The Distribution of these Dev MSC is structured so that developers receive 50% of the Dev MSC by one year after the initial Exodus Address period closed (date the Exodus Address closed - August 31st 2013), 75% by a year later, 87.5% by a year later, and so on:
 
-![Reward Mastercoins](images/reward-mastercoin-formula.png)
+![Dev MSC](images/reward-mastercoin-formula.png)
 
-2. Standard Distribution Rate Algorithm: The distribution of "Dev MSC", mirrors the amount of Dev MSC generated each 30.41 days. Further more these Dev MSC are distributed in proportion to the amount of BTC won by participants in Mastercoin development bounties completed during that 30.41 day period. The intension being, that the Mastercoin Foundation will handle this distribution process temporarilly until its operation can be transferred to the Mastercoin community via the Distributed Bounty system and the Proof of Stake concensus mechanism. During the temporary period of the Mastercoin Foudnation distributing the Dev MSC 50% of the normal distribution rate shall apply. When the Mastercoin community begins handling the Distribution of the Dev MSC all undistributed Dev MSC from the pervious period shall be transferred to the Decentralized system and concensus must be reached on the standard distribution rate algorithm for the new period going forward.   
+2. Standard Distribution Rate Algorithm: The distribution of "Dev MSC", mirrors the amount of Dev MSC generated each 30.41 days. Further more these Dev MSC are distributed in proportion to the amount of BTC won by participants in Master Protocol development bounties completed during that 30.41 day period. The intension being, that the Mastercoin Foundation will handle this distribution process temporarilly until its operation can be transferred to the Master Protocol community via the Distributed Bounty system and the Proof of Stake concensus mechanism. During the temporary period of the Mastercoin Foudnation distributing the Dev MSC 50% of the normal distribution rate shall apply. When the Master Protocol community begins handling the Distribution of the Dev MSC all undistributed Dev MSC from the pervious period shall be transferred to the Decentralized system and concensus must be reached on the standard distribution rate algorithm for the new period going forward.   
 
 Simple Dev MSC Distribution Equation:  A / B = C * D = E
 (A) Amount of awards an individual earns in BTC during a 30.41 day period, divided by,
@@ -92,11 +94,13 @@ There are 56,316 Dev MSC that will ever be generated.
 28,158 Dev MSC will be generated the first year or 2,346 MSC each 30.41 day period. 
 So if a developer won 10% of the bounties during this 30.41 day period he or she would be distributed 234.6 Dev MSC.
 
-## Embeding Mastercoin Protocol Data in the Block Chain
+## Embeding Master Protocol Data in the Block Chain
 
-Bitcoin has some little-known advanced features (such as scripting) which many people imagine will enable it to perform fancy new tricks someday. Mastercoin uses exactly NONE of those advanced features, because support for them is not guaranteed in the future, and Mastercoin doesn't need them anyway.
+Bitcoin has some little-known advanced features (such as scripting) which many people imagine will enable it to perform fancy new tricks someday. The Master Protocol uses exactly NONE of those advanced features, because support for them is not guaranteed in the future, and the Master Protocol doesn't need them to enbed data in the blockchain.
 
-Mastercoin was originally specified to embed data in the block chain using fake bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which embeds data in a bitcoin multi-signature transaction (Class B). Once bitcoin miners start supporting the new OP_RETURN opcode, we'll be able to use that opcode to make Mastercoin data completely prunable (Class C).
+The Master Protocol was originally specified to embed data in the block chain using fake bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which embeds data in a bitcoin multi-signature transaction (Class B). Once bitcoin miners start supporting the new OP_RETURN opcode as part of version 0.9 of the Bitcoin reference client, Master Protocol will be able to use that opcode to make the Master Protocol data completely prunable (Class C) see description here by Gavin Andresen here: https://bitcoinfoundation.org/blog/?p=290 
+
+Class C transactions are most prefered due to the Provably Prune-able Outputs avoiding issues of "bloat" and "pullution" of the blockchain.
 
 The technical details for both Class A and Class B transactions can be found in Appendix A. 
 
@@ -334,7 +338,7 @@ CFD bets store "leverage" in place of the data used by "bet threshold" in other 
 
 ## Accepting a Bet
 
-Say you see a bet which you would like to accept. Simply publish the inverse bet with matching odds and the same end date, and the Mastercoin protocol will match them automatically (that is, everyone parsing Mastercoin data will mark both bets as accepted). Here is what a bet matching our last example published 5 days later (with 25 days to go) would look like:
+Say you see a bet which you would like to accept. Simply publish the inverse bet with matching odds and the same end date, and the Master Protocol will match them automatically (that is, everyone parsing Mastercoin data will mark both bets as accepted). Here is what a bet matching our last example published 5 days later (with 25 days to go) would look like:
 
 1. Transaction type = 40 for creating a bet offer (32-bit unsigned integer, 4 bytes)
 2. Bet Currency identifier = 5 for USDCoin (32-bit unsigned integer, 4 bytes)
@@ -354,12 +358,12 @@ Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner ge
 
 ## Smart Property
 
-Mastercoin supports creating property tokens to be used for titles, deeds, user-backed currencies, and even shares in a company. Whenever property is created, it gets assigned the next available currency ID, so any property can be bought, sold, transferred, and even used for betting, just like other Mastercoin-derived currencies.
+The Master Protocol supports creating property tokens to be used for titles, deeds, user-backed currencies, and even shares in a company. Whenever property is created, it gets assigned the next available currency ID, so any property can be bought, sold, transferred, and even used for betting, just as other Master Protocol-derived currencies are.
 
 
 ## New Property Creation
 
-Say you want to create a new IPO for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 37 bytes:
+Say you want to do an initial distribution of digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 37 bytes:
 
 1. Transaction type = 50 for creating new property (32-bit unsigned integer, 4 bytes)
 2. Property Type = 1 for indivisible shares (2 is divisible currency) (32-bit unsigned integer, 4 bytes)
@@ -377,7 +381,7 @@ Once property has been created, the creator owns them at the address which broad
 
 ## Pay Dividends (Send All)
 
-Say your company has made a huge profit and wishes to pay 1000 MSC evenly distributed among the holders of Quantum Miner shares. Doing so will use 20 bytes:
+Say your company has made a huge profit and wishes to pay 1000 MSC evenly distributed among the holders of Quantum Miner digital tokens. Doing so will use 20 bytes:
 
 1. Transaction type = 1 for "send all" (32-bit unsigned integer, 4 bytes)
 2. Currency identifier = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
@@ -449,9 +453,9 @@ The reference address should point to the address which listed the Bible for sal
 
 In order to avoid people gaming the reputation system, some coins must be destroyed with every purchase. The percentage of coins destroyed goes down with each new purchase. The percentage is calculated as 2\*(value of this purchase) / (value of all purchases, including this one). Note that this formula causes 50% of the coins from the first purchase to be destroyed.
 
-# Escrow-Backed User Currencies
+# Escrow-Backed User Currencies (experimental proposed feature)
 
-The most important (and most controversial) feature of Mastercoins is the built-in support for users to create their own currencies out of existing Mastercoins. For the purposes of demonstrating how user currencies will work, we will use an example currency called “GoldCoins”, which are intended to track the value of one ounce of gold, and which may be stored, transferred, bought, and sold similarly to Mastercoins.
+The most important and also the most controversial feature (at least the escrow backed part) of the Master Protocol is the built-in support for users to create their own currencies out of existing Mastercoins. For the purposes of demonstrating how user currencies will work, we will use an example currency called “GoldCoins”, which are intended to track the value of one ounce of gold, and which may be stored, transferred, bought, and sold similarly to Mastercoins.
 
 ## Stability Concept
 
@@ -588,20 +592,20 @@ These compressed public key 'packets' can then be included in one or multiple OP
 
 
 
-# Appendix B – Horrible, Awful, Very Bad Things
+# Appendix B – Regulatory and Legal Complience - Know Your Jurisdiction
 
-Speaking of insider trading, it should be clear by now that Mastercoins can be used for some very bad things. Anyone working on an implementation of the Mastercoin protocol should be very careful to warn users to not break the law of their country of residence. It is up to the user to know the laws of their country, and not (for instance) engage in sports betting in a country where sports betting is not legal.
+It should be clear by now that the Master Protocol can be used for activities that may be regulated or even prohibited in certain jurisdictions. Anyone working on an implementation of the Master Protocol should be very careful to warn users to know and understand the regulatory environment of their jurisdiction and country of residence in order to not break any laws. It is up to the user to know the laws of their country, and not (for instance) engage in sports betting in a juristication / country where sports betting is not a legal activity.
 
-Also, we are not securities experts, but one has to imagine that insider trading is illegal most places, if not everywhere. Also, if you think bitcoin has a reputation problem for money laundering now, just wait until you can store “USDCoins” in the block chain! At last, drug dealers and human traffickers will have the perfect currency to enable their work.
+Also, the contributors to this open source specification are not securities experts, and offer no advice or counsel on how to properly comply with securities or other regulations. This protocol is presented as a open source tool on which others can impliment clients and build innovative services for the benifit of others. 
 
-However, stable distributed currencies will be incredibly useful in a huge number of legal applications, and even modest success of this protocol could make early investors (and even those who simply hold bitcoins) very rich. Mastercoins, much like guns, are just tools, capable of being used for good or for evil. We urge our early adopters to consider how they may use Mastercoin for good, and if you get rich, how to use that money for good. It will take a lot of work to make the good outshine the evil.
+That said, stable distributed currencies / smart property and the other features of this protocol will be incredibly useful in a huge number of legal applications, and even modest success of this protocol could allow early adopters (and even those who simply hold bitcoins) to greatly benefit. The Master Protocol and Mastercoins, are just neutral tools, capable of being used for good or for evil. We urge our early adopters to consider how they may use Mastercoin for good, and if they gain from its adoption, to use those funds for good. It will take a lot of work to make the good, outshine bad actors.
 
 
 
-# Appendix C – Disclaimer
+# Appendix C – Financial Disclaimer
 
-Investing in experimental currencies is really, absurdly risky. This paper is not investment advice, and anyone predicting what will happen with experimental currencies such as those described here is indulging in the wildest sort of speculation, and that includes the speculations in the previous appendix.
+Placing your funds in experimental currencies is really, absurdly risky. This paper is not investment advice, and anyone predicting what will happen with experimental currencies such as those described here is indulging in the wildest sort of speculation, and that includes the speculations in the previous appendix.
 
-Please consult your financial adviser before investing in ANY wild scheme such as this (hint: they will probably tell you to RUN and not look back unless you assure them that it is money you are totally prepared to lose).
+Please consult your financial adviser before purchasing Mastercoins or other digital tokens (hint: they will probably tell you to RUN and not look back unless you assure them that it is money you are totally prepared to lose).
 
-Anyone who puts their rent money or life savings into an experiment of this type is a fool, and deserves the financial ruin they will inevitably reap from this or some other risky enterprise.
+Anyone who puts their rent money or life savings into an experiment of this type is very unwise, and is risking financial ruin from this or similarlly other risky enterprise.
