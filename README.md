@@ -464,6 +464,7 @@ The escrow fund operates like a battery on the power grid, charging when there i
 ## New Currency Creation
 
 Say you want to create the GoldCoin currency described above, using the Gold data stream we defined. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 38 bytes:
+
 1. Transaction type = 100 for creating a new child currency (32-bit unsigned integer, 4 bytes)
 2. Data Stream identifier = 3 for the Gold ticker, per our data stream example (32-bit unsigned integer, 4 bytes)
 3. Escrow fund delay = 4 for 4 days (see below) (8-bit unsigned integer, 1 byte)
