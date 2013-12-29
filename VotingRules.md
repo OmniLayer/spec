@@ -7,6 +7,11 @@
 6. 6 Board members may agree to spend up to $20000, as long as there are no objections raised
 7. The board must vote unanimously to spend more than $20000
 
+## Hire process for Role Based Bounties ##
+1. Any board member can nominate an RBB
+2. If 3 other board members support this nomination AND no board member formally objects AND 48 hours from the moment the RBB was nominated, the RBB is hired.
+3. If anyone objects OR we fail to reach a total of 4 supporting board members, the discussion continues until the objections are met.
+
 ## Discretionary Funds ##
 The board may approve a member (such as the Executive Director) to have a larger pool of discretionary funds by unanimous vote
 
