@@ -131,7 +131,7 @@ Say you want to back up your savings wallet in the cloud, but if someone manages
 1. Transaction type = 10 for marking savings (32-bit unsigned integer, 4 bytes)
 2. Reversibility period = 2,592,000 seconds (30 days) (32-bit unsigned integer, 4 bytes) 
 
-The maximum reversibility period is 365 days (1,892,160,000 seconds) to avoid accidents. Marking an address as savings is PERMANENT and cannot be undone. If an address is marked as savings, the reversibility rules affect not only Mastercoins, but any Mastercoin-derived child currency stored at that address.
+The maximum reversibility period is 365 days (31,536,000 seconds) to avoid accidents. Marking an address as savings is PERMANENT and cannot be undone. If an address is marked as savings, the reversibility rules affect not only Mastercoins, but any Mastercoin-derived child currency stored at that address.
 
 When marking an address as savings, the reference payment should point to a “guardian” address authorized to reverse fraudulent transactions. The guardian address should preferably be from an unused offline or paper wallet. The sending address should be the address to be marked as savings.
 
