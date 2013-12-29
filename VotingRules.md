@@ -7,6 +7,10 @@
 6. 6 Board members may agree to spend up to $20000, as long as there are no objections raised
 7. The board must vote unanimously to spend more than $20000
 
+## Recurring expenses ##
+1. If the total sum of the recurrences fits under a specific voting rule for one-time expenses, then this number of board members can approve it. E.g. 3 board members can approve a monthly recurring $150 expense for 6 months.
+2. It takes one more board member than usual to approve a recurring monthly expense. E.g. 6 members members can approve a monthly expense of up to $5000 (it takes 5 board members to approve a one time expense of up to $5000).
+
 ## Discretionary Funds ##
 The board may approve a member (such as the Executive Director) to have a larger pool of discretionary funds by unanimous vote
 
