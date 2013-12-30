@@ -16,5 +16,7 @@ If an objection is raised, time must be allowed for discussion, and all members 
 ## Change of these rules and composition of the board ##
 A vote of six board members with zero against is required to change these rules or to change the composition of the board.
 
+Such a vote must be allowed at least 7 days to be concluded, unless 7 board members agree within a shorter period of time.
+
 ## Documentation of expenses ##
 ALL expenditures must be itemized in our public-facing budget spreadsheet (or equivalent)
