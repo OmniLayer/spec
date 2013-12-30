@@ -14,7 +14,7 @@ The board may approve a member (such as the Executive Director) to have a larger
 If an objection is raised, time must be allowed for discussion, and all members must vote if there is still disagreement after discussion. Under no conditions will more than $20k be spent over the objection of any board member.
 
 ## Change of these rules and composition of the board ##
-A unanimous vote is required to change these rules, or to change the composition of the board
+A vote of six board members with zero against is required to change these rules or to change the composition of the board.
 
 ## Documentation of expenses ##
 ALL expenditures must be itemized in our public-facing budget spreadsheet (or equivalent)
