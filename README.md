@@ -50,10 +50,10 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
-# Master Protocol / Mastercoin Termonology
+# Master Protocol / Mastercoin Terminology
 
-* The term M.A.S.T.E.R. is an ancroynm for "Metadata Archived by Standard Transaction Embedding Records" 
-* The term "Master Protocol" applies to the specication and the clients that impliment its features. 
+* The term M.A.S.T.E.R. is an acronym for "Metadata Archived by Standard Transaction Embedding Records" 
+* The term "Master Protocol" applies to the specification and the clients that implement its features. 
 * The term "Mastercoins" applies to the digital tokens that access the features of the Master Protocol clients.
 
 # Master Protocol Design
