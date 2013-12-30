@@ -605,3 +605,25 @@ Investing in experimental currencies is really, absurdly risky. This paper is no
 Please consult your financial adviser before investing in ANY wild scheme such as this (hint: they will probably tell you to RUN and not look back unless you assure them that it is money you are totally prepared to lose).
 
 Anyone who puts their rent money or life savings into an experiment of this type is a fool, and deserves the financial ruin they will inevitably reap from this or some other risky enterprise.
+
+# Appendix C - Webservice verification API
+
+One of the large differences between Mastercoin and Bitcoin is that there is no reference implementation available for Mastercoin which you can use to test your own implementation. The official spec, the document you hopefully just read, is open for interpretation. This makes it very difficult to make sure every implementation processes transactions the same. In order to make it easier to compare implementations and spot discrepancies every webbased Mastercoin service should ideally implement the following API calls.
+
+**GET /mastercoin_verify/addresses?currency_id=#currency_id#**
+
+```json
+[{address: 1KZmDQGzGJWYmPP9X3b7TA9dY91KBXgaG4, balance: 20.1}, {address: 1Q1sFqsi8S5DxV5hz6sWLamGBp9To93iG7, balance: 3.1}, etc..]
+```
+
+You supply this URL a currency_id, initially 1 or 2, and it should return an JSON array of objects with two keys: address and balance. This will be a quick way to spot differences between implementations. If an other returns a different balance for two implementations a second call can be used to spot the offending transaction.
+
+**GET /mastercoin_verify/transactions/#address#?currency_id=#currency_id#**
+
+```json
+{address: 1KZmDQGzGJWYmPP9X3b7TA9dY91KBXgaG4, transactions: [{tx_hash: 5f01def181b761f1d03bcd20590c5729a47b11c68955b364add9253d7aec5eb9, valid: true}, {tx_hash: 130c5175d4f3e9add03bd1d115a87b26e613293fbe3815b970f8fc830f018ebc, valid: false}, etc..]} 
+```
+
+This URL takes an address and currency_id as arguments and should return an JSON object with an address and a transactions key for this given address. The transactions key should have an array of all transactions for this address and whether this implementation considers a given transaction valid or not. 
+
+In all likeliness this will capture most of the discrepancies. If this doesn't proof enough we can supply addional information like the amount transferred per transaction in the future.
