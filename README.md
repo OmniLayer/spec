@@ -3,7 +3,7 @@ The Master Protocol / Mastercoin Complete Specification
 
 Version 0.3.5 (previously version 1.2) Class C Data Storage Method "Provably Prune-able Outputs" Edition
 
-* JR Willett dacoinminster (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
+* JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Peter Todd (https://github.com/petertodd)
 * Maran Hidskes (https://github.com/maran)
 * David Johnston (https://github.com/DavidJohnstonCEO)
