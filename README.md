@@ -3,10 +3,11 @@ The Master Protocol / Mastercoin Complete Specification
 
 Version 0.3.5 (previously version 1.2) Class C Data Storage Method "Provably Prune-able Outputs" Edition
 
-* dacoinminster (jr DOT willett AT gmail DOT com)
-* petertodd (https://github.com/petertodd)
-* DavidJohnstonCEO (https://github.com/DavidJohnstonCEO)
-* ripper234 (https://github.com/ripper234?source=c)
+* JR Willett dacoinminster (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
+* Peter Todd (https://github.com/petertodd)
+* Maran Hidskes (https://github.com/maran)
+* David Johnston (https://github.com/DavidJohnstonCEO)
+* Ron Gross (https://github.com/ripper234?source=c)
 
 # Summary
 
@@ -52,7 +53,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 # Master Protocol / Mastercoin Terminology
 
-* The term M.A.S.T.E.R. is an acronym for "Metadata Archived by Standard Transaction Embedding Records" 
+* The term M.A.S.T.E.R. is an acronym for "Metadata Archival of Standard Transaction Embedding Records" 
 * The term "Master Protocol" applies to the specification and the clients that implement its features. 
 * The term "Mastercoins" applies to the digital tokens that access the features of the Master Protocol clients.
 
