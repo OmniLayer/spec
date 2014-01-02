@@ -24,6 +24,15 @@ The following standard conditions apply to all RBBs:
 * RBBs qualify to receive other outstanding bounties, however the amount awarded to them via the RBB position in a given month will be deducted from the total value of other bounties received that month.  i.e. if a core developer contributes above and beyond and wins 10000 USD worth of bounties in a month, the 6000 USD from their RBB would subtracted from the award giving them 4000 USD in bounties and 6000 USD for the RBB for a total of 10000 USD.
 * RBBs may manage teams, and the team may qualify for outstanding bounties. Each team's budget should be managed independently of the team lead's personal funds. 
 
+# Hourly Bounties
+
+Some tasks are more suitable to be carried out by hourly "employees", rather than a full fledged Role Based Bounty. We term these Hourly Bounties. The way it works is:
+
+1. We approve a budget for the Hourly Bounty in the usual process (see the Voting Rules). A standard budget size can be 1,000-2,500 USD, but it can vary by task.
+2. We use a standard uniform rate of 40 USD per hour.
+3. The Hourly Bounty is expected to manage and report his budget and hours. If the hours run out before the task is completed, or it is an ongoing task, the Hourly Bounty is expected to ask the Foundation for an refill of his budget.
+4. Like other bounties, the Hourly Bounty is entitled to Dev MSC, in accordance with the [Dev MSC distribution algorithm](https://github.com/mastercoin-MSC/spec#development-mastercoins-dev-msc-previously-reward-mastercoins)
+
 # The Future
 
 Like everything else, we will decentralize any central control to the RBB protocol. All of the above will be codified in a Proof of Stake voting system, and it will become part of the official Mastercoin spec.
