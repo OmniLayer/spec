@@ -13,7 +13,7 @@
 3. If anyone objects OR we fail to reach a total of 4 supporting board members, the discussion continues until the objections are met.
 
 ## Monthly Budget ##
-At any one time, the recurring monthly expenses that the Foundation is committed to AKA "burn rate" will not go over 75,000 USD (see our [actual burn rate](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=8) and [proposed budget](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=3)).
+At any one time, the monthly expenses that the Foundation is committed to AKA "burn rate" will not go over 75,000 USD (see our [actual burn rate](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=8) and [proposed budget](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=3)).
 
 ## Discretionary Funds ##
 The board may approve a member (such as the Executive Director) to have a larger pool of discretionary funds by unanimous vote
