@@ -11,7 +11,9 @@
 1. Any board member can nominate an RBB
 2. If 3 other board members support this nomination AND no board member formally objects AND 48 hours from the moment the RBB was nominated, the RBB is hired.
 3. If anyone objects OR we fail to reach a total of 4 supporting board members, the discussion continues until the objections are met.
-4. At any one time, the recurring monthly expenses that the Foundation is committed to AKA "burn rate" will not go over 75,000 USD (see our [actual burn rate](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=8) and [proposed budget](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=3)).
+
+## Monthly Budget ##
+At any one time, the recurring monthly expenses that the Foundation is committed to AKA "burn rate" will not go over 75,000 USD (see our [actual burn rate](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=8) and [proposed budget](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=3)).
 
 ## Discretionary Funds ##
 The board may approve a member (such as the Executive Director) to have a larger pool of discretionary funds by unanimous vote
