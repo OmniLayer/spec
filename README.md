@@ -536,13 +536,13 @@ The transaction data is encoded into said fake Bitcoin address which is then use
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
 * Has an output for the encoded fake address (the 'data' address)
-* Has all output values equal & above the 'dust' threshold (currently 0.00005430 BTC)  
-* An additional output is permitted for the remainder of the input (the 'change' address) 
+* Has all output values above the 'dust' threshold (currently 0.00005430 BTC) and preferable be equal. 
+* Additional outputs are permitted for the remainder of the input (the 'change' address) 
 
 The following conditions must also be satisfied for the transaction to be considered decode-able: 
 * The reference address sequence number must be the data address sequence number + 1
 * Ideally, all outputs should be the same (except the change).  In fringe cases where the change output value is equal to the other output values the change address can be identified by sequence number, which must not equal or be +/-1 of the sequence number for either the reference address or the data address 
-* A last resort 'peek and decode' method may be used to identify the data packet in the event of ambiguity following the above rules.  This involves decoding each packet and looking for the correct bytes for a simple send (the majority of bytes in a Class A simple send do not change).  These byte checks are defined as:
+* A last resort 'peek and decode' method may be used to identify the data packet in the event of ambiguity following the above rules. This involves decoding each packet and looking for the correct bytes for a simple send (the majority of bytes in a Class A simple send do not change).  These byte checks are defined as:
     * Bytes two to eight must equal 00
     * Byte nine must equal 01 or 02
 * Should there still be packet ambiguity or 'peek and decode' reveals more than one packet (simple sends are always one packet) the transaction is considered invalid. 
