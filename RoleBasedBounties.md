@@ -1,6 +1,8 @@
 ﻿Role Based Bounties
 ===================
 
+Document Version: 0.2
+
 A role based bounty or RBB is the term we use for someone who receives an ongoing bounty for filling some role for the project.
 
 This is the [DA](http://wiki.mastercoin.org/index.php/Decentralized_Application) equivalent of an employee in traditional companies.
