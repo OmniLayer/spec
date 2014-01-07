@@ -2,6 +2,7 @@
 ===================
 
 **Document Version: 0.3**
+
 **Please update the above version number whenever you update this document.**
 
 A role based bounty or RBB is the term we use for someone who receives an ongoing bounty for filling some role for the project.
