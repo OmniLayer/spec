@@ -27,6 +27,10 @@ The Executive Director has the voting power of 2 board members for the purpose o
 ## Monthly Budget ##
 At any one time, the monthly expenses that the Foundation is committed to AKA "burn rate" will not go over 75,000 USD (see our [actual burn rate](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=8) and [proposed budget](https://docs.google.com/spreadsheet/ccc?key=0AtCyUJvk_IyNdGpVcnpBN2tOczFmbVRnck5TWjZuRFE&usp=sharing#gid=3)).
 
+## Recurring expenses ##
+1. If the total sum of the recurrences fits under a specific voting rule for one-time expenses, then this number of board members can approve it. E.g. 3 board members can approve a monthly recurring $150 expense for 6 months.
+2. It takes one more board member than usual to approve a recurring monthly expense. E.g. 6 members members can approve a monthly expense of up to $5000 (it takes 5 board members to approve a one time expense of up to $5000).
+
 ## Discretionary Funds ##
 The board may approve a member (such as the Executive Director) to have a larger pool of discretionary funds by unanimous vote
 
