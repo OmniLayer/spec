@@ -40,7 +40,7 @@ If an objection is raised, time must be allowed for discussion, and all members 
 ## Change of these rules and composition of the board ##
 1. A unanimous vote is required to change these rules, or to change the composition of the board
 
-## A Quorum
+## Quorum
 1. A Quorum is defined as 2/3 of the board members, rounded up. E.g. with 7 board members, a Quorum is any 5 board members.
 2. During a board meeting that has been announced with ample notification of at least 10 days, a Quorum of board members with no objections is sufficient to make any decisions, including ones that normally require all board members. If there are any objections, they must be resolved for the Quorum to be in effect.
 
