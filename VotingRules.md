@@ -7,6 +7,18 @@
 6. 6 Board members may agree to spend up to $20000, as long as there are no objections raised
 7. The board must vote unanimously to spend more than $20000
 
+## One time bounties ##
+Bounties are treated like expenses, with 1 board member “discount”:
+
+1. 1 board member can put a bounty of up to $500
+2. 2 board members can put a bounty of up to $1000, as long as no objections are raised
+3. 3 board members can put a bounty of up to $2000, as long as no objections are raised
+4. And so forth…
+
+(Note that this is just a copy-paste of the normal Voting Rules tab, with 1 less board member per line).
+
+The Executive Director has the voting power of 2 board members for the purpose of approving one time bounties.
+
 ## Discretionary Funds ##
 The board may approve a member (such as the Executive Director) to have a larger pool of discretionary funds by unanimous vote
 
