@@ -34,6 +34,13 @@ At any one time, the monthly expenses that the Foundation is committed to AKA "b
 ## Discretionary Funds ##
 The board may approve a member (such as the Executive Director) to have a larger pool of discretionary funds by unanimous vote
 
+## Executive Director Spending ##
+1. The Executive Director is allowed to make any single expense of up to $10,000. This includes actual expenses, one time bounties, limited hourly bounties and time-limited role-based bounties or recurring expenses (e.g. $3,000 per month for 3 months).
+2. The Executive Director is entitled to approve any number of unrelated expenses, each up to $10,000.
+3. Direct expenses made by the Executive Director will be reported via the Executive Director ledger. Expenses will be reported to expenses@mastercoin.org.
+4. Bounties and other delayed expenses may be paid by the Executive Director directly, or by the treasurers. Normal reporting rules apply (each person reports his direct expenses).
+5. For large expenses, the Executive Director is expected to consult with the board and give some time for consideration. This is not a strict requirement, depending on the expense size, urgency, and availability of board members.
+
 ## Objections ##
 If an objection is raised, time must be allowed for discussion, and all members must vote if there is still disagreement after discussion. Under no conditions will more than $20k be spent over the objection of any board member.
 
