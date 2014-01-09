@@ -1,7 +1,7 @@
 ﻿Role Based Bounties
 ===================
 
-**Document Version: 0.3**
+**Document Version: 0.31**
 
 **Please update the version number whenever you update this document.**
 
@@ -21,7 +21,7 @@ The reason an RBB exists is to complement the traditional bounty system. We want
 The following standard conditions apply to all RBBs:
 
 * In addition to USD or BTC, each RBB also wins a proportional amount of the Dev MSCs. The amount they receive is proportional to the relative share of their USD or BTC allocation, out of all the Bounty BTC awarded that month.
-* The payment schedule is monthly, usually via bitcoins (but we can pay via other means if needed e.g. wire transfer).
+* The payment schedule is monthly, the first of the month, usually via bitcoins (but we can pay via other means if needed e.g. wire transfer).
 * The position is "at will", meaning both the Foundation and the RBB can terminate the RBB position without any reason.
 * We do set a mutual 30 days notice period. Both the Foundation and the RBB are obligated not to terminate this RBB position without giving a 30 days notice.
 * We generally intend to keep RBBs on for a long time, typically a year or more. However note that just like most jobs, this is not a contractual obligation given the items above.
