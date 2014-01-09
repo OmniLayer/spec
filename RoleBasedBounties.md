@@ -28,6 +28,21 @@ The following standard conditions apply to all RBBs:
 * RBBs qualify to receive other outstanding bounties, however the amount awarded to them via the RBB position in a given month will be deducted from the total value of other bounties received that month.  i.e. if a core developer contributes above and beyond and wins 10000 USD worth of bounties in a month, the 6000 USD from their RBB would subtracted from the award giving them 4000 USD in bounties and 6000 USD for the RBB for a total of 10000 USD.
 * RBBs may manage teams, and the team may qualify for outstanding bounties. Each team's budget should be managed independently of the team lead's personal funds. 
 
+# Signup bonus for C-Level positions
+Any C-level hire (e.g. CEO/CTO/CMO) is entitled to a signup bonus. The purpose of the bonus is to properly reward such key members of the organization, and make sure they have an extra incentive to promote The Master Protocol. The bonus works as follows:
+
+1. In addition to the Role Based Bounties above, a C-Level position is entitled to $60,000 worth of MSC.
+2. These extra MSCs will be vested over a period of 12 months, via a quarterly vesting schedule.
+3. Each quarter, the dollar value ($15,000) will be calculated in MSC (see below), and allocated to the RBB. 
+4. We want to encourage key members of the Foundation to keep these MSC long term. For this purpose, The Mastercoin Foundation will keep these bonus MSC, and will send them to the RBB after the sooner of these two events:
+4. 1. A year passes from their signup date, or
+4. 2. The RBB quits or is let go. In this case, only the vested portion of their bonus will be sent, and the rest will be returned to the Mastercoin Foundation's budget.
+
+# Converting USD to MSC
+For the purpose of this contract, sometime a dollar amount is payable via MSC (e.g. the Bonus for C-Level positions).
+
+Such calculations are made by taking the 3-day daily average of MSC/USD price over the last 3 days (e.g. if a bonus is awarded on Feb 6, we take the average of the closing rate on Feb 5, 4, 3). The best price source is used - either a centralized exchange, the price on a decentralized exchange, or a combination of these, by our consideration.
+
 # Hourly Bounties
 
 Some tasks are more suitable to be carried out by hourly "employees", rather than a full fledged Role Based Bounty. We term these Hourly Bounties. The way it works is:
