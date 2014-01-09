@@ -35,8 +35,8 @@ Any C-level hire (e.g. CEO/CTO/CMO) is entitled to a signup bonus. The purpose o
 2. These extra MSCs will be vested over a period of 12 months, via a quarterly vesting schedule.
 3. Each quarter, the dollar value ($15,000) will be calculated in MSC (see below), and allocated to the RBB. 
 4. We want to encourage key members of the Foundation to keep these MSC long term. For this purpose, The Mastercoin Foundation will keep these bonus MSC, and will send them to the RBB after the sooner of these two events:
-4. 1. A year passes from their signup date, or
-4. 2. The RBB quits or is let go. In this case, only the vested portion of their bonus will be sent, and the rest will be returned to the Mastercoin Foundation's budget.
+    1. A year passes from their signup date, or
+    2. The RBB quits or is let go. In this case, only the vested portion of their bonus will be sent, and the rest will be returned to the Mastercoin Foundation's budget.
 
 # Converting USD to MSC
 For the purpose of this contract, sometime a dollar amount is payable via MSC (e.g. the Bonus for C-Level positions).
