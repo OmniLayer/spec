@@ -102,6 +102,14 @@ There are 56,316 Dev MSC that will ever be generated.
 28,158 Dev MSC will be generated the first year or 2,346 MSC each 30.41 day period. 
 So if a developer won 10% of the bounties during this 30.41 day period he or she would be distributed 234.6 Dev MSC.
 
+
+Technical notes: 
+
+* Any Mastercoin implementation implementing Exodus balance should recalculate the Development Mastercoin amount on each new block found and use the block timestamp for y.
+* When calculating the years since the Mastercoin sale we assume a year is 31556926 seconds.
+
+
+
 ## Embedding Master Protocol Data in the Block Chain
 
 Bitcoin has some little-known advanced features (such as scripting) which many people imagine will enable it to perform fancy new tricks someday. The Master Protocol uses exactly NONE of those advanced features, because support for them is not guaranteed in the future, and the Master Protocol doesn't need them to embed data in the block chain.
