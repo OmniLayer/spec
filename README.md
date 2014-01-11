@@ -107,7 +107,7 @@ Technical notes:
 
 * Any Mastercoin implementation implementing Exodus balance should recalculate the Development Mastercoin amount on each new block found and use the block timestamp for y.
 * When calculating the years since the Mastercoin sale we assume a year is 31556926 seconds.
-* 1377993874 is the Unix timestamp used to define the end-date of Exodus and thus the start date for the Development Mastercoins calculation.
+* 1377993874 is the Unix timestamp used to define the end-date of Exodus and thus the start date for the Development Mastercoins vesting.
 
 
 
