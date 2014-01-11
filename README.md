@@ -82,7 +82,7 @@ Initially, the only valid Mastercoin transaction was a “simple send” (define
 
 ## Development Mastercoins (Dev MSC), previously "Reward Mastercoins")
 
-1. Generation Rate: For every 10 Mastercoins sold during the Exodus period, 1 additional “Dev MSC” was also generated, which are being awarded to the Exodus Address slowly over the years following the exodus period (these Dev MSC are interoperable and fungible with regular MSC). These Development Mastercoins will ensure that developers have a continuing incentive to maintain, improve and add features to the Master Protocol implementations desired by users. The Distribution of these Dev MSC is structured so that developers receive 50% of the Dev MSC by one year after the initial Exodus Address period closed (date the Exodus Address closed - August 31st 2013), 75% by a year later, 87.5% by a year later, and so on:
+1. Generation Rate: For every 10 Mastercoins sold during the Exodus period, 1 additional “Dev MSC” was also generated, which are being awarded to the Exodus Address slowly over the years following the exodus period (these Dev MSC are interoperable and fungible with regular MSC). These Development Mastercoins will ensure that developers have a continuing incentive to maintain, improve and add features to the Master Protocol implementations desired by users. The Distribution of these Dev MSC is structured so that developers receive 50% of the Dev MSC by one year after the initial Exodus Address period closed (date the Exodus Address closed - August 31st 2013, although transactions up till block 255365 were still accepted to account for slower propegation of transactions still sent on the 31st of August), 75% by a year later, 87.5% by a year later, and so on:
 
 ![Dev MSC](images/reward-mastercoin-formula.png)
 
@@ -107,6 +107,7 @@ Technical notes:
 
 * Any Mastercoin implementation implementing Exodus balance should recalculate the Development Mastercoin amount on each new block found and use the block timestamp for y.
 * When calculating the years since the Mastercoin sale we assume a year is 31556926 seconds.
+* 1377993874 is the Unix timestamp used to define the end-date of Exodus and thus the start date for the Development Mastercoins calculation.
 
 
 
