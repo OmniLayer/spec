@@ -639,9 +639,21 @@ You supply this URL a currency_id, initially 1 or 2, and it should return an JSO
 **GET /mastercoin_verify/transactions/#address#?currency_id=#currency_id#**
 
 ```json
-{address: 1KZmDQGzGJWYmPP9X3b7TA9dY91KBXgaG4, transactions: [{tx_hash: 5f01def181b761f1d03bcd20590c5729a47b11c68955b364add9253d7aec5eb9, valid: true}, {tx_hash: 130c5175d4f3e9add03bd1d115a87b26e613293fbe3815b970f8fc830f018ebc, valid: false}, etc..]} 
+{address: 1KZmDQGzGJWYmPP9X3b7TA9dY91KBXgaG4, transactions: [{tx_hash: 5f01def181b761f1d03bcd20590c5729a47b11c68955b364add9253d7aec5eb9, valid: true, accepted_amount: nil, bought_amount: nil}, {tx_hash: 130c5175d4f3e9add03bd1d115a87b26e613293fbe3815b970f8fc830f018ebc, valid: false, accepted_amount: nil, bought_amount: nil}, etc..]} 
 ```
 
 This URL takes an address and currency_id as arguments and should return an JSON object with an address and a transactions key for this given address. The transactions key should have an array of all transactions for this address and whether this implementation considers a given transaction valid or not. 
 
 In all likeliness this will capture most of the discrepancies. If this doesn't proof enough we can supply addional information like the amount transferred per transaction in the future.
+
+For Simple Send transactions accepted_amount and bought_amount can be null values. These values are only used for Distributed Exchange transactions. The accepted amount should contain the amount that was accepted when a Purchase Offer got added to a block.
+
+Example:
+
+User A has a Selling Offer for 5 MSC. User B sends out a Purchase Offer for 8. It gets added to a block but since User A only had a Selling Offer for 5 the Accepted Amount for User B's Purchase Offer is now 5. 
+
+The bought amount is the total amount a user actually spend on an open Purchase Offer.
+
+Example: 
+
+User B has a valid Purchase Offer to buy 5 MSC from User A. He sends out a transaction that actually purchases 2.5 MSC. At that point his Purchase Offer has an bought_amount of 2.5 MSC. If he decides to sent an other 2.5 MSC later this values gets updated to 5 MSC.
