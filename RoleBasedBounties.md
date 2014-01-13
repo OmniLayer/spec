@@ -1,7 +1,7 @@
 ﻿Role Based Bounties
 ===================
 
-**Document Version: 0.3**
+**Document Version: 0.4**
 
 **Please update the version number whenever you update this document.**
 
