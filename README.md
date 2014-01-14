@@ -652,8 +652,8 @@ Example:
 
 User A has a Selling Offer for 5 MSC. User B sends out a Purchase Offer for 8. It gets added to a block but since User A only had a Selling Offer for 5 the Accepted Amount for User B's Purchase Offer is now 5. 
 
-The bought amount is the total amount a user actually spend on an open Purchase Offer.
+The bought amount is the total amount a user actually spends on an open Purchase Offer.
 
 Example: 
 
-User B has a valid Purchase Offer to buy 5 MSC from User A. He sends out a transaction that actually purchases 2.5 MSC. At that point his Purchase Offer has an bought_amount of 2.5 MSC. If he decides to sent an other 2.5 MSC later this values gets updated to 5 MSC.
+User B has a valid Purchase Offer to buy 5 MSC from User A. He sends out a transaction that actually purchases 2 MSC. At that point his Purchase Offer has an bought_amount of 2 MSC. If he decides to sent an other 3 MSC later this values gets updated to 5 MSC.
