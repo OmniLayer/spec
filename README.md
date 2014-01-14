@@ -543,7 +543,7 @@ The transaction data is encoded into said fake Bitcoin address which is then use
 * Has an output for the exodus address
 * Has an output for the encoded fake address (the 'data' address)
 * Has all output values above the 'dust' threshold (currently 0.00005430 BTC) and preferable be equal. 
-* Has exactly two additional outputs (one of which must be the data address) with a value equal to the Exodus output and/or has exactly one output with a sequence number +1 of the data address for reference output identification
+* Has exactly two non-Exodus outputs (one of which must be the data address) with a value equal to the Exodus output and/or has exactly one output with a sequence number +1 of the data address for reference output identification
 * Additional outputs are permitted for the remainder of the input (the 'change' address) 
 
 NOTE: The sequence number for a given address is defined as a 1 -byte integer stored as the first byte of each 'packet'.   Sequence numbers are continuous with 0 following 255 (256=0, 255+1=0). 
