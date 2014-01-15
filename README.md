@@ -624,7 +624,7 @@ Please consult your financial adviser before purchasing Mastercoins or other dig
 
 Anyone who puts their rent money or life savings into an experiment of this type is very unwise, and is risking financial ruin from this or similarly other risky enterprise.
 
-# Appendix C - Webservice verification API
+# Appendix D - Webservice verification API
 
 One of the large differences between Mastercoin and Bitcoin is that there is no reference implementation available for Mastercoin which you can use to test your own implementation. The official spec, the document you hopefully just read, is open for interpretation. This makes it very difficult to make sure every implementation processes transactions the same. In order to make it easier to compare implementations and spot discrepancies every webbased Mastercoin service should ideally implement the following API calls.
 
