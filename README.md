@@ -644,4 +644,4 @@ You supply this URL a currency_id, initially 1 or 2, and it should return an JSO
 
 This URL takes an address and currency_id as arguments and should return an JSON object with an address and a transactions key for this given address. The transactions key should have an array of all transactions for this address and whether this implementation considers a given transaction valid or not. 
 
-In all likeliness this will capture most of the discrepancies. If this doesn't proof enough we can supply addional information like the amount transferred per transaction in the future.
+In all likeliness this will capture most of the discrepancies. If this doesn't proof enough we can supply additional information like the amount transferred per transaction in the future.
