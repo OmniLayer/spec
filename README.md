@@ -226,13 +226,13 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 
 The reference address should point to the seller's address, to identify whose offer you are accepting.
 
-If you send an offer for more Mastercoins then are available by the time your transaction gets added to a block your amount bought will automatically adjusted to be the amount still available. When a Purchase Offer is sent to an address whos Selling Offer is all sold out the Purchase Offer should be invalidated. 
+If you send an offer for more Mastercoins then are available by the time your transaction gets added to a block your amount bought will automatically adjusted to be the amount still available. When a Purchase Offer is sent to an address whose Selling Offer is all sold out the Purchase Offer should be invalidated. 
 
 Note: Make sure your total expenditures on bitcoin transaction fees while accepting the purchase meet the minimum fee requested!
 
 You will need to send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards. If you send more then the correct amount of bitcoins and the Selling Offer has more Mastercoins still available your order will be adjusted upwards.
 
-Please note that all transactions between the Purchase Offer and expiration block should be accumlated and that this value should be used to adjust the Purchse Offer accordingly.
+Please note that all transactions between the Purchase Offer and expiration block should be accumlated and that this value should be used to adjust the Purchase Offer accordingly.
 
 In order to make parsing Mastercoin transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but should be above the dust threshold.
 
@@ -248,7 +248,7 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 4. Currency identifier desired = 3 for GoldCoin (32-bit unsigned integer, 4 bytes)
 5. Amount of GoldCoins desired = 5,000,000,000 (50.00000000 GoldCoins) (64-bit unsigned integer, 8 bytes)
 
-To accept the offer above, simply publish the same message type with an inverse offer (selling Goldcoins for Mastercoins) at a price which matches or beats the seller's price. The protocol simply finds orders that match and the coins from matching orders are considered transfered at the price specified by the earlier of the two offers.
+To accept the offer above, simply publish the same message type with an inverse offer (selling Goldcoins for Mastercoins) at a price which matches or beats the seller's price. The protocol simply finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers.
 
 Note that when only some coins are purchased, the rest are still for sale with the same terms.
 
@@ -606,7 +606,7 @@ These compressed public key 'packets' can then be included in one or multiple OP
 
 
 
-# Appendix B – Regulatory and Legal Complience - Know Your Jurisdiction
+# Appendix B – Regulatory and Legal Compliance - Know Your Jurisdiction
 
 It should be clear by now that the Master Protocol can be used for activities that may be regulated or even prohibited in certain jurisdictions. Anyone working on an implementation of the Master Protocol should be very careful to warn users to know and understand the regulatory environment of their jurisdiction and country of residence in order to not break any laws. It is up to the user to know the laws of their country, and not (for instance) engage in sports betting in a jurisdiction / country where sports betting is not a legal activity.
 
