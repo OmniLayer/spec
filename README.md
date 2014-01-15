@@ -453,7 +453,7 @@ Once a buyer has been accepted, the seller may ship the Bible.
 Once a buyer has been accepted, they may release funds held in escrow (or destroy those funds) and leave feedback. To do so takes a variable number of bytes due to the use of a null-terminated string:
 
 1. Transaction type = 63 for Release Funds and Leave Feedback (32-bit unsigned integer, 4 bytes)
-2. Listind ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
+2. Listing ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
 3. Percentage of funds to release = 105% (65536*1.05 68813) (32-bit unsigned integer, 4 bytes)
 4. Text feedback = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your feedback!)
 
