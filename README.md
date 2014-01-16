@@ -548,7 +548,7 @@ The transaction data is encoded into said fake Bitcoin address which is then use
 
 NOTE: The sequence number for a given address is defined as a 1 -byte integer stored as the first byte of each 'packet'.   Sequence numbers are continuous with 0 following 255 (256=0, 255+1=0). 
 
-NOTE: Should a transaction result in an edge case that appears to follow the rules above but fails to exclusively and without ambiguity identify the sending, reference and data addresses the transaction is considered invalid.
+NOTE: Should a transaction result in an edge case that provides conflicting reference address values for sequence numbers and equal outputs, the reference address identified via equal outputs will take precedence.
 
 As there is no private key associated with these fake addresses they are inherently unspendable.  This creates concerns around blockchain bloat, especially within the UTXO (Unspent Transaction Output) set as each use of a fake address adds an unspent output to the UTXO dataset that will never be redeemed, thus growing (or ‘bloating’) it. 
 
