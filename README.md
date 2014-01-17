@@ -220,9 +220,9 @@ The amount for sale will be reserved from the actual balance for this address mu
 
 ## Changing an Offer
 
-Say you decide you want to change the number of coins you are offering for sale, or change the asking price. Simply re-send the offer with the new details. If your change gets into the block chain before someone accepts your old offer, your offer has been updated.
+Say you decide you want to change the number of coins you are offering for sale, or change the asking price. Simply re-send the offer with the new details. If your change gets into the block chain before someone accepts your old offer, your offer has been updated. Otherwise, to prevent you from accidentally creating a new sell offer when you meant to modify an old one, a sell offer will not be allowed from the seller's address until at least 2 blocks after payment has been made for the accepted offer.
 
-If you decide you want to cancel an offer, simply send the offer again, but enter the number of coins for sale as zero.
+If you decide you want to cancel an offer, simply re-send the offer before it's been accepted, but enter the number of coins for sale as zero.
 
 ## Purchasing Mastercoins with Bitcoins
 
