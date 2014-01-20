@@ -1,4 +1,4 @@
-﻿The Master Protocol / Mastercoin Complete Specification
+The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
 Version 0.3.5 (previously version 1.2) Class C Data Storage Method "Provably Prune-able Outputs" Edition
@@ -218,11 +218,13 @@ Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doin
 
 The amount for sale will be reserved from the actual balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Selling Order" for 100 MSC this address's balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
 
+## Cancelling an Offer
+
+If you decide you want to cancel an offer, simply re-send the offer, but enter the number of coins for sale as zero.
+
 ## Changing an Offer
 
-Say you decide you want to change the number of coins you are offering for sale, or change the asking price. Simply re-send the offer with the new details. If your change gets into the block chain before someone accepts your old offer, your offer has been updated. Otherwise, to prevent you from accidentally creating a new sell offer when you meant to modify an old one, a sell offer will not be allowed from the seller's address until at least 2 blocks after payment has been made for the accepted offer.
-
-If you decide you want to cancel an offer, simply re-send the offer before it's been accepted, but enter the number of coins for sale as zero.
+Say you decide you want to change the number of coins you are offering for sale, or change the asking price. Simply cancel an existing Offer and broadcast a new one in it's place.
 
 ## Purchasing Mastercoins with Bitcoins
 
