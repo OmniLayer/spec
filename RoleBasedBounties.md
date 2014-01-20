@@ -1,7 +1,7 @@
 ﻿Role Based Bounties
 ===================
 
-**Document Version: 0.4**
+**Document Version: 0.5**
 
 **Please update the version number whenever you update this document.**
 
@@ -32,9 +32,11 @@ The following standard conditions apply to all RBBs:
 Any C-level hire (e.g. CEO/CTO/CMO) is entitled to a signup bonus. The purpose of the bonus is to properly reward such key members of the organization, and make sure they have an extra incentive to promote The Master Protocol. The bonus works as follows:
 
 1. In addition to the Role Based Bounties above, a C-Level position is entitled to $60,000 worth of MSC.
-2. These extra MSCs will be vested over a period of 12 months, via a quarterly vesting schedule.
-3. Each quarter, the dollar value ($15,000) will be calculated in MSC (see below), and allocated to the RBB. 
-4. We want to encourage key members of the Foundation to keep these MSC long term. For this purpose, The Mastercoin Foundation will keep these bonus MSC, and will send them to the RBB after the sooner of these two events:
+2. These extra MSCs will be vested over a period of 12 months, via a quarterly vesting schedule, and a 6 month cliff.
+3. After the first 6 months, $30,000 will be calculated in MSC and allocated to the RBB.
+4. At the 9 month mark, $15,000 will be added to this pool.
+5. Finally, at the 12 months mark, an additional $15,000 will be allocated, and the entire bonus MSC pool will be transferred to the RBB.
+6. We want to encourage key members of the Foundation to keep these MSC long term. For this purpose, The Mastercoin Foundation will keep these bonus MSC, and will send them to the RBB after the sooner of these two events:
     1. A year passes from their signup date, or
     2. The RBB quits or is let go. In this case, only the vested portion of their bonus will be sent, and the rest will be returned to the Mastercoin Foundation's budget.
 
