@@ -12,10 +12,10 @@ Version 0.3.5 (previously version 1.2) Class C Data Storage Method "Provably Pru
 
 # Summary
 
-We claim that the existing bitcoin network can be used as a protocol layer, on top of which new currency layers with new rules can be built without changing the foundation.  We further claim that the new protocol layers described in this document:
+We claim that the existing Bitcoin network can be used as a protocol layer, on top of which new currency layers with new rules can be built without changing the foundation.  We further claim that the new protocol layers described in this document:
 
-* Will fix the two biggest barriers to widespread bitcoin adoption: instability and insecurity.
-* Will financially benefit the entire bitcoin user community, including those who don’t use the new protocol layers.
+* Will fix the two biggest barriers to widespread Bitcoin adoption: instability and insecurity.
+* Will financially benefit the entire Bitcoin user community, including those who don’t use the new protocol layers.
 * Will provide initial funds to hire developers to build software which implements the new protocol layers, and ongoing funds to pay for maintenance of this software.
 * Will richly reward early adopters of the new protocol, in proportion to how successful it is.
 
@@ -24,10 +24,10 @@ We claim that the existing bitcoin network can be used as a protocol layer, on t
 
 Our claims are built on the following assumptions:
 
-* Alternate block chains compete with bitcoins financially, confuse our message to the world, and dilute our efforts. These barriers interfere with the adoption momentum of bitcoin and the adoption momentum of alternate currencies as well, regardless of how well-conceived their rules may be.
-* New protocol layers on top of the bitcoin protocol will increase bitcoin values, consolidate our message to the world, and concentrate our efforts, while still allowing individuals and groups to issue new currencies with experimental new rules. The success of any experimental currency protocol layer will enhance the value and success of the foundational bitcoin protocol. 
-* Getting consensus and widespread adoption from the bitcoin community is not needed to add protocol layers, since no changes to the foundational bitcoin protocol are required. 
-* Tiny bitcoin transactions can be encoded into the block chain to support and represent transactions in higher protocol layers. 
+* Alternate block chains compete with Bitcoins financially, confuse our message to the world, and dilute our efforts. These barriers interfere with the adoption momentum of Bitcoin and the adoption momentum of alternate currencies as well, regardless of how well-conceived their rules may be.
+* New protocol layers on top of the Bitcoin protocol will increase Bitcoin values, consolidate our message to the world, and concentrate our efforts, while still allowing individuals and groups to issue new currencies with experimental new rules. The success of any experimental currency protocol layer will enhance the value and success of the foundational Bitcoin protocol. 
+* Getting consensus and widespread adoption from the Bitcoin community is not needed to add protocol layers, since no changes to the foundational Bitcoin protocol are required. 
+* Tiny Bitcoin transactions can be encoded into the block chain to support and represent transactions in higher protocol layers. 
 * A protocol can pay for its own software development, “bootstrapping” itself into existence, utilizing a trusted entity to hold funds and hire developers. 
 * It is possible to create tools to allow end users to create currency protocol layers which have a stable value, pegged to an external currency or commodity. In this way, users of these currencies can own stabilized virtual currency tied to U.S. Dollars, Euros, ounces of gold, barrels of oil, etc. 
 * It is possible for users of these new currencies to exchange between currencies with each other using simple rules and no central exchange.
@@ -40,7 +40,7 @@ The proposed protocol layers can be visualized as follows, with arrows represent
 ![Mastercoin Protocol Layers](images/layers.png) 
 
 
-Note that all transfers of value are still stored in the normal bitcoin block chain, but higher layers of the protocol assign additional meaning to some transactions.
+Note that all transfers of value are still stored in the normal Bitcoin block chain, but higher layers of the protocol assign additional meaning to some transactions.
 
 # Document History
 
@@ -66,12 +66,12 @@ The “Master Protocol” layer between the existing Bitcoin Protocol and users�
 
 ## Initial Token Distribution via the “Exodus Address”
 
-Perhaps you have heard of the “Genesis Block” which launched the Bitcoin protocol. The Master Protocol has a similar starting point in the block chain, called the “Exodus Address” - the bitcoin address from which the first Mastercoins were generated during the month of August 2013. The Exodus Address is: **[1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P](https://blockchain.info/address/1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P)**  
+Perhaps you have heard of the “Genesis Block” which launched the Bitcoin protocol. The Master Protocol has a similar starting point in the block chain, called the “Exodus Address” - the Bitcoin address from which the first Mastercoins were generated during the month of August 2013. The Exodus Address is: **[1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P](https://blockchain.info/address/1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P)**  
 
 Initial distribution of Mastercoins was essentially a kickstarter style period to provide funding to pay developers to write the software which fully implements the protocol. The distribution was very simple, and proceeded as follows:
 
-1. Anyone who sent bitcoins to the Exodus Address before August 31st, 2013 was recognized by the protocol as owning 100x that number of Mastercoins. For instance, if I sent 100 bitcoins to the Exodus Address before August 31st, my bitcoin address owns 10,000 Mastercoins after August 31st. 
-2. Early buyers got additional Mastercoins. In order to encourage adoption momentum, buyers got an additional 10% bonus Mastercoins if they made their purchase a week before the deadline, 20% extra if they purchased two weeks early, and so on, including partial weeks. Thus, if I sent 100 bitcoins to the exodus address 1.5 weeks before August 31st, the protocol recognized my bitcoin address as owning 11,500 Mastercoins (10000 + 15% bonus).
+1. Anyone who sent Bitcoins to the Exodus Address before August 31st, 2013 was recognized by the protocol as owning 100x that number of Mastercoins. For instance, if I sent 100 Bitcoins to the Exodus Address before August 31st, my Bitcoin address owns 10,000 Mastercoins after August 31st. 
+2. Early buyers got additional Mastercoins. In order to encourage adoption momentum, buyers got an additional 10% bonus Mastercoins if they made their purchase a week before the deadline, 20% extra if they purchased two weeks early, and so on, including partial weeks. Thus, if I sent 100 Bitcoins to the exodus address 1.5 weeks before August 31st, the protocol recognized my Bitcoin address as owning 11,500 Mastercoins (10000 + 15% bonus).
 3. Attempts to send funds to the Exodus Address on or after September 1st 2013 (after block #255365) were not considered Mastercoin purchases, and were refunded to the sender.
 
 In the event that a purchase had multiple inputs, the input address contributing the most funds was recognized as owning the Mastercoins.
@@ -115,7 +115,7 @@ Technical notes:
 
 Bitcoin has some little-known advanced features (such as scripting) which many people imagine will enable it to perform fancy new tricks someday. The Master Protocol uses exactly NONE of those advanced features, because support for them is not guaranteed in the future, and the Master Protocol doesn't need them to embed data in the block chain.
 
-The Master Protocol was originally specified to embed data in the block chain using fake bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which embeds data in a bitcoin multi-signature transaction (Class B). Once bitcoin miners start supporting the new OP_RETURN opcode as part of version 0.9 of the Bitcoin reference client, Master Protocol will be able to use that opcode to make the Master Protocol data completely prune-able (Class C) see description here by Gavin Andresen here: https://bitcoinfoundation.org/blog/?p=290 
+The Master Protocol was originally specified to embed data in the block chain using fake Bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which embeds data in a Bitcoin multi-signature transaction (Class B). Once Bitcoin miners start supporting the new OP_RETURN opcode as part of version 0.9 of the Bitcoin reference client, Master Protocol will be able to use that opcode to make the Master Protocol data completely prune-able (Class C) see description here by Gavin Andresen here: https://Bitcoinfoundation.org/blog/?p=290 
 
 Class C transactions are most preferred due to the Provably Prune-able Outputs avoiding issues of "bloat" and "pollution" of the block chain.
 
@@ -123,7 +123,7 @@ The technical details for both Class A and Class B transactions can be found in 
 
 ## Special Considerations to Avoid Invalid Transactions
 
-Not every wallet lets you choose which address bitcoins come from when you make a payment, and Mastercoin transactions must all come from the address which holds the Mastercoins. If a wallet contains bitcoins stored in multiple addresses, the wallet must first consolidate the bitcoins by sending ALL of them to the address which is going to initiate a Mastercoin transaction. Then, any Mastercoin-related bitcoin transactions will be sent from that address.
+Not every wallet lets you choose which address Bitcoins come from when you make a payment, and Mastercoin transactions must all come from the address which holds the Mastercoins. If a wallet contains Bitcoins stored in multiple addresses, the wallet must first consolidate the Bitcoins by sending ALL of them to the address which is going to initiate a Mastercoin transaction. Then, any Mastercoin-related Bitcoin transactions will be sent from that address.
 
 Wallets which do not allow you to consolidate to one address and send from that address (such as online web wallet providers) will not work for Mastercoin unless they are modified to do so. For this reason, **attempting to purchase Mastercoins from an online web wallet will likely result in the permanent loss of those Mastercoins.**
 
@@ -140,7 +140,7 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 3. Amount to transfer = 100,000,000 (1.00000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed number owned, but if it does, assume user is transferring all of them)
 
 
-Note that the amount to transfer is multiplied by 100,000,000 before it is stored, which allows for Mastercoins to be sent with the same precision as bitcoins (eight decimal places). The reference payment (described earlier) determines the address receiving the Mastercoins.
+Note that the amount to transfer is multiplied by 100,000,000 before it is stored, which allows for Mastercoins to be sent with the same precision as Bitcoins (eight decimal places). The reference payment (described earlier) determines the address receiving the Mastercoins.
 
 Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone. Otherwise Mastercoin transactions are not reversible.
 
@@ -207,14 +207,14 @@ This transaction must be sent from the guardian address in charge of the rate li
 
 ## Selling Mastercoins for Bitcoins
 
-Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 33 bytes:
+Say you want to publish an offer to sell 1.5 Mastercoins for 1000 Bitcoins. Doing this takes 33 bytes:
 
-1. Transaction type = 20 for currency trade offer for bitcoins (32-bit unsigned integer, 4 bytes)
+1. Transaction type = 20 for currency trade offer for Bitcoins (32-bit unsigned integer, 4 bytes)
 2. Currency identifier for sale = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
 3. Amount for sale = 150,000,000 (1.50000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed the number owned, but if it does,  assume the user is selling all of them)
-4. Amount of bitcoins desired = 100,000,000,000 (1000.00000000 bitcoins) (64-bit unsigned integer, 8 bytes)
+4. Amount of Bitcoins desired = 100,000,000,000 (1000.00000000 Bitcoins) (64-bit unsigned integer, 8 bytes)
 5. Time limit = 10 (10 blocks in which to send payment after counter-party accepts these terms) (8-bit unsigned integer, 1 byte)
-6. Minimum bitcoin transaction fee = 10,000,000 (require that the buyer pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers) (64-bit unsigned integer, 8 bytes)
+6. Minimum Bitcoin transaction fee = 10,000,000 (require that the buyer pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers) (64-bit unsigned integer, 8 bytes)
 
 The amount for sale will be reserved from the actual balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Selling Order" for 100 MSC this address's balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
 
@@ -235,15 +235,15 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 
 The reference address should point to the seller's address, to identify whose offer you are accepting.
 
-If you send an offer for more Mastercoins then are available by the time your transaction gets added to a block your amount bought will automatically adjusted to be the amount still available. When a Purchase Offer is sent to an address whos Selling Offer is all sold out the Purchase Offer should be invalidated. 
+If you send an offer for more Mastercoins then are available by the time your transaction gets added to a block your amount bought will automatically adjusted to be the amount still available. When a Purchase Offer is sent to an address whose Selling Offer is all sold out the Purchase Offer should be invalidated. 
 
-Note: Make sure your total expenditures on bitcoin transaction fees while accepting the purchase meet the minimum fee requested!
+Note: Make sure your total expenditures on Bitcoin transaction fees while accepting the purchase meet the minimum fee requested!
 
-You will need to send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards. If you send more then the correct amount of bitcoins and the Selling Offer has more Mastercoins still available your order will be adjusted upwards.
+You will need to send the appropriate amount of Bitcoins before the time limit expires to complete the purchase. Note that you must send the Bitcoins from the same address which initiated the purchase. If you send less than the correct amount of Bitcoins, your purchase will be adjusted downwards. If you send more then the correct amount of Bitcoins and the Selling Offer has more Mastercoins still available your order will be adjusted upwards.
 
-Please note that all transactions between the Purchase Offer and expiration block should be accumlated and that this value should be used to adjust the Purchse Offer accordingly.
+Please note that all transactions between the Purchase Offer and expiration block should be accumlated and that this value should be used to adjust the Purchase Offer accordingly.
 
-In order to make parsing Mastercoin transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but should be above the dust threshold.
+In order to make parsing Mastercoin transactions easier, you must also include an output to the Exodus Address when sending the Bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but should be above the dust threshold.
 
 Mastercoin messages that also have a reference output to the seller address, for instance if the buyer wants to change his offer, should not be counted towards the actual purchase of Mastercoins. 
 
@@ -257,7 +257,7 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 4. Currency identifier desired = 3 for GoldCoin (32-bit unsigned integer, 4 bytes)
 5. Amount of GoldCoins desired = 5,000,000,000 (50.00000000 GoldCoins) (64-bit unsigned integer, 8 bytes)
 
-To accept the offer above, simply publish the same message type with an inverse offer (selling Goldcoins for Mastercoins) at a price which matches or beats the seller's price. The protocol simply finds orders that match and the coins from matching orders are considered transfered at the price specified by the earlier of the two offers.
+To accept the offer above, simply publish the same message type with an inverse offer (selling Goldcoins for Mastercoins) at a price which matches or beats the seller's price. The protocol simply finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers.
 
 Note that when only some coins are purchased, the rest are still for sale with the same terms.
 
@@ -274,7 +274,7 @@ Say you decide you would like to start publishing the price of Gold in the block
 7. Display Multiplier = 10,000 (if the ticker publishes 0.00150000, the price of an ounce of gold is currently 15.0000 Mastercoins. (32-bit unsigned integer, 4 bytes)
 
 
-The reference payment should be to the bitcoin address which will be publishing the data. Only the first payment sent from that address in a given day (as determined by block-chain timestamps) will be considered ticker data. Data published by a ticker should also have an output to the Exodus Address – this will make it easier to find ticker data in the block chain data. The output can be for any amount, but should be above the dust threshold.
+The reference payment should be to the Bitcoin address which will be publishing the data. Only the first payment sent from that address in a given day (as determined by block-chain timestamps) will be considered ticker data. Data published by a ticker should also have an output to the Exodus Address – this will make it easier to find ticker data in the block chain data. The output can be for any amount, but should be above the dust threshold.
 
 Each data stream gets a unique identifier, determined by the order in which they were registered. For instance, if your data stream was the third data stream ever registered, your data stream identifier would be 3.
 
@@ -393,7 +393,7 @@ Say you want to do an initial distribution of digital tokens for your company �
 3. Property Name = “Quantum Miner Shares\0” (21 bytes)
 4. Number Properties = 1,000,000 indivisible shares (64-bit unsigned integer, 8 bytes)
 
-As with data streams, properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2.
+As with data streams, properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (Bitcoin is 0), and Test Mastercoins have currency identifier 2.
 
 If creating a title to a house or deed to land, the number of properties should be 1. Don’t set number of properties to 10 for 10 pieces of land – create a new property for each piece of land, since each piece of land inherently has a different value, and they are not interchangeable.
 
@@ -462,7 +462,7 @@ Once a buyer has been accepted, the seller may ship the Bible.
 Once a buyer has been accepted, they may release funds held in escrow (or destroy those funds) and leave feedback. To do so takes a variable number of bytes due to the use of a null-terminated string:
 
 1. Transaction type = 63 for Release Funds and Leave Feedback (32-bit unsigned integer, 4 bytes)
-2. Listind ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
+2. Listing ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
 3. Percentage of funds to release = 105% (65536*1.05 68813) (32-bit unsigned integer, 4 bytes)
 4. Text feedback = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your feedback!)
 
@@ -502,7 +502,7 @@ Say you want to create the GoldCoin currency described above, using the Gold dat
 8. Sale/Transfer Penalty = 100,000 for 0.1% (32-bit unsigned integer, 4 bytes, any time GoldCoins are sold or transferred, 0.1% are destroyed, which improves the health of the escrow fund)
 
 
-As with properties, currencies are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2, so if GoldCoin is the first Mastercoin-derived currency, it will get a currency identifier of 3. 
+As with properties, currencies are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (Bitcoin is 0), and Test Mastercoins have currency identifier 2, so if GoldCoin is the first Mastercoin-derived currency, it will get a currency identifier of 3. 
 
 The currency held in escrow is the parent currency of the data stream. In this example it is Mastercoins, but it could also be any currency derived from Mastercoins. For instance, GoldCoins could later be held in escrow to support a currency whose data stream uses GoldCoins as a parent currency.
 
@@ -528,7 +528,7 @@ Given a reasonably stable Mastercoin, escrow funds should generally grow healthi
 
 When an escrow fund is unhealthy, lowering the aggression factor makes the escrow fund take more profitable trades, which increases the likelihood of recovery. For instance, if it is buying excess GoldCoins, the cheapest 0.05% can be purchased at a better average price than the cheapest 1% on the market.
 
-Escrow funds should generally be tuned to act slowly. This will allow arbitrage traders to do the heavy lifting, as the knowledge that the escrow fund will eventually get the price back to the target makes for a self-fulfilling prophecy when traders act on that knowledge. If the escrow fund acts too quickly, it loses money when the bitcoin version of a security leads the real-world version, as would happen if someone was engaging in insider trading anonymously using the bitcoin version.
+Escrow funds should generally be tuned to act slowly. This will allow arbitrage traders to do the heavy lifting, as the knowledge that the escrow fund will eventually get the price back to the target makes for a self-fulfilling prophecy when traders act on that knowledge. If the escrow fund acts too quickly, it loses money when the Bitcoin version of a security leads the real-world version, as would happen if someone was engaging in insider trading anonymously using the Bitcoin version.
 
 
 
@@ -576,7 +576,7 @@ NOTE: Class A transactions are restricted to the ‘simple send’ transaction t
 
 Class B transactions attempt to address the UTXO ‘bloat’ issue by storing data in the blockchain by utilizing ‘1-of-n’ multisignature outputs where one of the signatories is always the sender.   
 
-By adopting a ‘1-of-n’ approach (credit Tachikoma @ bitcointalk) we can increase n to the number of packets (public keys) needed to store the transaction data while maintaining the ability of the sender to redeem the output.  
+By adopting a ‘1-of-n’ approach (credit Tachikoma @ Bitcointalk) we can increase n to the number of packets (public keys) needed to store the transaction data while maintaining the ability of the sender to redeem the output.  
 
 NOTE: The reference client currently supports a maximum value of 3 for n.  As one signatory must be the sender for redemption purposes, there is a current limit of 2 data packets per output.  A number of multisig outputs can be combined to increase the space available for transaction data as required.  On decoding all Mastercoin packets from all multisig outputs are ordered via their sequence number and evaluated as a continuous data stream. 
 
@@ -615,13 +615,13 @@ These compressed public key 'packets' can then be included in one or multiple OP
 
 
 
-# Appendix B – Regulatory and Legal Complience - Know Your Jurisdiction
+# Appendix B – Regulatory and Legal Compliance - Know Your Jurisdiction
 
 It should be clear by now that the Master Protocol can be used for activities that may be regulated or even prohibited in certain jurisdictions. Anyone working on an implementation of the Master Protocol should be very careful to warn users to know and understand the regulatory environment of their jurisdiction and country of residence in order to not break any laws. It is up to the user to know the laws of their country, and not (for instance) engage in sports betting in a jurisdiction / country where sports betting is not a legal activity.
 
 Also, the contributors to this open source specification are not securities experts, and offer no advice or counsel on how to properly comply with securities or other regulations. This protocol is presented as a open source tool on which others can implement clients and build innovative services for the benefit of others. 
 
-That said, stable distributed currencies / smart property and the other features of this protocol will be incredibly useful in a huge number of legal applications, and even modest success of this protocol could allow early adopters (and even those who simply hold bitcoins) to greatly benefit. The Master Protocol and Mastercoins, are just neutral tools, capable of being used for good or for evil. We urge our early adopters to consider how they may use Mastercoin for good, and if they gain from its adoption, to use those funds for good. It will take a lot of work to make the good, outshine bad actors.
+That said, stable distributed currencies / smart property and the other features of this protocol will be incredibly useful in a huge number of legal applications, and even modest success of this protocol could allow early adopters (and even those who simply hold Bitcoins) to greatly benefit. The Master Protocol and Mastercoins, are just neutral tools, capable of being used for good or for evil. We urge our early adopters to consider how they may use Mastercoin for good, and if they gain from its adoption, to use those funds for good. It will take a lot of work to make the good, outshine bad actors.
 
 
 
@@ -633,7 +633,7 @@ Please consult your financial adviser before purchasing Mastercoins or other dig
 
 Anyone who puts their rent money or life savings into an experiment of this type is very unwise, and is risking financial ruin from this or similarly other risky enterprise.
 
-# Appendix C - Webservice verification API
+# Appendix D - Webservice verification API
 
 One of the large differences between Mastercoin and Bitcoin is that there is no reference implementation available for Mastercoin which you can use to test your own implementation. The official spec, the document you hopefully just read, is open for interpretation. This makes it very difficult to make sure every implementation processes transactions the same. In order to make it easier to compare implementations and spot discrepancies every webbased Mastercoin service should ideally implement the following API calls.
 
@@ -653,4 +653,4 @@ You supply this URL a currency_id, initially 1 or 2, and it should return an JSO
 
 This URL takes an address and currency_id as arguments and should return an JSON object with an address and a transactions key for this given address. The transactions key should have an array of all transactions for this address and whether this implementation considers a given transaction valid or not. 
 
-In all likeliness this will capture most of the discrepancies. If this doesn't proof enough we can supply addional information like the amount transferred per transaction in the future.
+In all likeliness this will capture most of the discrepancies. If this doesn't proof enough we can supply additional information like the amount transferred per transaction in the future.
