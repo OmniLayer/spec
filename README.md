@@ -220,7 +220,10 @@ The amount for sale will be reserved from the actual balance for this address mu
 
 ## Cancelling an Offer
 
-If you decide you want to cancel an offer, simply re-send the offer, but enter the number of coins for sale as zero.
+Cancelling an existing offer would takes 8 bytes.
+
+1. Transaction type = 23 for cancelling existing trade offer (32-bit unsigned integer, 4 bytes)
+2. Currency identifier for sale = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
 
 ## Changing an Offer
 
