@@ -1,4 +1,4 @@
-The Master Protocol / Mastercoin Complete Specification
+﻿The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
 Version 0.3.5 (previously version 1.2) Class C Data Storage Method "Provably Prune-able Outputs" Edition
@@ -552,17 +552,12 @@ The transaction data is encoded into said fake Bitcoin address which is then use
 * Has an output for the exodus address
 * Has an output for the encoded fake address (the 'data' address)
 * Has all output values above the 'dust' threshold (currently 0.00005430 BTC) and preferable be equal. 
+* Has exactly two non-Exodus outputs (one of which must be the data address) with a value equal to the Exodus output and/or has exactly one output with a sequence number +1 of the data address for reference output identification
 * Additional outputs are permitted for the remainder of the input (the 'change' address) 
 
-The following conditions must also be satisfied for the transaction to be considered decode-able: 
-* The reference address sequence number must be the data address sequence number + 1
-* Ideally, all outputs should be the same (except the change).  In fringe cases where the change output value is equal to the other output values the change address can be identified by sequence number, which must not equal or be +/-1 of the sequence number for either the reference address or the data address 
-* A last resort 'peek and decode' method may be used to identify the data packet in the event of ambiguity following the above rules. This involves decoding each packet and looking for the correct bytes for a simple send (the majority of bytes in a Class A simple send do not change).  These byte checks are defined as:
-    * Bytes two to eight must equal 00
-    * Byte nine must equal 01 or 02
-* Should there still be packet ambiguity or 'peek and decode' reveals more than one packet (simple sends are always one packet) the transaction is considered invalid. 
-
 NOTE: The sequence number for a given address is defined as a 1 -byte integer stored as the first byte of each 'packet'.   Sequence numbers are continuous with 0 following 255 (256=0, 255+1=0). 
+
+NOTE: Should a transaction result in an edge case that provides conflicting reference address values for sequence numbers and equal outputs, the reference address identified via equal outputs will take precedence.
 
 As there is no private key associated with these fake addresses they are inherently unspendable.  This creates concerns around blockchain bloat, especially within the UTXO (Unspent Transaction Output) set as each use of a fake address adds an unspent output to the UTXO dataset that will never be redeemed, thus growing (or ‘bloating’) it. 
 
