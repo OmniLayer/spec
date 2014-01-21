@@ -207,7 +207,7 @@ This transaction must be sent from the guardian address in charge of the rate li
 
 ## Selling Mastercoins for Bitcoins
 
-Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 33 bytes:
+Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 34 bytes:
 
 1. Transaction type = 20 for currency trade offer for bitcoins (32-bit unsigned integer, 4 bytes)
 2. Currency identifier for sale = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
@@ -215,14 +215,21 @@ Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doin
 4. Amount of bitcoins desired = 100,000,000,000 (1000.00000000 bitcoins) (64-bit unsigned integer, 8 bytes)
 5. Time limit = 10 (10 blocks in which to send payment after counter-party accepts these terms) (8-bit unsigned integer, 1 byte)
 6. Minimum bitcoin transaction fee = 10,000,000 (require that the buyer pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers) (64-bit unsigned integer, 8 bytes)
+7. Action = 1 for New offer (2 for Update offer, 3 for Cancel offer) (8-bit unsigned integer, 1 byte)
 
 The amount for sale will be reserved from the actual balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Selling Order" for 100 MSC this address's balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
 
+An address cannot create a new Sell offer for a given currency identifier while there is an active Sell offer from that address for that currency identifier. 
+
 ## Changing an Offer
 
-Say you decide you want to change the number of coins you are offering for sale, or change the asking price. Simply re-send the offer with the new details. If your change gets into the block chain before someone accepts your old offer, your offer has been updated. Otherwise, to prevent you from accidentally creating a new sell offer when you meant to modify an old one, a sell offer will not be allowed from the seller's address until at least 2 blocks after payment has been made for the accepted offer.
+Say you decide you want to change an offer, e.g. the number of coins you are offering for sale, or change the asking price. Send the transaction with the new values and Action = 2 before the pending offer has been accepted. It's your responsibility to determine if the update was successful.
 
-If you decide you want to cancel an offer, simply re-send the offer before it's been accepted, but enter the number of coins for sale as zero.
+The amount reserved from the actual balance for this address will be adjusted to reflect the new amount for sale. 
+
+## Canceling an Offer
+
+If you want to cancel an offer, use Action = 3 and send the transaction before it's been accepted. It's your responsibility to determine if the cancellation was successful.
 
 ## Purchasing Mastercoins with Bitcoins
 
@@ -235,13 +242,13 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 
 The reference address should point to the seller's address, to identify whose offer you are accepting.
 
-If you send an offer for more Mastercoins then are available by the time your transaction gets added to a block your amount bought will automatically adjusted to be the amount still available. When a Purchase Offer is sent to an address whos Selling Offer is all sold out the Purchase Offer should be invalidated. 
+If you send an offer for more Mastercoins then are available by the time your transaction gets added to a block your amount bought will automatically adjusted to be the amount still available. When a Purchase Offer is sent to an address whose Selling Offer is all sold out the Purchase Offer should be invalidated. 
 
 Note: Make sure your total expenditures on bitcoin transaction fees while accepting the purchase meet the minimum fee requested!
 
 You will need to send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards. If you send more then the correct amount of bitcoins and the Selling Offer has more Mastercoins still available your order will be adjusted upwards.
 
-Please note that all transactions between the Purchase Offer and expiration block should be accumlated and that this value should be used to adjust the Purchse Offer accordingly.
+Please note that all transactions between the Purchase Offer and expiration block should be accumulated and that this value should be used to adjust the Purchase Offer accordingly.
 
 In order to make parsing Mastercoin transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but should be above the dust threshold.
 
