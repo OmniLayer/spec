@@ -131,6 +131,70 @@ Wallets which do not allow you to consolidate to one address and send from that 
 
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
+## Common Transaction Field Definitions
+
+This section defines the fields that appear in multiple transactions.
+
+***
++ Name: Transaction type
++ Description: the MSC Protocol function to be performed
++ Size: 16-bit unsigned integer, 2 bytes
++ Required/optional: Required
++ Inter-dependencies: Transaction version
++ Default value: None
++ Valid values:
+    *    0: [Simple Send](https://github.com/mastercoin-MSC/spec#transferring-mastercoins-simple-send)
+    *    1: [Pay Dividends (Send All)](https://github.com/mastercoin-MSC/spec#pay-dividends-send-all)
+    *   10: [Mark an Address as Savings](https://github.com/mastercoin-MSC/spec#marking-an-address-as-savings)
+    *   11: [Mark a Savings Address as Compromised](https://github.com/mastercoin-MSC/spec#marking-a-savings-address-as-compromised)
+    *   12: [Mark an Address as Rate-Limited](https://github.com/mastercoin-MSC/spec#marking-an-address-as-rate-limited)
+    *   14: [Remove a Rate Limitation](https://github.com/mastercoin-MSC/spec#removing-a-rate-limitation)
+    *   20: [Sell Mastercoins for Bitcoins (currency trade offer)](https://github.com/mastercoin-MSC/spec#selling-mastercoins-for-bitcoins)
+    *   21: [Offer/Accept Mastercoins for other Mastercoin-derived Currency (currency trade offer)](https://github.com/mastercoin-MSC/spec#selling-mastercoins-for-other-mastercoin-derived-currencies)
+    *   22: [Purchase Mastercoins with Bitcoins (accept currency trade offer)](https://github.com/mastercoin-MSC/spec#purchasing-mastercoins-with-bitcoins)
+    *   30: [Register a Data Stream](https://github.com/mastercoin-MSC/spec#registering-a-data-stream)
+    *   40: [Offer/Accept a Bet](https://github.com/mastercoin-MSC/spec#offering-a-bet)
+    *   50: [Create a Property](https://github.com/mastercoin-MSC/spec#smart-property)
+    *   60: [List Something for Sale](https://github.com/mastercoin-MSC/spec#listing-something-for-sale)
+    *   61: [Initiate a Purchase from a Listing](https://github.com/mastercoin-MSC/spec#initiating-a-purchase)
+    *   62: [Accept a Buyer Offer](https://github.com/mastercoin-MSC/spec#accepting-a-buyer)
+    *   63: [Release Funds and Leave Feedback](https://github.com/mastercoin-MSC/spec#leaving-feedback)
+    * 100: [Create a New Child Currency](https://github.com/mastercoin-MSC/spec#new-currency-creation)
+
+***
++ Name: Transaction version
++ Description: the version of the transaction definition, monotonically increasing
++ Size: 8-bit unsigned integer, 1 byte
++ Required/optional: Required
++ Inter-dependencies: Transaction type
++ Default value: None
++ Valid values: 0 to 255
+
+***
++ Name: Currency identifier
++ Description: the currency used in the transaction
++ Size: 32-bit unsigned integer, 4 bytes
++ Required/optional: Required
++ Inter-dependencies: None
++ Default value: None
++ Valid values: 1 to N
+***
++ Name: Filler byte
++ Description: unused space, typically for backward compatibility
++ Size: 8-bit unsigned integer, 1 byte
++ Required/optional: Optional
++ Inter-dependencies: Transaction type
++ Default value: 0
++ Valid values: 0
+***
++ Name: Amount to transfer
++ Description: Number of coins, should not exceed number owned, but if it does, assume user is transferring all of them
++ Size: 64-bit unsigned integer, 8 byte
++ Required/optional: Required
++ Inter-dependencies: None
++ Default value: None
++ Valid values: 1 to N
+
 ## Transferring Mastercoins (Simple Send)
 
 Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are needed. The data stored is:
