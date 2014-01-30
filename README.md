@@ -131,12 +131,54 @@ Wallets which do not allow you to consolidate to one address and send from that 
 
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
-## Common Transaction Field Definitions
+## Transaction Field Definitions
 
-This section defines the fields that appear in multiple transactions.
+This section defines the fields that are used to construct transactions.
 
-***
-+ Name: Transaction type
+### Field: Number of coins
++ Description: Specifies the number of coins affected by the transaction this field appears in. Note: the number of coins is to be multiplied by 100,000,000 in this field (e.g. 100,000,000 represents 1.0 MSC), which allows for the number of Mastercoins to be specified with the same precision as bitcoins (eight decimal places).
++ Size: 64-bit unsigned integer, 8 byte
++ Inter-dependencies: None
++ Default value: None
++ Valid values: 1 to N **what is N?**
+
+### Field: Currency identifier
++ Description: the currency used in the transaction
++ Size: 32-bit unsigned integer, 4 bytes
++ Inter-dependencies: None
++ Default value: None
++ Valid values: 1 to N **what is N?**
+
+### Field: Filler byte
++ Description: unused space, typically for backward compatibility (e.g. with Transaction type & Transaction version to map to the original 4 byte Transaction type)
++ Size: 8-bit unsigned integer, 1 byte
++ Inter-dependencies: Transaction type, Transaction version
++ Default value: 0
++ Valid values: 0
+
+### Field: Time period in blocks
++ Description: number of blocks during which an action can be performed
++ Size: 8-bit unsigned integer, 1 byte
++ Default value: None
++ Valid values: 1 to N **what's N** 
+
+### Field: Time period in seconds
++ Description: number of seconds during which an action can be performed
++ Size: 32-bit unsigned integer, 4 bytes
++ Default value: None
++ Valid values: 1 to 31,536,000 (365 days) 
+
+### Field: Transaction sub-action
++ Description: the action to be performed on the transaction, e.g. Sell Offer
++ Size: 8-bit unsigned integer, 1 byte
++ Required/optional: Required
++ Default value: None
++ Valid values:
+    * 1: New
+    * 2: Update
+    * 3: Cancel
+
+### Field: Transaction type
 + Description: the MSC Protocol function to be performed
 + Size: 16-bit unsigned integer, 2 bytes
 + Required/optional: Required
@@ -161,8 +203,7 @@ This section defines the fields that appear in multiple transactions.
     *   63: [Release Funds and Leave Feedback](https://github.com/mastercoin-MSC/spec#leaving-feedback)
     * 100: [Create a New Child Currency](https://github.com/mastercoin-MSC/spec#new-currency-creation)
 
-***
-+ Name: Transaction version
+### Field: Transaction version
 + Description: the version of the transaction definition, monotonically increasing
 + Size: 8-bit unsigned integer, 1 byte
 + Required/optional: Required
@@ -170,41 +211,17 @@ This section defines the fields that appear in multiple transactions.
 + Default value: None
 + Valid values: 0 to 255
 
-***
-+ Name: Currency identifier
-+ Description: the currency used in the transaction
-+ Size: 32-bit unsigned integer, 4 bytes
-+ Required/optional: Required
-+ Inter-dependencies: None
-+ Default value: None
-+ Valid values: 1 to N
-***
-+ Name: Filler byte
-+ Description: unused space, typically for backward compatibility
-+ Size: 8-bit unsigned integer, 1 byte
-+ Required/optional: Optional
-+ Inter-dependencies: Transaction type
-+ Default value: 0
-+ Valid values: 0
-***
-+ Name: Amount to transfer
-+ Description: Number of coins, should not exceed number owned, but if it does, assume user is transferring all of them
-+ Size: 64-bit unsigned integer, 8 byte
-+ Required/optional: Required
-+ Inter-dependencies: None
-+ Default value: None
-+ Valid values: 1 to N
-
 ## Transferring Mastercoins (Simple Send)
 
 Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are needed. The data stored is:
 
-1. Transaction type = 0 for simple send (32-bit unsigned integer, 4 bytes)
-2. Currency identifier = 1  for Mastercoin (32-bit unsigned integer, 4 bytes)
-3. Amount to transfer = 100,000,000 (1.00000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed number owned, but if it does, assume user is transferring all of them)
+1.  [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 0
+1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
+1. [Amount to transfer](spec#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
 
-
-Note that the amount to transfer is multiplied by 100,000,000 before it is stored, which allows for Mastercoins to be sent with the same precision as bitcoins (eight decimal places). The reference payment (described earlier) determines the address receiving the Mastercoins.
+Amount to transfer should not exceed number owned, but if it does, assume user is transferring all of them. The reference payment (described **where?**) determines the address receiving the Mastercoins.
 
 Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone. Otherwise Mastercoin transactions are not reversible.
 
@@ -213,10 +230,12 @@ Note that if the transfer comes from an address which has been marked as “Savi
 
 Say you want to back up your savings wallet in the cloud, but if someone manages to hack into it, you want transactions out of that wallet to be reversible for up to 30 days. Doing this takes 8 bytes:
 
-1. Transaction type = 10 for marking savings (32-bit unsigned integer, 4 bytes)
-2. Reversibility period = 2,592,000 seconds (30 days) (32-bit unsigned integer, 4 bytes) 
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 10
+1. [Reversibility period](spec#field-time-period-in-seconds) = 2,592,000 (30 days) 
 
-The maximum reversibility period is 365 days (31,536,000 seconds) to avoid accidents. Marking an address as savings is PERMANENT and cannot be undone. If an address is marked as savings, the reversibility rules affect not only Mastercoins, but any Mastercoin-derived child currency stored at that address.
+Marking an address as savings is PERMANENT and cannot be undone. If an address is marked as savings, the reversibility rules affect not only Mastercoins, but any Mastercoin-derived child currency stored at that address.
 
 When marking an address as savings, the reference payment should point to a “guardian” address authorized to reverse fraudulent transactions. The guardian address should preferably be from an unused offline or paper wallet. The sending address should be the address to be marked as savings.
 
@@ -229,7 +248,9 @@ An address marked as savings can only do simple transfers (transaction type=0). 
 
 Say you notice that the address you marked as savings has been compromised, and you want to reverse transactions and transfer everything to the guardian address. Doing this takes 4 bytes:
 
-1. Transaction type = 11 for marking a compromised savings address (32-bit unsigned integer, 4 bytes)
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 11 for marking a compromised savings address
 
 This transaction must be sent from the guardian address. The reference payment must be to the compromised savings address. Funds from any pending transactions and any remaining funds will then be transferred to the guardian address, both Mastercoins and any currencies derived from Mastercoins.
 
@@ -247,53 +268,59 @@ It should be obvious that anyone parsing Mastercoin transactions for payment sho
 
 Say you want to enforce a spending limit of 1 Mastercoin per Month on one of your addresses. Doing this takes 20 bytes:
 
-1. Transaction type = 12 for rate limitation (32-bit unsigned integer, 4 bytes)
-2. Currency identifier = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
-3. Spending Limit = 100,000,000 (1.00000000 Mastercoins) (64-bit unsigned integer, 8 bytes)
-4. Limitation Reset period = 2,592,000 seconds (30 days) (32-bit unsigned integer, 4 bytes) 
+1. [Transaction version](spec#field-transaction-version) = 0
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 12
+1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
+1. [Spending Limit](spec#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+1. [Limitation Reset period](spec#field-time-period-in-seconds) = 2,592,000 (30 days) 
 
 Marking an address as rate-limited only affects the specified currency. Other currencies stored in the address are not rate-limited. The limitation reset period begins once the protected address makes a send. Attempting to send beyond the rate limit results in the maximum send possible under the limit.
 
-When marking an address as rate-limited, the reference payment should point to a “guardian” address authorized to remove the limitation. The guardian address should preferably be from an unused offline or paper wallet. The sending address should be the address to be marked as rate-limited. Note that an address could be marked as savings AND rate limited, with the same or different guardian addresses.
+When marking an address as rate-limited, the reference payment must point to a “guardian” address authorized to remove the limitation. The guardian address should preferably be from an unused offline or paper wallet. The sending address must be the address to be marked as rate-limited. Note that an address could be marked as savings AND rate limited, with the same or different guardian addresses.
 
-An address marked as rate limited can only do simple transfers (transaction type=0). All other transaction types require addresses without a rate limitation.
+An address marked as rate limited can only do [Simple Send](spec#simple-send) transactions. All other transaction types require addresses without a rate limitation.
 
 
 ## Removing a rate limitation
 
 Removing the rate limitation above takes 8 bytes:
 
-1. Transaction type = 14 for removing rate limitation (32-bit unsigned integer, 4 bytes)
-2. Currency identifier = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 14
+1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
 
-This transaction must be sent from the guardian address in charge of the rate limitation. The reference payment must be to the rate-limited address. Removing the limit only affects the specified currency, and not any other rate-limited currencies stored at that address.
+This transaction must be sent from the guardian address in charge of the rate limitation. The reference payment must be to the rate-limited address. Removing the limit affects only the specified currency, and not any other rate-limited currencies stored at that address.
 
 
 ## Selling Mastercoins for Bitcoins
 
 Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 34 bytes:
 
-1. Transaction type = 20 for currency trade offer for bitcoins (32-bit unsigned integer, 4 bytes)
-2. Currency identifier for sale = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
-3. Amount for sale = 150,000,000 (1.50000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed the number owned, but if it does,  assume the user is selling all of them)
-4. Amount of bitcoins desired = 100,000,000,000 (1000.00000000 bitcoins) (64-bit unsigned integer, 8 bytes)
-5. Time limit = 10 (10 blocks in which to send payment after counter-party accepts these terms) (8-bit unsigned integer, 1 byte)
-6. Minimum bitcoin transaction fee = 10,000,000 (require that the buyer pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers) (64-bit unsigned integer, 8 bytes)
-7. Action = 1 for New offer (2 for Update offer, 3 for Cancel offer) (8-bit unsigned integer, 1 byte)
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 20  (currency trade offer for bitcoins)
+1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
+1. [Amount for sale](spec#field-number-of-coins) = 150,000,000 (1.50000000 Mastercoins)
+1. [Amount of bitcoins desired](spec#field-number-of-coins) = 100,000,000,000 (1000.00000000 bitcoins)
+1. [Time limit in blocks](spec#field-time-limit-in-blocks) = 10 (10 blocks in which to send payment after counter-party accepts these terms)
+1. [Minimum bitcoin transaction fee](spec#field-number-of-coins) = 10,000,000 (require the buyer to pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers)
+1. [Action](spec#field-transaction-sub-action) = 1 (New offer)
 
-The amount for sale will be reserved from the actual balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Selling Order" for 100 MSC this address's balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
+The amount for sale should not exceed the number owned, but if it does,  assume the user is selling all of them. That amount will be reserved from the actual balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Selling Order" for 100 MSC this address's balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
 
-An address cannot create a new Sell offer for a given currency identifier while there is an active Sell offer from that address for that currency identifier. 
+An address cannot create a new Sell offer for a given currency identifier while there is an active Sell offer (one that has not yet been fully accepted and full payment received) from that address for that currency identifier. 
 
 ## Changing an Offer
 
-Say you decide you want to change an offer, e.g. the number of coins you are offering for sale, or change the asking price. Send the transaction with the new values and Action = 2 before the pending offer has been accepted. It's your responsibility to determine if the update was successful.
+Say you decide you want to change an offer, e.g. the number of coins you are offering for sale, or change the asking price. Send the transaction with the new values and Action = 2 before the whole amount offered has been accepted. The change will apply to the balance that has not yet been accepted. It's your responsibility to determine if the update was successful.
 
 The amount reserved from the actual balance for this address will be adjusted to reflect the new amount for sale. 
 
 ## Canceling an Offer
 
-If you want to cancel an offer, use Action = 3 and send the transaction before it's been accepted. It's your responsibility to determine if the cancellation was successful.
+If you want to cancel an offer, use Action = 3 and send the transaction before the full amount for sale has been accepted. The cancel will apply to the amount that has not yet been accepted. It's your responsibility to determine if the cancellation was successful.
 
 ## Purchasing Mastercoins with Bitcoins
 
