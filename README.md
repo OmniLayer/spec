@@ -135,32 +135,62 @@ Not all features described in this document are active by default. Each feature 
 
 This section defines the fields that are used to construct transactions.
 
-### Field: Number of coins
-+ Description: Specifies the number of coins affected by the transaction this field appears in. Note: the number of coins is to be multiplied by 100,000,000 in this field (e.g. 100,000,000 represents 1.0 MSC), which allows for the number of Mastercoins to be specified with the same precision as bitcoins (eight decimal places).
-+ Size: 64-bit unsigned integer, 8 byte
-+ Inter-dependencies: None
-+ Default value: None
-+ Valid values: 1 to N **what is N?**
-
 ### Field: Currency identifier
 + Description: the currency used in the transaction
 + Size: 32-bit unsigned integer, 4 bytes
-+ Inter-dependencies: None
 + Default value: None
 + Valid values: 1 to N **what is N?**
 
 ### Field: Filler byte
 + Description: unused space, typically for backward compatibility (e.g. with Transaction type & Transaction version to map to the original 4 byte Transaction type)
 + Size: 8-bit unsigned integer, 1 byte
-+ Inter-dependencies: Transaction type, Transaction version
++ Inter-dependencies: [Transaction type](spec#field-transaction-type), [Transaction version](spec#field-transaction-version)
 + Default value: 0
 + Valid values: 0
+
+### Field: Integer-eight byte
++ Description: used as a multiplier or in other calculations
++ Size: 64-bit unsigned integer, 8 bytes
++ Default value: None
++ Valid values: 1 to N **what is N?**
+
+### Field: Integer-four byte
++ Description: used as a multiplier or in other calculations
++ Size: 32-bit unsigned integer, 4 bytes
++ Default value: None
++ Valid values: 1 to N **what is N?**
+
+### Field: Integer-two byte
++ Description: used as a multiplier or in other calculations
++ Size: 16-bit unsigned integer, 2 bytes
++ Default value: None
++ Valid values: 1 to N **what is N?**
+
+### Field: Number of coins
++ Description: Specifies the number of coins affected by the transaction this field appears in. Note: the number of coins is to be multiplied by 100,000,000 in this field (e.g. 100,000,000 represents 1.0 MSC), which allows for the number of Mastercoins to be specified with the same precision as bitcoins (eight decimal places).
++ Size: 64-bit unsigned integer, 8 bytes
++ Default value: None
++ Valid values: 1 to N **what is N?**
+
+### Field: Property type
++ Description: indivisible or not
++ Size: 32-bit unsigned integer, 4 bytes **can this be smaller??**
++ Default value: None
++ Valid values:
+    * 1: Indivisible shares
+    * 2: Divisible currency
+
+### Field: String null-terminated
++ Description: a variable length string terminated with a \0 byte
++ Size: variable
++ Default value: None
++ Valid values: ASCII, Unicode ?? 
 
 ### Field: Time period in blocks
 + Description: number of blocks during which an action can be performed
 + Size: 8-bit unsigned integer, 1 byte
 + Default value: None
-+ Valid values: 1 to N **what's N** 
++ Valid values: 1 to N **what's N?** 
 
 ### Field: Time period in seconds
 + Description: number of seconds during which an action can be performed
@@ -171,7 +201,6 @@ This section defines the fields that are used to construct transactions.
 ### Field: Transaction sub-action
 + Description: the action to be performed on the transaction, e.g. Sell Offer
 + Size: 8-bit unsigned integer, 1 byte
-+ Required/optional: Required
 + Default value: None
 + Valid values:
     * 1: New
@@ -181,27 +210,26 @@ This section defines the fields that are used to construct transactions.
 ### Field: Transaction type
 + Description: the MSC Protocol function to be performed
 + Size: 16-bit unsigned integer, 2 bytes
-+ Required/optional: Required
-+ Inter-dependencies: Transaction version
++ Inter-dependencies: [Transaction version](spec#field-transaction-version), [Filler byte](spec#field-filler-byte)
 + Default value: None
 + Valid values:
-    *    0: [Simple Send](https://github.com/mastercoin-MSC/spec#transferring-mastercoins-simple-send)
-    *    1: [Pay Dividends (Send All)](https://github.com/mastercoin-MSC/spec#pay-dividends-send-all)
-    *   10: [Mark an Address as Savings](https://github.com/mastercoin-MSC/spec#marking-an-address-as-savings)
-    *   11: [Mark a Savings Address as Compromised](https://github.com/mastercoin-MSC/spec#marking-a-savings-address-as-compromised)
-    *   12: [Mark an Address as Rate-Limited](https://github.com/mastercoin-MSC/spec#marking-an-address-as-rate-limited)
-    *   14: [Remove a Rate Limitation](https://github.com/mastercoin-MSC/spec#removing-a-rate-limitation)
-    *   20: [Sell Mastercoins for Bitcoins (currency trade offer)](https://github.com/mastercoin-MSC/spec#selling-mastercoins-for-bitcoins)
-    *   21: [Offer/Accept Mastercoins for other Mastercoin-derived Currency (currency trade offer)](https://github.com/mastercoin-MSC/spec#selling-mastercoins-for-other-mastercoin-derived-currencies)
-    *   22: [Purchase Mastercoins with Bitcoins (accept currency trade offer)](https://github.com/mastercoin-MSC/spec#purchasing-mastercoins-with-bitcoins)
-    *   30: [Register a Data Stream](https://github.com/mastercoin-MSC/spec#registering-a-data-stream)
-    *   40: [Offer/Accept a Bet](https://github.com/mastercoin-MSC/spec#offering-a-bet)
-    *   50: [Create a Property](https://github.com/mastercoin-MSC/spec#smart-property)
-    *   60: [List Something for Sale](https://github.com/mastercoin-MSC/spec#listing-something-for-sale)
-    *   61: [Initiate a Purchase from a Listing](https://github.com/mastercoin-MSC/spec#initiating-a-purchase)
-    *   62: [Accept a Buyer Offer](https://github.com/mastercoin-MSC/spec#accepting-a-buyer)
-    *   63: [Release Funds and Leave Feedback](https://github.com/mastercoin-MSC/spec#leaving-feedback)
-    * 100: [Create a New Child Currency](https://github.com/mastercoin-MSC/spec#new-currency-creation)
+    *    0: [Simple Send](spec#transferring-mastercoins-simple-send)
+    *    1: [Pay Dividends (Send All)](spec#pay-dividends-send-all)
+    *   10: [Mark an Address as Savings](spec#marking-an-address-as-savings)
+    *   11: [Mark a Savings Address as Compromised](spec#marking-a-savings-address-as-compromised)
+    *   12: [Mark an Address as Rate-Limited](spec#marking-an-address-as-rate-limited)
+    *   14: [Remove a Rate Limitation](spec#removing-a-rate-limitation)
+    *   20: [Sell Mastercoins for Bitcoins (currency trade offer)](spec#selling-mastercoins-for-bitcoins)
+    *   21: [Offer/Accept Mastercoins for other Mastercoin-derived Currency (currency trade offer)](spec#selling-mastercoins-for-other-mastercoin-derived-currencies)
+    *   22: [Purchase Mastercoins with Bitcoins (accept currency trade offer)](spec#purchasing-mastercoins-with-bitcoins)
+    *   30: [Register a Data Stream](spec#registering-a-data-stream)
+    *   40: [Offer/Accept a Bet](spec#offering-a-bet)
+    *   50: [Create a Property](spec#smart-property)
+    *   60: [List Something for Sale](spec#listing-something-for-sale)
+    *   61: [Initiate a Purchase from a Listing](spec#initiating-a-purchase)
+    *   62: [Accept a Buyer Offer](spec#accepting-a-buyer)
+    *   63: [Release Funds and Leave Feedback](spec#leaving-feedback)
+    * 100: [Create a New Child Currency](spec#new-currency-creation)
 
 ### Field: Transaction version
 + Description: the version of the transaction definition, monotonically increasing
@@ -281,7 +309,6 @@ When marking an address as rate-limited, the reference payment must point to a �
 
 An address marked as rate limited can only do [Simple Send](spec#simple-send) transactions. All other transaction types require addresses without a rate limitation.
 
-
 ## Removing a rate limitation
 
 Removing the rate limitation above takes 8 bytes:
@@ -326,18 +353,19 @@ If you want to cancel an offer, use Action = 3 and send the transaction before t
 
 Say you see an offer such as the one listed above, and wish to initiate a purchase of those Mastercoins. Doing so takes 16 bytes:
 
-1. Transaction type = 22 for accepting currency trade offer (32-bit unsigned integer, 4 bytes)
-2. Currency identifier you are purchasing = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
-3. Amount you are purchasing = 130,000,000 (1.30000000 Mastercoins) (64-bit unsigned integer, 8 bytes)
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 22  (accept currency trade offer)
+1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
+1. [Amount to be purchased](spec#field-number-of-coins) = 130,000,000 (1.30000000 Mastercoins) 
 
-
-The reference address should point to the seller's address, to identify whose offer you are accepting.
+The reference address must point to the seller's address, to identify whose offer you are accepting.
 
 If you send an offer for more Mastercoins then are available by the time your transaction gets added to a block your amount bought will automatically adjusted to be the amount still available. When a Purchase Offer is sent to an address whose Selling Offer is all sold out the Purchase Offer should be invalidated. 
 
 Note: Make sure your total expenditures on bitcoin transaction fees while accepting the purchase meet the minimum fee requested!
 
-You will need to send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards. If you send more then the correct amount of bitcoins and the Selling Offer has more Mastercoins still available your order will be adjusted upwards.
+You must send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards. If you send more then the correct amount of bitcoins and the Selling Offer has more Mastercoins still available your order will be adjusted upwards.
 
 Please note that all transactions between the Purchase Offer and expiration block should be accumulated and that this value should be used to adjust the Purchase Offer accordingly.
 
@@ -349,11 +377,15 @@ Mastercoin messages that also have a reference output to the seller address, for
 
 Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 28 bytes:
 
-1. Transaction type = 21 for currency trade offer for another Mastercoin-derived currency (32-bit unsigned integer, 4 bytes)
-2. Currency identifier for sale = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
-3. Amount for sale = 250,000,000 (2.50000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed the number owned, but if it does,  assume the user is selling all of them)
-4. Currency identifier desired = 3 for GoldCoin (32-bit unsigned integer, 4 bytes)
-5. Amount of GoldCoins desired = 5,000,000,000 (50.00000000 GoldCoins) (64-bit unsigned integer, 8 bytes)
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 21  (currency trade offer for another Mastercoin-derived currency)
+1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
+1. [Amount for sale](spec#field-number-of-coins) = 250,000,000 (2.50000000 Mastercoins) 
+1. [Currency identifier desired](spec#field-currency-identifier) = 3 for GoldCoin 
+1. [Amount of GoldCoins desired](spec#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins) 
+
+The amount for sale should not exceed the number owned, but if it does,  assume the user is selling all of them.
 
 To accept the offer above, simply publish the same message type with an inverse offer (selling Goldcoins for Mastercoins) at a price which matches or beats the seller's price. The protocol simply finds orders that match and the coins from matching orders are considered transfered at the price specified by the earlier of the two offers.
 
@@ -363,16 +395,17 @@ Note that when only some coins are purchased, the rest are still for sale with t
 
 Say you decide you would like to start publishing the price of Gold in the block chain. Registering your data stream takes a varying number of bytes due to the use of null-terminated strings. This example uses 57 bytes:
 
-1. Transaction type = 30 for registering a data stream (32-bit unsigned integer, 4 bytes)
-2. Parent Currency Identifier = 1 for Mastercoin (32-bit unsigned integer, 4 bytes) (Meaning that the price of Gold will be published in units of Mastercoin)
-3. Category = “Commodities\0” (12 bytes)
-4. Sub-Category = “Metals\0” (7 bytes)
-5. Label = “Gold\0” (5 bytes) (if a second “Gold” is registered in this sub-category, it will be shown as “Gold-2”)
-6. Description/Notes = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
-7. Display Multiplier = 10,000 (if the ticker publishes 0.00150000, the price of an ounce of gold is currently 15.0000 Mastercoins. (32-bit unsigned integer, 4 bytes)
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 30
+1. [Parent currency identifier](spec#field-currency-identifier) = 1 for Mastercoin (the price of Gold will be published in units of Mastercoin)
+1. [Category](spec#field-string-null-terminated) = “Commodities\0” (12 bytes)
+1. [Sub-Category](spec#field-string-null-terminated) = “Metals\0” (7 bytes)
+1. [Label](spec#field-string-null-terminated) = “Gold\0” (5 bytes) (if a second “Gold” is registered in this sub-category, it will be shown as “Gold-2”)
+1. [Description/Notes](spec#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
+1. [Display Multiplier](spec#field-integer-four-byte) = 10,000 (if the ticker publishes 0.00150000, the price of an ounce of gold is currently 15.0000 Mastercoins
 
-
-The reference payment should be to the bitcoin address which will be publishing the data. Only the first payment sent from that address in a given day (as determined by block-chain timestamps) will be considered ticker data. Data published by a ticker should also have an output to the Exodus Address – this will make it easier to find ticker data in the block chain data. The output can be for any amount, but should be above the dust threshold.
+The reference payment must be to the bitcoin address which will be publishing the data. Only the first payment sent from that address in a given day (as determined by block-chain timestamps) will be considered ticker data. Data published by a ticker should also have an output to the Exodus Address – this will make it easier to find ticker data in the block chain data. The output can be for any amount, but should be above the dust threshold.
 
 Each data stream gets a unique identifier, determined by the order in which they were registered. For instance, if your data stream was the third data stream ever registered, your data stream identifier would be 3.
 
@@ -384,14 +417,16 @@ If you ever need to change the description/notes for your data stream (for insta
 
 Say you want to use USDCoins (another hypothetical currency derived from Mastercoin, each USDCoin being worth one U.S. Dollar) to bet $200 that the gold ticker will not rise above 20 Mastercoins/Ounce in the next 30 days at 2:1 odds. For the sake of example, we will assume that USDCoins have currency identifier 5. Creating this bet takes 36 bytes:
 
-1. Transaction type = 40 for creating a bet offer (32-bit unsigned integer, 4 bytes)
-2. Bet Currency identifier = 5 for USDCoin (32-bit unsigned integer, 4 bytes)
-3. Data Stream identifier = 3 for the Gold ticker, per our data stream example (32-bit unsigned integer, 4 bytes)
-4. Bet Type = 35 for “Will not exceed on or before” (See table below) (16-bit unsigned integer, 2 bytes)
-5. Bet threshold (Non-CFDs only) = 200,000 (0.00200000 BTC, which equates to a ticker value of 20 per our data stream example) **OR** Leverage (CFDs only) = 65536 (1x leverage) (32-bit unsigned integer, 4 bytes)
-6. Days out = 30 (16-bit unsigned integer, 2 bytes)
-7. Amount of wager = 20,000,000,000 (200.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
-8. Amount of counter-wager = 10,000,000,000 (100.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 40
+1. [Bet currency identifier](spec#field-currency-identifier) = 5 for USDCoin
+1. [Data Stream identifier](spec#field-integer-four-byte) = 3 for the Gold ticker, per our data stream example
+1. [Bet Type](spec#field-integer-two-byte) = 35 for “Will not exceed on or before” (See table below)
+1. [Bet threshold (Non-CFDs only) ](spec#field-number-of-coins) = 200,000 (0.00200000 BTC, equates to a ticker value of 20 per our data stream example) **OR** [Leverage (CFDs only) ](spec#field-number-of-coins) = 65536 (1x leverage) 
+1. [Days out](spec#field-integer-two-byte) = 30
+1. [Amount of wager](spec#field-number-of-coins) = 20,000,000,000 (200.00000000 USDCoins) 
+1. [Amount of counter-wager](spec#field-number-of-coins) = 10,000,000,000 (100.00000000 USDCoins) 
 
 Since this bet is not a CFD (described later) "bet threshold" is used rather than "leverage".
 
@@ -461,16 +496,16 @@ CFD bets store "leverage" in place of the data used by "bet threshold" in other 
 
 Say you see a bet which you would like to accept. Simply publish the inverse bet with matching odds and the same end date, and the Master Protocol will match them automatically (that is, everyone parsing Mastercoin data will mark both bets as accepted). Here is what a bet matching our last example published 5 days later (with 25 days to go) would look like:
 
-1. Transaction type = 40 for creating a bet offer (32-bit unsigned integer, 4 bytes)
-2. Bet Currency identifier = 5 for USDCoin (32-bit unsigned integer, 4 bytes)
-3. Data Stream identifier = 3 for the Gold ticker, per our data stream example (32-bit unsigned integer, 4 bytes)
-4. Bet Type = 34 for “Will exceed on or before” (See table above) (16-bit unsigned integer, 2 bytes)
-5. Bet threshold (Non-CFDs only) = 200,000 (0.00200000 BTC, which equates to a ticker value of 20 per our data stream example) **OR** Leverage (CFDs only) = 65536 (1x leverage) (32-bit unsigned integer, 4 bytes)
-6. Days out = 25 (16-bit unsigned integer, 2 bytes)
-7. Amount of wager = 5,000,000,000 (50.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
-8. Amount of counter-wager = 10,000,000,000 (100.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
-
-
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 40
+1. [Bet currency identifier](spec#field-currency-identifier) = 5 for USDCoin
+1. [Data Stream identifier](spec#field-integer-four-byte) = 3 for the Gold ticker, per our data stream example
+1. [Bet Type](spec#field-integer-two-byte) = 34 for “Will exceed on or before” (See table above)
+1. [Bet threshold (Non-CFDs only) ](spec#field-number-of-coins) = 200,000 (0.00200000 BTC, equates to a ticker value of 20 per our data stream example) **OR** [Leverage (CFDs only) ](spec#field-number-of-coins) = 65536 (1x leverage) 
+1. [Days out](spec#field-integer-two-byte) = 25
+1. [Amount of wager](spec#field-number-of-coins) = 5,000,000,000 (50.00000000 USDCoins) 
+1. [Amount of counter-wager](spec#field-number-of-coins) = 10,000,000,000 (100.00000000 USDCoins) 
 
 Note that this bet will be matched against only half of the previous example, because while the odds match (2:1 vs. 1:2), the amount of this bet is for less. This bet is only for $50, so would only win $100 if they win, as opposed to the full $200. Once the bets are matched, the first bet still has $100 available for someone else to bet $50 against.
 
@@ -481,15 +516,16 @@ Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner ge
 
 The Master Protocol supports creating property tokens to be used for titles, deeds, user-backed currencies, and even shares in a company. Whenever property is created, it gets assigned the next available currency ID, so any property can be bought, sold, transferred, and even used for betting, just as other Master Protocol-derived currencies are.
 
-
 ## New Property Creation
 
 Say you want to do an initial distribution of digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 37 bytes:
 
-1. Transaction type = 50 for creating new property (32-bit unsigned integer, 4 bytes)
-2. Property Type = 1 for indivisible shares (2 is divisible currency) (32-bit unsigned integer, 4 bytes)
-3. Property Name = “Quantum Miner Shares\0” (21 bytes)
-4. Number Properties = 1,000,000 indivisible shares (64-bit unsigned integer, 8 bytes)
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 50
+2. [Property Type](spec#field-property-type) = 1 for indivisible shares
+3. [Property Name](spec#field-string-null-terminated) = “Quantum Miner Shares\0” (21 bytes)
+4. [Number Properties](spec#field-integer-eight-byte) = 1,000,000 indivisible shares
 
 As with data streams, properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2.
 
@@ -504,15 +540,16 @@ Once property has been created, the creator owns them at the address which broad
 
 Say your company has made a huge profit and wishes to pay 1000 MSC evenly distributed among the holders of Quantum Miner digital tokens. Doing so will use 20 bytes:
 
-1. Transaction type = 1 for "send all" (32-bit unsigned integer, 4 bytes)
-2. Currency identifier = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
-3. Amount to transfer = 100,000,000,000 (1000.00000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed number owned, but if it does, assume user is transferring all of them)
-4. Currency ID of Payees = 6 for Quantum Miner Shares (32-bit unsigned integer, 4 bytes)
+1.  [Transaction version](spec#field-transaction-version) = 1
+1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction type](spec#field-transaction-type) = 1
+1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
+1. [Amount to transfer](spec#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+1. [Currency identifier of payees](spec#field-currency-identifier) = 6 for Quantum Miner Shares 
 
-Note that this transaction is very similar to "simple send", with just one extra field. The protocol will split up the 1000 MSC among the shareholders, according to how many shares they have. 
+Note that this transaction is very similar to "simple send", with just one extra field. The protocol will split up the 1000 MSC among the shareholders, according to how many shares they have. The amount to transfer should not exceed the number owned, but if it does, assume user is transferring all of them.
 
 Another use-case for this transaction type would be a giveaway, where someone wants to raise interest in their new coin or property by giving some away to everyone who owns (for instance) Mastercoins.
-
 
 ## Listing Something for Sale
 
