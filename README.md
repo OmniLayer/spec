@@ -133,49 +133,44 @@ Not all features described in this document are active by default. Each feature 
 
 ## Transaction Field Definitions
 
-This section defines the fields that are used to construct transactions.
+This section defines the fields that are used to construct transaction messages.
 
 ### Field: Currency identifier
 + Description: the currency used in the transaction
 + Size: 32-bit unsigned integer, 4 bytes
-+ Default value: None
-+ Valid values: 1 to N **what is N?**
-
-### Field: Filler byte
-+ Description: unused space, typically for backward compatibility (e.g. with Transaction type & Transaction version to map to the original 4 byte Transaction type)
-+ Size: 8-bit unsigned integer, 1 byte
-+ Inter-dependencies: [Transaction type](spec#field-transaction-type), [Transaction version](spec#field-transaction-version)
-+ Default value: 0
-+ Valid values: 0
++ Valid values: 1 to N **what is N? Do we need to allow 4.2 billion?**
 
 ### Field: Integer-eight byte
 + Description: used as a multiplier or in other calculations
 + Size: 64-bit unsigned integer, 8 bytes
-+ Default value: None
-+ Valid values: 1 to N **what is N?**
++ Valid values: 0 to 9223372036854775807
 
 ### Field: Integer-four byte
 + Description: used as a multiplier or in other calculations
 + Size: 32-bit unsigned integer, 4 bytes
-+ Default value: None
-+ Valid values: 1 to N **what is N?**
++ Valid values: 0 to 4294967295
 
 ### Field: Integer-two byte
 + Description: used as a multiplier or in other calculations
 + Size: 16-bit unsigned integer, 2 bytes
-+ Default value: None
-+ Valid values: 1 to N **what is N?**
++ Valid values: 0 to 65535
+
+### Field: Listing for sale sub-action
++ Description: the action to be performed by this transaction
++ Size: 8-bit unsigned integer, 1 byte
++ Valid values:
+    * 1: New
+    * 2: Update
+    * 3: Cancel
 
 ### Field: Number of coins
 + Description: Specifies the number of coins affected by the transaction this field appears in. Note: the number of coins is to be multiplied by 100,000,000 in this field (e.g. 100,000,000 represents 1.0 MSC), which allows for the number of Mastercoins to be specified with the same precision as bitcoins (eight decimal places).
 + Size: 64-bit unsigned integer, 8 bytes
-+ Default value: None
-+ Valid values: 1 to N **what is N?**
++ Valid values: 1 to 9223372036854775807
 
 ### Field: Property type
 + Description: indivisible or not
 + Size: 32-bit unsigned integer, 4 bytes **can this be smaller??**
-+ Default value: None
 + Valid values:
     * 1: Indivisible shares
     * 2: Divisible currency
@@ -183,25 +178,21 @@ This section defines the fields that are used to construct transactions.
 ### Field: String null-terminated
 + Description: a variable length string terminated with a \0 byte
 + Size: variable
-+ Default value: None
 + Valid values: ASCII, Unicode ?? 
 
 ### Field: Time period in blocks
 + Description: number of blocks during which an action can be performed
 + Size: 8-bit unsigned integer, 1 byte
-+ Default value: None
 + Valid values: 1 to N **what's N?** 
 
 ### Field: Time period in seconds
 + Description: number of seconds during which an action can be performed
 + Size: 32-bit unsigned integer, 4 bytes
-+ Default value: None
 + Valid values: 1 to 31,536,000 (365 days) 
 
-### Field: Transaction sub-action
-+ Description: the action to be performed on the transaction, e.g. Sell Offer
+### Field: Sell offer sub-action
++ Description: the action to be performed by this transaction
 + Size: 8-bit unsigned integer, 1 byte
-+ Default value: None
 + Valid values:
     * 1: New
     * 2: Update
@@ -210,8 +201,7 @@ This section defines the fields that are used to construct transactions.
 ### Field: Transaction type
 + Description: the MSC Protocol function to be performed
 + Size: 16-bit unsigned integer, 2 bytes
-+ Inter-dependencies: [Transaction version](spec#field-transaction-version), [Filler byte](spec#field-filler-byte)
-+ Default value: None
++ Inter-dependencies: [Transaction version](spec#field-transaction-version)
 + Valid values:
     *    0: [Simple Send](spec#transferring-mastercoins-simple-send)
     *    1: [Pay Dividends (Send All)](spec#pay-dividends-send-all)
@@ -236,30 +226,31 @@ This section defines the fields that are used to construct transactions.
 + Size: 8-bit unsigned integer, 1 byte
 + Required/optional: Required
 + Inter-dependencies: Transaction type
-+ Default value: None
-+ Valid values: 0 to 255
++ Valid values: 1 to 255
 
-## Transferring Mastercoins (Simple Send)
+## Transaction Definitions
+The Master Protocol Distributed Exchange transactions are listed below.
+
+Each transaction definition has a version number to enable support for changes to the transaction definitions. Up thru version 0.3.5 of this spec, the transaction type field was a 4 byte integer. Since there are only 17 transactions defined, the upper 3 bytes of the field had a value of 0. Now, the first field in each transaction message is the 1 byte version number, with an initial value of 1. The transaction type field is now a 2 byte integer. So, each client must read the first byte of each transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the original format. If the value is at least 1, then the message is in the format described below.
+
+### Transferring Mastercoins (Simple Send)
 
 Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are needed. The data stored is:
 
 1.  [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 0
 1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to transfer](spec#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
 
-Amount to transfer should not exceed number owned, but if it does, assume user is transferring all of them. The reference payment (described **where?**) determines the address receiving the Mastercoins.
+Amount to transfer should not exceed number owned, but if it does, assume user is transferring all of them. The reference address determines the address receiving the Mastercoins.
 
 Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone. Otherwise Mastercoin transactions are not reversible.
 
-
-## Marking an Address as “Savings”
+### Marking an Address as “Savings”
 
 Say you want to back up your savings wallet in the cloud, but if someone manages to hack into it, you want transactions out of that wallet to be reversible for up to 30 days. Doing this takes 8 bytes:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 10
 1. [Reversibility period](spec#field-time-period-in-seconds) = 2,592,000 (30 days) 
 
@@ -271,19 +262,16 @@ When a fraudulent transaction is reversed, any pending funds go to the guardian 
 
 An address marked as savings can only do simple transfers (transaction type=0). All other transaction types require addresses without a reversibility time window.
 
-
-## Marking a Savings Address as Compromised
+### Marking a Savings Address as Compromised
 
 Say you notice that the address you marked as savings has been compromised, and you want to reverse transactions and transfer everything to the guardian address. Doing this takes 4 bytes:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 11 for marking a compromised savings address
 
 This transaction must be sent from the guardian address. The reference payment must be to the compromised savings address. Funds from any pending transactions and any remaining funds will then be transferred to the guardian address, both Mastercoins and any currencies derived from Mastercoins.
 
-
-## Advantages of the Savings/Guardian Model
+### Advantages of the Savings/Guardian Model
 
 The savings/guardian model is intended to allow the user to take extreme precautions against accidental loss of the savings address (for instance, by storing lots of backups, including in the cloud), and extreme precautions against theft of the guardian address. Although reasonable precautions should be taken, if your savings address gets hacked, or the key to your guardian address gets lost or destroyed, the coins can still be recovered. 
 
@@ -292,12 +280,11 @@ This model also facilitates estate planning. You simply give your heir(s) a pape
 It should be obvious that anyone parsing Mastercoin transactions for payment should check that the payment is not reversible before completing the transaction!
 
 
-## Marking an Address as Rate-Limited
+### Marking an Address as Rate-Limited
 
 Say you want to enforce a spending limit of 1 Mastercoin per Month on one of your addresses. Doing this takes 20 bytes:
 
-1. [Transaction version](spec#field-transaction-version) = 0
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
+1. [Transaction version](spec#field-transaction-version) = 1
 1. [Transaction type](spec#field-transaction-type) = 12
 1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
 1. [Spending Limit](spec#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
@@ -309,52 +296,49 @@ When marking an address as rate-limited, the reference payment must point to a �
 
 An address marked as rate limited can only do [Simple Send](spec#simple-send) transactions. All other transaction types require addresses without a rate limitation.
 
-## Removing a rate limitation
+### Removing a rate limitation
 
 Removing the rate limitation above takes 8 bytes:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 14
 1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
 
 This transaction must be sent from the guardian address in charge of the rate limitation. The reference payment must be to the rate-limited address. Removing the limit affects only the specified currency, and not any other rate-limited currencies stored at that address.
 
 
-## Selling Mastercoins for Bitcoins
+### Selling Mastercoins for Bitcoins
 
 Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 34 bytes:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 20  (currency trade offer for bitcoins)
 1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount for sale](spec#field-number-of-coins) = 150,000,000 (1.50000000 Mastercoins)
 1. [Amount of bitcoins desired](spec#field-number-of-coins) = 100,000,000,000 (1000.00000000 bitcoins)
 1. [Time limit in blocks](spec#field-time-limit-in-blocks) = 10 (10 blocks in which to send payment after counter-party accepts these terms)
 1. [Minimum bitcoin transaction fee](spec#field-number-of-coins) = 10,000,000 (require the buyer to pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers)
-1. [Action](spec#field-transaction-sub-action) = 1 (New offer)
+1. [Action](spec#field-sell-offer-sub-action) = 1 (New offer)
 
 The amount for sale should not exceed the number owned, but if it does,  assume the user is selling all of them. That amount will be reserved from the actual balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Selling Order" for 100 MSC this address's balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
 
 An address cannot create a new Sell offer for a given currency identifier while there is an active Sell offer (one that has not yet been fully accepted and full payment received) from that address for that currency identifier. 
 
-## Changing an Offer
+### Changing an Offer
 
 Say you decide you want to change an offer, e.g. the number of coins you are offering for sale, or change the asking price. Send the transaction with the new values and Action = 2 before the whole amount offered has been accepted. The change will apply to the balance that has not yet been accepted. It's your responsibility to determine if the update was successful.
 
 The amount reserved from the actual balance for this address will be adjusted to reflect the new amount for sale. 
 
-## Canceling an Offer
+### Canceling an Offer
 
 If you want to cancel an offer, use Action = 3 and send the transaction before the full amount for sale has been accepted. The cancel will apply to the amount that has not yet been accepted. It's your responsibility to determine if the cancellation was successful.
 
-## Purchasing Mastercoins with Bitcoins
+### Purchasing Mastercoins with Bitcoins
 
 Say you see an offer such as the one listed above, and wish to initiate a purchase of those Mastercoins. Doing so takes 16 bytes:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 22  (accept currency trade offer)
 1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to be purchased](spec#field-number-of-coins) = 130,000,000 (1.30000000 Mastercoins) 
@@ -373,12 +357,11 @@ In order to make parsing Mastercoin transactions easier, you must also include a
 
 Mastercoin messages that also have a reference output to the seller address, for instance if the buyer wants to change his offer, should not be counted towards the actual purchase of Mastercoins. 
 
-## Selling Mastercoins for Other Mastercoin-Derived Currencies
+### Selling Mastercoins for Other Mastercoin-Derived Currencies
 
 Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 28 bytes:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 21  (currency trade offer for another Mastercoin-derived currency)
 1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount for sale](spec#field-number-of-coins) = 250,000,000 (2.50000000 Mastercoins) 
@@ -391,12 +374,11 @@ To accept the offer above, simply publish the same message type with an inverse 
 
 Note that when only some coins are purchased, the rest are still for sale with the same terms.
 
-## Registering a Data Stream
+### Registering a Data Stream
 
 Say you decide you would like to start publishing the price of Gold in the block chain. Registering your data stream takes a varying number of bytes due to the use of null-terminated strings. This example uses 57 bytes:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 30
 1. [Parent currency identifier](spec#field-currency-identifier) = 1 for Mastercoin (the price of Gold will be published in units of Mastercoin)
 1. [Category](spec#field-string-null-terminated) = “Commodities\0” (12 bytes)
@@ -412,13 +394,13 @@ Each data stream gets a unique identifier, determined by the order in which they
 Since anyone can cheaply register a data stream, and thereby create categories and subcategories, we can assume that there will be a lot of noise. Anyone writing code to display data stream categories should note which data streams are the most actively used, and order categories and subcategories by descending activity, thereby pushing unused categories to the bottom of the list. 
 
 If you ever need to change the description/notes for your data stream (for instance, if some poor sport takes down your website), simply re-register it from the same address with the same category, subcategory, and label. When re-registering, you can also change the ticker address by choosing a different address for the reference payment (for instance, if your ticker address gets compromised), or change the display multiplier.
+**How to destroy a data stream?**
 
-## Offering a Bet
+### Offering a Bet
 
 Say you want to use USDCoins (another hypothetical currency derived from Mastercoin, each USDCoin being worth one U.S. Dollar) to bet $200 that the gold ticker will not rise above 20 Mastercoins/Ounce in the next 30 days at 2:1 odds. For the sake of example, we will assume that USDCoins have currency identifier 5. Creating this bet takes 36 bytes:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 40
 1. [Bet currency identifier](spec#field-currency-identifier) = 5 for USDCoin
 1. [Data Stream identifier](spec#field-integer-four-byte) = 3 for the Gold ticker, per our data stream example
@@ -492,12 +474,11 @@ A "Contract for Difference" (CFD) allows a bettor to temporarily gain bullish or
 CFD bets store "leverage" in place of the data used by "bet threshold" in other bet types. If a bettor prefers that a 10% price movement means a 20% gain or loss, they may select 2x leverage (65536\*2=131072). Similarly, a 10% price movement could mean a 5% gain or loss using 0.5x leverage (65536\*0.5 = 32768). Just as with normal bets, a CFD bettor can "sweeten the deal" by offering better odds (a lower counter-wager amount). High-leverage bets or big price movements could result in a winnings calculation higher than the amount at stake, in which case the winner simply gets the entire pot. 
 
 
-## Accepting a Bet
+### Accepting a Bet
 
 Say you see a bet which you would like to accept. Simply publish the inverse bet with matching odds and the same end date, and the Master Protocol will match them automatically (that is, everyone parsing Mastercoin data will mark both bets as accepted). Here is what a bet matching our last example published 5 days later (with 25 days to go) would look like:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 40
 1. [Bet currency identifier](spec#field-currency-identifier) = 5 for USDCoin
 1. [Data Stream identifier](spec#field-integer-four-byte) = 3 for the Gold ticker, per our data stream example
@@ -512,20 +493,19 @@ Note that this bet will be matched against only half of the previous example, be
 Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner gets 99.5% of the money at stake. The other 0.5% goes to the creator of the data stream. 
 
 
-## Smart Property
+### Smart Property
 
 The Master Protocol supports creating property tokens to be used for titles, deeds, user-backed currencies, and even shares in a company. Whenever property is created, it gets assigned the next available currency ID, so any property can be bought, sold, transferred, and even used for betting, just as other Master Protocol-derived currencies are.
 
-## New Property Creation
+### New Property Creation
 
 Say you want to do an initial distribution of digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 37 bytes:
 
 1. [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 50
-2. [Property Type](spec#field-property-type) = 1 for indivisible shares
-3. [Property Name](spec#field-string-null-terminated) = “Quantum Miner Shares\0” (21 bytes)
-4. [Number Properties](spec#field-integer-eight-byte) = 1,000,000 indivisible shares
+1. [Property Type](spec#field-property-type) = 1 for indivisible shares
+1. [Property Name](spec#field-string-null-terminated) = “Quantum Miner Shares\0” (21 bytes)
+1. [Number Properties](spec#field-integer-eight-byte) = 1,000,000 indivisible shares
 
 As with data streams, properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2.
 
@@ -534,14 +514,15 @@ If creating a title to a house or deed to land, the number of properties should 
 If creating 1,000,000 units of a divisible currency, the user would have chosen property type 2 and would have entered 100,000,000,000,000 for the number of properties (1 million divisible to 8 decimal places).
 
 Once property has been created, the creator owns them at the address which broadcast the message creating them.
+** How is a property destroyed? **
+** 
 
 
-## Pay Dividends (Send All)
+### Pay Dividends (Send All)
 
 Say your company has made a huge profit and wishes to pay 1000 MSC evenly distributed among the holders of Quantum Miner digital tokens. Doing so will use 20 bytes:
 
 1.  [Transaction version](spec#field-transaction-version) = 1
-1. [Filler byte](spec#field-filler-byte) = 0 (for backward compatibility)
 1. [Transaction type](spec#field-transaction-type) = 1
 1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to transfer](spec#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
@@ -551,24 +532,26 @@ Note that this transaction is very similar to "simple send", with just one extra
 
 Another use-case for this transaction type would be a giveaway, where someone wants to raise interest in their new coin or property by giving some away to everyone who owns (for instance) Mastercoins.
 
-## Listing Something for Sale
+### Listing Something for Sale
 
 Say you want to sell a Bible for 0.001 Mastercoins. Creating a sell offer will use a variable number of bytes due to the use of null-terminated strings:
 
-1. Transaction type = 60 for sale listing  (32-bit unsigned integer, 4 bytes)
-2. Currency identifier of price = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
-3. Desired price = 100,000 (0.00100000 Mastercoins) (64-bit unsigned integer, 8 bytes)
-4. Item category = "Contraband\0" (11 bytes)
-5. Item subcategory = "Forbidden Books\0" (16 bytes)
-6. Item title = "Bible, NASB\0" (12 bytes)
-7. Description/Notes = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
+1.  [Transaction version](spec#field-transaction-version) = 1
+1. [Transaction type](spec#field-transaction-type) = 60
+1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
+1. [Desired price](spec#field-number-of-coins) = 100,000 (0.00100000 Mastercoins)
+1. [Item category](spec#field-string-null-terminated) = "Contraband\0" (11 bytes)
+1. [Item subcategory](spec#field-string-null-terminated) = "Forbidden Books\0" (16 bytes)
+1. [Item title](spec#field-string-null-terminated) = "Bible, NASB\0" (12 bytes)
+1. [Description/Notes](spec#field-string-null-terminated) = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
 
 Every sale offer published by a given address gets a 32-bit "Listing ID" number assigned, which increments for each item offered for sale from that address. We'll assume this is the first item offered for sale from this address (Listing ID=0).
 
 To delist an unsold item, publish the exact same message, but with a price of zero. Sellers should make sure they provide some method of contacting them (for instance, on the listing webpage), so they have a communication channel to help resolve disputes with buyers.
+**How to change the terms of a Listing?**
 
 
-## Initiating a Purchase
+### Initiating a Purchase
 
 Say you see the Bible listed above and wish to purchase it. However, you have no reputation as a buyer, so you want to offer a 10% higher purchase price than what the seller is asking. Starting the purchase process takes 16 bytes:
 
@@ -582,7 +565,7 @@ The reference address should point to the address which listed the Bible for sal
 The price multiplier can also be used to offer less than the suggested price. This may be viable for an established buyer and/or a stale listing.
 
 
-## Accepting a Buyer
+### Accepting a Buyer
 
 If the buyer offers a bad price, has a bad reputation, or has no reputation, then you may not wish to do business with them. If you see an offer that you like, the message to accept the offer takes X bytes:
 
@@ -592,12 +575,12 @@ If the buyer offers a bad price, has a bad reputation, or has no reputation, the
 Once a buyer has been accepted, the seller may ship the Bible.
 
 
-## Leaving Feedback
+### Leaving Feedback
 
 Once a buyer has been accepted, they may release funds held in escrow (or destroy those funds) and leave feedback. To do so takes a variable number of bytes due to the use of a null-terminated string:
 
 1. Transaction type = 63 for Release Funds and Leave Feedback (32-bit unsigned integer, 4 bytes)
-2. Listind ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
+2. Listing ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
 3. Percentage of funds to release = 105% (65536*1.05 68813) (32-bit unsigned integer, 4 bytes)
 4. Text feedback = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your feedback!)
 
@@ -623,7 +606,7 @@ So how do we drive the value of these GoldCoins to their target value, when dema
 
 The escrow fund operates like a battery on the power grid, charging when there is excess energy then discharging where there isn't enough. When there are too few GoldCoins (GoldCoin price is too high), the escrow fund releases new GoldCoins, and the escrow-battery “charges” by holding Mastercoins in escrow. When there are too many GoldCoins (GoldCoin price is too low), the escrow fund purchases some of the excess GoldCoins, thereby “discharging” the escrow-battery as it releases the stored Mastercoins.
 
-## New Currency Creation
+### New Currency Creation
 
 Say you want to create the GoldCoin currency described above, using the Gold data stream we defined. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 38 bytes:
 
@@ -638,6 +621,8 @@ Say you want to create the GoldCoin currency described above, using the Gold dat
 
 
 As with properties, currencies are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2, so if GoldCoin is the first Mastercoin-derived currency, it will get a currency identifier of 3. 
+**Who generates currency identifiers?**
+**How does anyone know what the identifier is?**
 
 The currency held in escrow is the parent currency of the data stream. In this example it is Mastercoins, but it could also be any currency derived from Mastercoins. For instance, GoldCoins could later be held in escrow to support a currency whose data stream uses GoldCoins as a parent currency.
 
@@ -705,7 +690,7 @@ As the UTXO set is designed to be memory resident it is thus in the interests of
 
 Class B transactions were developed to address this issue by using provably redeemable outputs.  Class A transactions are thus considered deprecated and are supported for backwards compatibility only.    
 
-NOTE: Class A transactions are restricted to the ‘simple send’ transaction type only.  All other Mastercoin transaction types are supported by Class B transactions only.  Client implementations should utilize Class B for all transaction types, including ‘simple send’. 
+NOTE: Class A transactions are restricted to the ‘simple send’ transaction type only.  All other Mastercoin transaction types are supported by Class B transactions only.  Client implementations must utilize Class B for all transaction types, including ‘simple send’. 
 
 ## Class B transactions (also known as the ‘multisig’ method) 
 
@@ -750,7 +735,7 @@ These compressed public key 'packets' can then be included in one or multiple OP
 
 
 
-# Appendix B – Regulatory and Legal Complience - Know Your Jurisdiction
+# Appendix B – Regulatory and Legal Compliance - Know Your Jurisdiction
 
 It should be clear by now that the Master Protocol can be used for activities that may be regulated or even prohibited in certain jurisdictions. Anyone working on an implementation of the Master Protocol should be very careful to warn users to know and understand the regulatory environment of their jurisdiction and country of residence in order to not break any laws. It is up to the user to know the laws of their country, and not (for instance) engage in sports betting in a jurisdiction / country where sports betting is not a legal activity.
 
@@ -768,7 +753,7 @@ Please consult your financial adviser before purchasing Mastercoins or other dig
 
 Anyone who puts their rent money or life savings into an experiment of this type is very unwise, and is risking financial ruin from this or similarly other risky enterprise.
 
-# Appendix C - Webservice verification API
+# Appendix D - Webservice verification API
 
 One of the large differences between Mastercoin and Bitcoin is that there is no reference implementation available for Mastercoin which you can use to test your own implementation. The official spec, the document you hopefully just read, is open for interpretation. This makes it very difficult to make sure every implementation processes transactions the same. In order to make it easier to compare implementations and spot discrepancies every webbased Mastercoin service should ideally implement the following API calls.
 
@@ -786,6 +771,6 @@ You supply this URL a currency_id, initially 1 or 2, and it should return an JSO
 {address: 1KZmDQGzGJWYmPP9X3b7TA9dY91KBXgaG4, transactions: [{tx_hash: 5f01def181b761f1d03bcd20590c5729a47b11c68955b364add9253d7aec5eb9, valid: true}, {tx_hash: 130c5175d4f3e9add03bd1d115a87b26e613293fbe3815b970f8fc830f018ebc, valid: false}, etc..]} 
 ```
 
-This URL takes an address and currency_id as arguments and should return an JSON object with an address and a transactions key for this given address. The transactions key should have an array of all transactions for this address and whether this implementation considers a given transaction valid or not. 
+This URL takes an address and currency_id as arguments and should return a JSON object with an address and a transactions key for this given address. The transactions key should have an array of all transactions for this address and whether this implementation considers a given transaction valid or not. 
 
-In all likeliness this will capture most of the discrepancies. If this doesn't proof enough we can supply addional information like the amount transferred per transaction in the future.
+In all likeliness this will capture most of the discrepancies. If this doesn't proof enough we can supply additional information like the amount transferred per transaction in the future.
