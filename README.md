@@ -140,6 +140,11 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 32-bit unsigned integer, 4 bytes
 + Valid values: 1 to N **what is N? Do we need to allow 4.2 billion?**
 
+### Field: Contact URI
++ Description: a variable length string containing a link or an email address, terminated with a \0 byte; to maintain anonymity, the email address could be a <bitcoin address> AT <organization> DOT <domain>. This field provides a way for another party to contact 
++ Size: variable **up to a max size to limit impact of malicious behavior?**
++ Valid values: ASCII, Unicode **??**
+
 ### Field: Integer-eight byte
 + Description: used as a multiplier or in other calculations
 + Size: 64-bit unsigned integer, 8 bytes
@@ -406,7 +411,7 @@ Say you want to use USDCoins (another hypothetical currency derived from Masterc
 1. [Transaction type](spec#field-transaction-type) = 40
 1. [Bet currency identifier](spec#field-currency-identifier) = 5 for USDCoin
 1. [Data Stream identifier](spec#field-integer-four-byte) = 3 for the Gold ticker, per our data stream example
-1. [Bet Type](spec#field-integer-two-byte) = 35 for “Will not exceed on or before” (See table below)
+1. [Bet Type](spec#field-integer-two-byte) = 35 for “Will not exceed on or before” (See table below) **need 2 bytes for this?**
 1. [Bet threshold (Non-CFDs only) ](spec#field-number-of-coins) = 200,000 (0.00200000 BTC, equates to a ticker value of 20 per our data stream example) **OR** [Leverage (CFDs only) ](spec#field-number-of-coins) = 65536 (1x leverage) 
 1. [Days out](spec#field-integer-two-byte) = 30
 1. [Amount of wager](spec#field-number-of-coins) = 20,000,000,000 (200.00000000 USDCoins) 
@@ -518,7 +523,7 @@ If creating 1,000,000 units of a divisible currency, the user would have chosen 
 
 Once property has been created, the creator owns them at the address which broadcast the message creating them.
 ** How is a property destroyed? **
-** 
+** An optional expiration date should be allowed. **
 
 
 ### Pay Dividends (Send All)
@@ -567,7 +572,7 @@ Say you see the Bible listed above and wish to purchase it. However, you have no
  
 The reference address should point to the address which listed the Bible for sale. The seller now has 72 hours to accept this offer from the buyer before the offer expires. The buyer's money is now locked in escrow until their offer expires or the purchase is complete.
 
-The buyer specifies what he is willing to pay by applying a multiplier to the asking price. The price multiplier is a percentage represented in a 4-byte integer, from 0 to 4,294,967,295 (e.g. 65536 = 100%, 32768 = 50%, 131072 = 200%). It can be used to offer less than the suggested price. This may be viable for an established buyer and/or a stale listing.
+The buyer specifies what he is willing to pay by applying a multiplier to the asking price. The price multiplier is a percentage represented in a 4-byte integer, from 0 to 4,294,967,295 (65536 = 100%, 32768 = 50%, 131072 = 200%). It can be used to offer less than the suggested price. This may be viable for an established buyer and/or a stale listing.
 **Can a buyer change/cancel an offer?**
 
 ### Accepting a Buyer
@@ -580,9 +585,9 @@ If the buyer offers a bad price, has a bad reputation, or has no reputation, the
 1. [Transaction type](spec#field-transaction-type) = 62
 1. [Listing id](spec#field-listing-identifier) = 0 (the ID for the listing above) 
 1. [Buyer offer number](spec#field-integer-two-byte) = 2 (3rd offer received)
-**what happens if there are more than 65535 buy offers?**
+**what happens if there are more than 65536 buy offers?**
 
-Once a buyer has been accepted, the seller may ship the Bible.
+Once a buyer has been accepted, the seller can expect to receive payment from the buyer within 60 days, and may ship the item.
 
 ### Leaving Feedback
 
