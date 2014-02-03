@@ -141,7 +141,7 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values: 1 to N **what is N? Do we need to allow 4.2 billion?**
 
 ### Field: Contact URI
-+ Description: a variable length string containing a link or an email address, terminated with a \0 byte; to maintain anonymity, the email address could be a <bitcoin address> AT <organization> DOT <domain>. This field provides a way for another party to contact 
++ Description: a variable length string containing a link or an email address, terminated with a \0 byte; the email address could be a \<bitcoin address\> AT \<organization\> DOT \<domain\>. The string can be just a \0 byte if the sender chooses not to provide any contact info. This field provides a way for another party to contact the person who created the message.
 + Size: variable **up to a max size to limit impact of malicious behavior?**
 + Valid values: ASCII, Unicode **??**
 
@@ -181,6 +181,14 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values:
     * 1: Indivisible shares
     * 2: Divisible currency
+
+### Field: Response sub-action
++ Description: the seller's response to a buyer's offer to purchase
++ Size: 8-bit unsigned integer, 1 byte
++ Valid values:
+    * 1: Accept
+    * 2: Reject
+    * 3: Contact
 
 ### Field: String null-terminated
 + Description: a variable length string terminated with a \0 byte
@@ -316,7 +324,7 @@ This transaction must be sent from the guardian address in charge of the rate li
 
 ### Selling Mastercoins for Bitcoins
 
-Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 33 bytes:
+Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 33 bytes + the length of the Contact URI field:
 
 1. [Transaction version](spec#field-transaction-version) = 1
 1. [Transaction type](spec#field-transaction-type) = 20  (currency trade offer for bitcoins)
@@ -325,6 +333,7 @@ Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doin
 1. [Amount of bitcoins desired](spec#field-number-of-coins) = 100,000,000,000 (1000.00000000 bitcoins)
 1. [Time limit in blocks](spec#field-time-limit-in-blocks) = 10 (10 blocks in which to send payment after counter-party accepts these terms)
 1. [Minimum bitcoin transaction fee](spec#field-number-of-coins) = 10,000,000 (require the buyer to pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers)
+1. [Contact URI](spec#field-contact-uri) = “tinyurl.com/kwejgoig\0” (22 bytes)
 1. [Action](spec#field-sell-offer-sub-action) = 1 (New offer)
 
 The amount for sale should not exceed the number owned, but if it does,  assume the user is selling all of them. That amount will be reserved from the actual balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Selling Order" for 100 MSC this address's balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
@@ -343,12 +352,13 @@ If you want to cancel an offer, use Action = 3 and send the transaction before t
 
 ### Purchasing Mastercoins with Bitcoins
 
-Say you see an offer such as the one listed above, and wish to initiate a purchase of those Mastercoins. Doing so takes 15 bytes:
+Say you see an offer such as the one listed above, and wish to initiate a purchase of those Mastercoins. Doing so takes 15 bytes + the length of the Contact URI field:
 
 1. [Transaction version](spec#field-transaction-version) = 1
 1. [Transaction type](spec#field-transaction-type) = 22  (accept currency trade offer)
 1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount to be purchased](spec#field-number-of-coins) = 130,000,000 (1.30000000 Mastercoins) 
+1. [Amount to be purchased](spec#field-number-of-coins) = 130,000,000 (1.30000000 Mastercoins)
+1. [Contact URI](spec#field-contact-uri) = “me@here.com\0” (12 bytes)
 
 The reference address must point to the seller's address, to identify whose offer you are accepting.
 
@@ -373,11 +383,12 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 1. [Currency identifier](spec#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount for sale](spec#field-number-of-coins) = 250,000,000 (2.50000000 Mastercoins) 
 1. [Currency identifier desired](spec#field-currency-identifier) = 3 for GoldCoin 
-1. [Amount of GoldCoins desired](spec#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins) 
+1. [Amount of GoldCoins desired](spec#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins)
+1. [Contact URI](spec#field-contact-uri) = “me@here.com\0” (12 bytes)
 
-The amount for sale should not exceed the number owned, but if it does,  assume the user is selling all of them.
+The amount for sale should not exceed the number owned, but if it does, assume the user is selling all of them.
 
-To accept the offer above, simply publish the same message type with an inverse offer (selling Goldcoins for Mastercoins) at a price which matches or beats the seller's price. The protocol simply finds orders that match and the coins from matching orders are considered transfered at the price specified by the earlier of the two offers.
+To accept the offer above, simply publish the same message type with an inverse offer (selling Goldcoins for Mastercoins) at a price which matches or beats the seller's price. The protocol simply finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers.
 
 Note that when only some coins are purchased, the rest are still for sale with the same terms.
 
@@ -391,12 +402,12 @@ Say you decide you would like to start publishing the price of Gold in the block
 1. [Category](spec#field-string-null-terminated) = “Commodities\0” (12 bytes)
 1. [Sub-Category](spec#field-string-null-terminated) = “Metals\0” (7 bytes)
 1. [Label](spec#field-string-null-terminated) = “Gold\0” (5 bytes) (if a second “Gold” is registered in this sub-category, it will be shown as “Gold-2”)
-1. [Description/Notes](spec#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
+1. [Description/Notes](spec#field-contact-uri)  = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
 1. [Display Multiplier](spec#field-integer-four-byte) = 10,000 (if the ticker publishes 0.00150000, the price of an ounce of gold is currently 15.0000 Mastercoins
 
 The reference payment must be to the bitcoin address which will be publishing the data. Only the first payment sent from that address in a given day (as determined by block-chain timestamps) will be considered ticker data. Data published by a ticker should also have an output to the Exodus Address – this will make it easier to find ticker data in the block chain data. The output can be for any amount, but should be above the dust threshold.
 
-Each data stream gets a unique identifier, determined by the order in which they were registered. For instance, if your data stream was the third data stream ever registered, your data stream identifier would be 3.
+Each data stream gets a 4-byte unique identifier, determined by the order in which they were registered. For instance, if your data stream was the third data stream ever registered, your data stream identifier would be 3.
 
 Since anyone can cheaply register a data stream, and thereby create categories and subcategories, we can assume that there will be a lot of noise. Anyone writing code to display data stream categories should note which data streams are the most actively used, and order categories and subcategories by descending activity, thereby pushing unused categories to the bottom of the list. 
 
@@ -414,6 +425,7 @@ Say you want to use USDCoins (another hypothetical currency derived from Masterc
 1. [Bet Type](spec#field-integer-two-byte) = 35 for “Will not exceed on or before” (See table below) **need 2 bytes for this?**
 1. [Bet threshold (Non-CFDs only) ](spec#field-number-of-coins) = 200,000 (0.00200000 BTC, equates to a ticker value of 20 per our data stream example) **OR** [Leverage (CFDs only) ](spec#field-number-of-coins) = 65536 (1x leverage) 
 1. [Days out](spec#field-integer-two-byte) = 30
+**what is the start date/time? is this whole calendar days, which timezone?**
 1. [Amount of wager](spec#field-number-of-coins) = 20,000,000,000 (200.00000000 USDCoins) 
 1. [Amount of counter-wager](spec#field-number-of-coins) = 10,000,000,000 (100.00000000 USDCoins) 
 
@@ -481,6 +493,8 @@ A "Contract for Difference" (CFD) allows a bettor to temporarily gain bullish or
 
 CFD bets store "leverage" in place of the data used by "bet threshold" in other bet types. If a bettor prefers that a 10% price movement means a 20% gain or loss, they may select 2x leverage (65536\*2=131072). Similarly, a 10% price movement could mean a 5% gain or loss using 0.5x leverage (65536\*0.5 = 32768). Just as with normal bets, a CFD bettor can "sweeten the deal" by offering better odds (a lower counter-wager amount). High-leverage bets or big price movements could result in a winnings calculation higher than the amount at stake, in which case the winner simply gets the entire pot. 
 
+**how to change/cancel a bet?**
+
 
 ### Accepting a Bet
 
@@ -493,6 +507,7 @@ Say you see a bet which you would like to accept. Simply publish the inverse bet
 1. [Bet Type](spec#field-integer-two-byte) = 34 for “Will exceed on or before” (See table above)
 1. [Bet threshold (Non-CFDs only) ](spec#field-number-of-coins) = 200,000 (0.00200000 BTC, equates to a ticker value of 20 per our data stream example) **OR** [Leverage (CFDs only) ](spec#field-number-of-coins) = 65536 (1x leverage) 
 1. [Days out](spec#field-integer-two-byte) = 25
+**how to reliably compute exactly the same end date as the one you're responding to?**
 1. [Amount of wager](spec#field-number-of-coins) = 5,000,000,000 (50.00000000 USDCoins) 
 1. [Amount of counter-wager](spec#field-number-of-coins) = 10,000,000,000 (100.00000000 USDCoins) 
 
@@ -500,6 +515,7 @@ Note that this bet will be matched against only half of the previous example, be
 
 Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner gets 99.5% of the money at stake. The other 0.5% goes to the creator of the data stream. 
 
+**how to change/cancel accepting a bet? **
 
 ### Smart Property
 
@@ -551,7 +567,7 @@ Say you want to sell a Bible for 0.001 Mastercoins. Creating a sell offer will u
 1. [Item category](spec#field-string-null-terminated) = "Contraband\0" (11 bytes)
 1. [Item subcategory](spec#field-string-null-terminated) = "Forbidden Books\0" (16 bytes)
 1. [Item title](spec#field-string-null-terminated) = "Bible, NASB\0" (12 bytes)
-1. [Description/Notes](spec#field-string-null-terminated) = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
+1. [Description/Notes](spec#field-contact-uri) = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
 
 Every sale offer published by a given address gets a 32-bit "Listing ID" number assigned, which increments for each item offered for sale from that address. We'll assume this is the first item offered for sale from this address (Listing ID=0).
 
@@ -561,7 +577,7 @@ To delist an unsold item, publish the exact same message, but with a price of ze
 
 ### Initiating a Purchase
 
-Say you see the Bible listed above and wish to purchase it. However, you have no reputation as a buyer, so you want to offer a 10% higher purchase price than what the seller is asking. Starting the purchase process takes 15 bytes:
+Say you see the Bible listed above and wish to purchase it. However, you have no reputation as a buyer, so you want to offer a 10% higher purchase price than what the seller is asking. Starting the purchase process takes 15 bytes + the length of the contact URI string:
 
 1. [Transaction version](spec#field-transaction-version) = 1
 1. [Transaction type](spec#field-transaction-type) = 61
@@ -569,23 +585,26 @@ Say you see the Bible listed above and wish to purchase it. However, you have no
 1. [Time limit](spec#field-time-limit-in-seconds) = 259,200 (72 hours) 
 1. [Price multiplier](spec#spec#field-integer-four-byte) = 72090 (65536*1.1)
 **why use a price multiplier rather than the explicit price the buyer is willing to pay?**
+1. [Contact URI](spec#field-contact-uri) = “me@here.com\0” (12 bytes)
  
 The reference address should point to the address which listed the Bible for sale. The seller now has 72 hours to accept this offer from the buyer before the offer expires. The buyer's money is now locked in escrow until their offer expires or the purchase is complete.
 
 The buyer specifies what he is willing to pay by applying a multiplier to the asking price. The price multiplier is a percentage represented in a 4-byte integer, from 0 to 4,294,967,295 (65536 = 100%, 32768 = 50%, 131072 = 200%). It can be used to offer less than the suggested price. This may be viable for an established buyer and/or a stale listing.
 **Can a buyer change/cancel an offer?**
 
-### Accepting a Buyer
+### Responding to a Buyer
 
-The seller can accept any buyer offer within the time limit set by each buyer.
+The seller can respond to any buyer offer, indicating acceptance or rejection, within the time limit set by each buyer.
 
-If the buyer offers a bad price, has a bad reputation, or has no reputation, then you may not wish to do business with them. If you see an offer that you like, the message to accept the offer takes 9 bytes:
+If the buyer offers a bad price, has a bad reputation, or has no reputation, then you may not wish to do business with them. If you see an offer that you like, the message to accept the offer takes 10 bytes + the length of the contact URI string:
 
 1. [Transaction version](spec#field-transaction-version) = 1
 1. [Transaction type](spec#field-transaction-type) = 62
 1. [Listing id](spec#field-listing-identifier) = 0 (the ID for the listing above) 
 1. [Buyer offer number](spec#field-integer-two-byte) = 2 (3rd offer received)
 **what happens if there are more than 65536 buy offers?**
+1. [Response](spec#field-response-sub-action) = 1 (Accept)
+1. [Contact URI](spec#field-contact-uri) = “me@here.com\0” (12 bytes)
 
 Once a buyer has been accepted, the seller can expect to receive payment from the buyer within 60 days, and may ship the item.
 
