@@ -582,12 +582,13 @@ Say you see the Bible listed above and wish to purchase it. However, you have no
 1. [Transaction version](spec#field-transaction-version) = 1
 1. [Transaction type](spec#field-transaction-type) = 61
 1. [Listing id](spec#field-listing-identifier) = 0 (the ID for the listing above) 
-1. [Time limit](spec#field-time-limit-in-seconds) = 259,200 (72 hours) 
+1. [Time limit](spec#field-time-limit-in-seconds) = 259,200 (72 hours)
+**when does the 72 hours start?** 
 1. [Price multiplier](spec#spec#field-integer-four-byte) = 72090 (65536*1.1)
 **why use a price multiplier rather than the explicit price the buyer is willing to pay?**
 1. [Contact URI](spec#field-contact-uri) = “me@here.com\0” (12 bytes)
  
-The reference address should point to the address which listed the Bible for sale. The seller now has 72 hours to accept this offer from the buyer before the offer expires. The buyer's money is now locked in escrow until their offer expires or the purchase is complete.
+The reference address should point to the address which listed the Bible for sale. The seller now has 72 hours to accept this offer from the buyer before the offer expires. The buyer's money is now locked in escrow until their offer expires or the purchase is complete. **or if the seller rejects the buyer's offer??**
 
 The buyer specifies what he is willing to pay by applying a multiplier to the asking price. The price multiplier is a percentage represented in a 4-byte integer, from 0 to 4,294,967,295 (65536 = 100%, 32768 = 50%, 131072 = 200%). It can be used to offer less than the suggested price. This may be viable for an established buyer and/or a stale listing.
 **Can a buyer change/cancel an offer?**
@@ -612,19 +613,23 @@ Once a buyer has been accepted, the seller can expect to receive payment from th
 
 Once a buyer has been accepted, they may release funds held in escrow (or destroy those funds) and leave feedback. To do so takes a variable number of bytes due to the use of a null-terminated string:
 
-1. Transaction type = 63 for Release Funds and Leave Feedback (32-bit unsigned integer, 4 bytes)
-2. Listing ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
-3. Percentage of funds to release = 105% (65536*1.05 68813) (32-bit unsigned integer, 4 bytes)
-4. Text feedback = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your feedback!)
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Transaction type](spec#field-transaction-type) = 63 for Release Funds and Leave Feedback
+1. [Listing id](spec#field-listing-identifier) = 0 (the ID for the listing above) 
+1. [Percentage of funds to release](spec#spec#field-integer-four-byte) = 68813 (65536*1.05) for a 5% tip on the buyer's offer
+1. [Text feedback](spec#field-string-null-terminated) = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your feedback!)
 
-The reference address should point to the address which listed the Bible for sale. Funds which are not released are permanently destroyed. Specifying more than 100% signifies an additional tip beyond the funds held in escrow. Funds are released automatically after 60 days if the buyer never leaves feedback. In addition to the text feedback, each transaction gets "1 star" to "5 stars" based on the following criteria:
+The reference address must point to the address which listed the item for sale. Escrow funds which are not released are permanently destroyed. Specifying more than 100% signifies an additional tip beyond the funds held in escrow. Funds to cover the additional tip must be available for transfer when the feedback message is generated.
 
-* 1 Star: All funds destroyed (very unhappy customer)
-* 2 Stars: Some funds destroyed
-* 3 Stars: No funds destroyed, no tip
+Funds are released automatically after 60 days if the buyer never leaves feedback. In addition to the text feedback, each transaction gets "1 star" to "5 stars" based on the following criteria:
+
+* 1 Star: No funds released, all funds destroyed (very unhappy customer)
+* 2 Stars: <100% of funds released, unreleased funds destroyed
+* 3 Stars: 100% of funds released, no funds destroyed, no tip
 * 4 Stars: Tip < 10%
 * 5 Stars: Tip >= 10%
 
+**this paragraph needs clarification**
 In order to avoid people gaming the reputation system, some coins must be destroyed with every purchase. The percentage of coins destroyed goes down with each new purchase. The percentage is calculated as 2\*(value of this purchase) / (value of all purchases, including this one). Note that this formula causes 50% of the coins from the first purchase to be destroyed.
 
 # Escrow-Backed User Currencies (experimental proposed feature)
@@ -643,29 +648,32 @@ The escrow fund operates like a battery on the power grid, charging when there i
 
 Say you want to create the GoldCoin currency described above, using the Gold data stream we defined. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 38 bytes:
 
-1. Transaction type = 100 for creating a new child currency (32-bit unsigned integer, 4 bytes)
-2. Data Stream identifier = 3 for the Gold ticker, per our data stream example (32-bit unsigned integer, 4 bytes)
-3. Escrow fund delay = 4 for 4 days (see below) (8-bit unsigned integer, 1 byte)
-4. Escrow fund aggression factor = 1,000,000 for 1% (See below) (32-bit unsigned integer, 4 bytes)
-5. Currency Name = “GoldCoin\0” (9 bytes)
-6. Escrow Fund Initial Size = 100,000,000,000 for 1,000 Mastercoins (64-bit unsigned integer, 8 bytes, causes 1,000 Mastercoins to be debited from the currency creator and credited to the escrow fund. This number should not exceed the amount owned by the creator, but if it does, assume they are crediting all their Mastercoins to the escrow fund)
-7. Escrow Fund Minimum Size = 99,000,000 for 99% (32-bit unsigned integer, 4 bytes, if the escrow fund value is ever less than 99% of all GoldCoins, the currency is dissolved and the escrow fund is distributed to GoldCoin holders who would take a 1% loss)
-8. Sale/Transfer Penalty = 100,000 for 0.1% (32-bit unsigned integer, 4 bytes, any time GoldCoins are sold or transferred, 0.1% are destroyed, which improves the health of the escrow fund)
-
+1. [Transaction version](spec#field-transaction-version) = 1
+1. [Transaction type](spec#field-transaction-type) = 100 for creating a new child currency
+1. [Data Stream identifier](spec#field-integer-four-byte) = 3 for the Gold ticker, per our data stream example
+1. [Escrow fund delay](spec#field-integer-one-byte) = 4 for 4 days (see below)  
+    * Valid values: 1 to 255 **is this right?**
+1. [Escrow fund aggression factor](spec#field-integer-four-byte) = 1,000,000 for 1% (See below)  
+    * Valid values: 0 to 100,000,000 (0 to 100%)
+1. [Currency Name](spec#field-string-null-terminated) = “GoldCoin\0” (9 bytes)
+1. [Escrow Fund Initial Size](spec#field-number-of-coins) = 100,000,000,000 for 1,000 Mastercoins (causes 1,000 Mastercoins to be debited from the currency creator and credited to the escrow fund. This number should not exceed the amount owned by the creator and available, but if it does, assume they are crediting all their Mastercoins to the escrow fund)  
+    * Valid values: 1 to 4,294,967,295
+1. [Escrow Fund Minimum Size](spec#field-integer-four-byte) = 99,000,000 for 99% (if the escrow fund value is ever less than 99% of all GoldCoins, the currency is dissolved and the escrow fund is distributed to GoldCoin holders who would take a 1% loss)  
+    * Valid values: 0 to 99,999,999 (0 to 99.999999%)
+1. [Sale/Transfer Penalty](spec#field-integer-four-byte) = 100,000 for 0.1% (any time GoldCoins are sold or transferred, 0.1% of that amount are destroyed, which improves the health of the escrow fund)  
+    * Valid values: 0 to 99,999,999 (0 to 99.999999%) **??**
 
 As with properties, currencies are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2, so if GoldCoin is the first Mastercoin-derived currency, it will get a currency identifier of 3. 
-**Who generates currency identifiers?**
-**How does anyone know what the identifier is?**
 
 The currency held in escrow is the parent currency of the data stream. In this example it is Mastercoins, but it could also be any currency derived from Mastercoins. For instance, GoldCoins could later be held in escrow to support a currency whose data stream uses GoldCoins as a parent currency.
 
-The escrow fund delay of 4 days means that the price of GoldCoins must be too high (or too low) for 4 days in a row before the escrow fund will take any action.
+The escrow fund delay of 4 days means that the price of GoldCoins must be too high (or too low) for 4 days in a row before the escrow fund will take any action. **when does this delay start, in which timezone? is it 4 calendar days, or 96 hours or something else?**
 
 The escrow fund aggression factor determines how aggressively the escrow fund corrects the price of GoldCoins when their price diverges from their target. An escrow fund with aggression factor of 0 will never take any action. If the aggression factor is 100%, the escrow fund will take the maximum possible action (buying every GoldCoin for sale above the target price, or selling new GoldCoins to every buyer below the target price).
 
-In the case of a 1% aggression factor, the escrow fund's first action will be to fix 1% of the error. If the error the next day is still in the same direction, the escrow fund will fix 2% of the error, then 3% the next day, and so on until it reaches 100% or the error changes direction. Once the error changes its direction, the escrow fund has done its job and it starts counting again from zero.
+In the case of a 1% aggression factor, the escrow fund's first action will be to fix 1% of the error. If the error the next day **what timezone?** is still in the same direction, the escrow fund will fix 2% of the error, then 3% the next day, and so on until it reaches 100% or the error changes direction. Once the error changes its direction, the escrow fund has done its job and it starts counting again from zero.
 
-Items 6-8 above were added in response to the “bytemaster/d’aniel attack”, which becomes possible once malicious actors are able to short these currencies. The attack only works on currencies with underfunded escrows, and consists of a malicious actor creating a competing GoldCoin with a healthy escrow fund, which the market would presumably prefer over the GoldCoin with the unhealthy escrow fund. The malicious actor could then profit by shorting the unhealthy GoldCoin until people panicked and fled for the healthy version. More information about unhealthy escrow funds can be found in the next section.
+The fields Escrow Fund Initial Size, Escrow Fund Minimum Size, and Sale/Transfer Penalty are in response to the “bytemaster/d’aniel attack”, which becomes possible once malicious actors are able to short these currencies. The attack only works on currencies with underfunded escrows, and consists of a malicious actor creating a competing GoldCoin with a healthy escrow fund, which the market would presumably prefer over the GoldCoin with the unhealthy escrow fund. The malicious actor could then profit by shorting the unhealthy GoldCoin until people panicked and fled for the healthy version. More information about unhealthy escrow funds can be found in the next section.
 
 ## Unhealthy Escrow Funds
 
