@@ -206,7 +206,7 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values: 1 to 31,536,000 (365.0 days) **is this right? When does the time period start?**
 
 ### Field: Sell offer sub-action
-+ Description: the action to be performed by this transaction
++ Description: the specific action to be applied to the sell offer by this transaction
 + Size: 8-bit unsigned integer, 1 byte
 + Valid values:
     * 1: New
@@ -342,13 +342,13 @@ An address cannot create a new Sell offer for a given currency identifier while 
 
 ### Changing an Offer
 
-Say you decide you want to change an offer, e.g. the number of coins you are offering for sale, or change the asking price. Send the transaction with the new values and Action = 2 before the whole amount offered has been accepted. The change will apply to the balance that has not yet been accepted. It's your responsibility to determine if the update was successful.
+Say you decide you want to change an offer, e.g. the number of coins you are offering for sale, or change the asking price. Send the transaction with the new values and Action = 2 (Update) before the whole amount offered has been accepted. The change will apply to the balance that has not yet been accepted. It's your responsibility to determine if the update was successful.
 
 The amount reserved from the actual balance for this address will be adjusted to reflect the new amount for sale. 
 
 ### Canceling an Offer
 
-If you want to cancel an offer, use Action = 3 and send the transaction before the full amount for sale has been accepted. The cancel will apply to the amount that has not yet been accepted. It's your responsibility to determine if the cancellation was successful.
+If you want to cancel an offer, use Action = 3 (Cancel) and send the transaction before the full amount for sale has been accepted. The cancel will apply to the amount that has not yet been accepted. It's your responsibility to determine if the cancellation was successful.
 
 ### Purchasing Mastercoins with Bitcoins
 
@@ -362,9 +362,9 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 
 The reference address must point to the seller's address, to identify whose offer you are accepting.
 
-If you send an offer for more Mastercoins then are available by the time your transaction gets added to a block your amount bought will automatically adjusted to be the amount still available. When a Purchase Offer is sent to an address whose Selling Offer is all sold out the Purchase Offer should be invalidated. 
+If you send an offer for more Mastercoins than are available by the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address whose Selling Offer is all sold out the Purchase Offer should be invalidated. 
 
-Note: Make sure your total expenditures on bitcoin transaction fees while accepting the purchase meet the minimum fee requested!
+Note: Make sure your total expenditures on bitcoin transaction fees while accepting the purchase meet the minimum fee requested! **or what happens?**
 
 You must send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards. If you send more then the correct amount of bitcoins and the Selling Offer has more Mastercoins still available your order will be adjusted upwards.
 
@@ -538,8 +538,8 @@ If creating a title to a house or deed to land, the number of properties should 
 If creating 1,000,000 units of a divisible currency, the user would have chosen property type 2 and would have entered 100,000,000,000,000 for the number of properties (1 million divisible to 8 decimal places).
 
 Once property has been created, the creator owns them at the address which broadcast the message creating them.
-** How is a property destroyed? **
-** An optional expiration date should be allowed. **
+**How is a property destroyed?**
+**An optional expiration date should be allowed.**
 
 
 ### Pay Dividends (Send All)
