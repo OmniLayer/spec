@@ -262,6 +262,7 @@ To accept the offer above, simply publish the same message type with an inverse 
 Note that when only some coins are purchased, the rest are still for sale with the same terms.
 
 ## Registering a Data Stream
+(AKA Data Feed)
 
 Say you decide you would like to start publishing the price of Gold in the block chain. Registering your data stream takes a varying number of bytes due to the use of null-terminated strings. This example uses 57 bytes:
 
