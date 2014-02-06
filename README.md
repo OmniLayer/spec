@@ -1,4 +1,4 @@
-﻿The Master Protocol / Mastercoin Complete Specification
+The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
 Version 0.3.5 (previously version 1.2) Class C Data Storage Method "Provably Prune-able Outputs" Edition
@@ -192,7 +192,7 @@ This section defines the fields that are used to construct transaction messages.
 
 ### Field: String null-terminated
 + Description: a variable length string terminated with a \0 byte
-+ Size: variable **up to a max size to limit impact of malicious behavior?**
++ Size: variable **up to a max size to limit impact of malicious behavior? J.R. suggests: Maybe we should make them burn a bit of MSC based on the length. If we had an anti-spam tax that floated to an appropriate value, we could use that in a LOT of places, including here.**
 + Valid values: ASCII, Unicode **??**
 
 ### Field: Time period in blocks
@@ -232,7 +232,7 @@ This section defines the fields that are used to construct transaction messages.
     *   50: [Create a Property](#smart-property)
     *   60: [List Something for Sale](#listing-something-for-sale)
     *   61: [Initiate a Purchase from a Listing](#initiating-a-purchase)
-    *   62: [Accept a Buyer Offer](#accepting-a-buyer)
+    *   62: [Respond to a Buyer Offer](#accepting-a-buyer)
     *   63: [Release Funds and Leave Feedback](#leaving-feedback)
     * 100: [Create a New Child Currency](#new-currency-creation)
 
@@ -252,7 +252,7 @@ Each transaction definition has its own version number to enable support for cha
 
 Say you want to transfer 1 Mastercoin to another address. Only 15 bytes are needed. The data stored is:
 
-1.  [Transaction version](#field-transaction-version) = 1
+1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 0
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
@@ -564,15 +564,23 @@ Say you want to sell a Bible for 0.001 Mastercoins. Creating a sell offer will u
 1. [Transaction type](#field-transaction-type) = 60
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Desired price](#field-number-of-coins) = 100,000 (0.00100000 Mastercoins)
+1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
+1. [Listing ID](#field-listing-identifier) = any value (ignored for a new offer) 
 1. [Item category](#field-string-null-terminated) = "Contraband\0" (11 bytes)
 1. [Item subcategory](#field-string-null-terminated) = "Forbidden Books\0" (16 bytes)
 1. [Item title](#field-string-null-terminated) = "Bible, NASB\0" (12 bytes)
 1. [Description/Notes](#field-contact-uri) = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
 
-Every sale offer published by a given address gets a 32-bit "Listing ID" number assigned, which increments for each item offered for sale from that address. We'll assume this is the first item offered for sale from this address (Listing ID=0).
+Every sale offer published by a given address gets a 32-bit "Listing ID" number assigned, which increments for each new sale offer published from that address (seller). The Listing ID number is incremented even if the sale offer is not valid, e.g. the currency identifier is not valid. **are null strings acceptable for item category, subcategory, title?** For this example, we’ll assume this is the first item offered for sale from this address (so it will be assigned Listing ID=0).
 
-To delist an unsold item, publish the exact same message, but with a price of zero. Sellers should make sure they provide some method of contacting them (for instance, on the listing webpage), so they have a communication channel to help resolve disputes with buyers.
-**How to change the terms of a Listing?**
+### Changing a Listing
+
+Say you decide you want to change a listing, e.g. the item description, or the asking price. Send a fully populated transaction message including the new values, the assigned Listing ID (0 in this case), and Action = 2 (Update). A listing can be changed until **WHEN?**
+
+### Canceling a Listing
+
+If you want to cancel a listing, send a fully populated transaction message with the assigned Listing ID (0 in this case) and Action = 3 (Cancel). A listing can be cancelled until the seller has accepted a Purchase offer for it. Sellers should make sure they provide some method of contacting them (for instance, on the listing webpage or an email address), so they have a communication channel to help resolve disputes with buyers.
+
 
 
 ### Initiating a Purchase
@@ -581,7 +589,7 @@ Say you see the Bible listed above and wish to purchase it. However, you have no
 
 1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 61
-1. [Listing id](#field-listing-identifier) = 0 (the ID for the listing above) 
+1. [Listing ID](#field-listing-identifier) = 0 (the ID for the listing above) 
 1. [Time limit](#field-time-limit-in-seconds) = 259,200 (72 hours)
 **when does the 72 hours start?** 
 1. [Price multiplier](#field-integer-four-byte) = 72090 (65536*1.1)
@@ -592,30 +600,31 @@ The reference address should point to the address which listed the Bible for sal
 
 The buyer specifies what he is willing to pay by applying a multiplier to the asking price. The price multiplier is a percentage represented in a 4-byte integer, from 0 to 4,294,967,295 (65536 = 100%, 32768 = 50%, 131072 = 200%). It can be used to offer less than the suggested price. This may be viable for an established buyer and/or a stale listing.
 **Can a buyer change/cancel an offer?**
+**Can a buyer submit multiple buy offers for the same listing id?**
 
-### Responding to a Buyer
+### Respond to a Buyer Offer
 
-The seller can respond to any buyer offer, indicating acceptance or rejection, within the time limit set by each buyer.
+The seller can respond to any buyer offer - to accept, reject, or provide contact information, within the time limit set by each buyer.
 
-If the buyer offers a bad price, has a bad reputation, or has no reputation, then you may not wish to do business with them. If you see an offer that you like, the message to accept the offer takes 10 bytes + the length of the contact URI string:
+If the buyer offers a bad price, has a bad reputation, or has no reputation, the seller may choose to not do business with the buyer. The message to respond to a buyer offer takes 10 bytes + the length of the contact URI string:
 
 1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 62
-1. [Listing id](#field-listing-identifier) = 0 (the ID for the listing above) 
+1. [Listing ID](#field-listing-identifier) = 0 (the ID for the listing above) 
 1. [Buyer offer number](#field-integer-two-byte) = 2 (3rd offer received)
 **what happens if there are more than 65536 buy offers?**
 1. [Response](#field-response-sub-action) = 1 (Accept)
 1. [Contact URI](#field-contact-uri) = “me@here.com\0” (12 bytes)
 
-Once a buyer has been accepted, the seller can expect to receive payment from the buyer within 60 days, and may ship the item.
+The seller can explicitly reject any and all buyer offers (Response=2) or let them expire. The buyer’s funds will be released from escrow, and the buyer is free to submit another offer. The seller can accept only one buyer offer. **Can this be reversed?** Once a buyer has been accepted, the seller will receive payment from the buyer within 60 days, and may arrange delivery of the item.
 
 ### Leaving Feedback
 
-Once a buyer has been accepted, they may release funds held in escrow (or destroy those funds) and leave feedback. To do so takes a variable number of bytes due to the use of a null-terminated string:
+Once a buyer offer has been accepted, the buyer may release funds held in escrow (or destroy those funds) and leave feedback. To do so takes a variable number of bytes due to the use of a null-terminated string:
 
 1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 63 for Release Funds and Leave Feedback
-1. [Listing id](#field-listing-identifier) = 0 (the ID for the listing above) 
+1. [Listing ID](#field-listing-identifier) = 0 (the ID for the listing above) 
 1. [Percentage of funds to release](#field-integer-four-byte) = 68813 (65536*1.05) for a 5% tip on the buyer's offer
 1. [Text feedback](#field-string-null-terminated) = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your feedback!)
 
