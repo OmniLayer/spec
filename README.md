@@ -645,15 +645,15 @@ In all likeliness this will capture most of the discrepancies. If this doesn't p
 
 # Appendix E - Understanding the cost of Master protocol messages
 
-The Master Protocol is at its core a layer of functionality on top of Bitcoin, utilizing the Bitcoin network for cryptographically secured data storage.  As such inherant to this approach are Bitcoin transaction fees.
+The Master Protocol is at its core a layer of functionality on top of Bitcoin, utilizing the Bitcoin network for cryptographically secured data storage.  As such inherent to this approach are Bitcoin transaction fees.
 
 In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Master Protocol message.  
 
-Each output must carry a value higher than the dust threshold (0.00005430 as of 6/2/14) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher dust output value.  For the purposes of this document default minimum values of 0.00006 and 0.00012 respectively will be used.
+Each output must carry a value higher than the dust threshold (0.00005430 as of 6/2/14) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
 
 The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of $800 USD/BTC:
 
-*Class A
+**Class A
 0.00006 ($0.05) - Exodus Address Output
 0.00006 ($0.05) - Reference Address Output
 0.00006 ($0.05) - Data Address Output
@@ -661,7 +661,7 @@ The following calculations will demonstrate the perceived cost to the end-user, 
 
 Total perceived cost ~$0.23 per transaction.
 
-*Class B
+**Class B
 0.00006 ($0.05) - Exodus Address Output
 0.00006 ($0.05) - Reference Address Output
 0.00012 ($0.10) - Per Multisig Output
