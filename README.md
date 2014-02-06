@@ -619,7 +619,8 @@ Please consult your financial adviser before purchasing Mastercoins or other dig
 
 Anyone who puts their rent money or life savings into an experiment of this type is very unwise, and is risking financial ruin from this or similarly other risky enterprise.
 
-# Appendix C - Webservice verification API
+
+# Appendix D - Webservice verification API
 
 One of the large differences between Mastercoin and Bitcoin is that there is no reference implementation available for Mastercoin which you can use to test your own implementation. The official spec, the document you hopefully just read, is open for interpretation. This makes it very difficult to make sure every implementation processes transactions the same. In order to make it easier to compare implementations and spot discrepancies every webbased Mastercoin service should ideally implement the following API calls.
 
@@ -640,3 +641,47 @@ You supply this URL a currency_id, initially 1 or 2, and it should return an JSO
 This URL takes an address and currency_id as arguments and should return an JSON object with an address and a transactions key for this given address. The transactions key should have an array of all transactions for this address and whether this implementation considers a given transaction valid or not. 
 
 In all likeliness this will capture most of the discrepancies. If this doesn't proof enough we can supply addional information like the amount transferred per transaction in the future.
+
+
+# Appendix E - Understanding the cost of Master protocol messages
+
+The Master Protocol is at its core a layer of functionality on top of Bitcoin, utilizing the Bitcoin network for cryptographically secured data storage.  As such inherant to this approach are Bitcoin transaction fees.
+
+In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Master Protocol message.  
+
+Each output must carry a value higher than the dust threshold (0.00005430 as of 6/2/14) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher dust output value.  For the purposes of this document default minimum values of 0.00006 and 0.00012 respectively will be used.
+
+The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of $800 USD/BTC:
+
+*Class A
+0.00006 ($0.05) - Exodus Address Output
+0.00006 ($0.05) - Reference Address Output
+0.00006 ($0.05) - Data Address Output
+0.0001 ($0.08) - Bitcoin Transaction Fee
+
+Total perceived cost ~$0.23 per transaction.
+
+*Class B
+0.00006 ($0.05) - Exodus Address Output
+0.00006 ($0.05) - Reference Address Output
+0.00012 ($0.10) - Per Multisig Output
+0.0001 ($0.08) - Bitcoin Transaction Fee
+
+Total perceived cost ~$0.28 per transaction.
+
+The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
+
+In a class A transaction (note class A allows simple send only):
+* The foundation (by controlling the Exodus address) may redeem the Exodus output  
+* The reference address may redeem the Reference output
+
+In a class B transaction:
+* The foundation may redeem the Exodus output
+* The reference address may redeem the Reference output
+* The sending address may redeem the Multisig output(s)
+
+As we can see from the above, the true cost of a Master Protocol message may be less than that of the perceived cost (as for example the sender may recover some of the cost).  A challenge for communication strategy will be providing awareness on this topic in a clear and simple fashion to the community.
+
+A further consideration relates to how multisig outputs are presented in the bitcoin reference client.  It is technically accurate to state that any of the addresses within a Class B multisig output can redeem, however only one of these addresses (the sending address) actually has a known private key.  The bitcoin reference client however of course has no way of knowing this and so does not include unspent multisig outputs in the displayed balance.  
+
+It is envisaged that in future Master Protocol clients will 'clean up' periodically by redeeming and consolidating unspent multisig outputs.
