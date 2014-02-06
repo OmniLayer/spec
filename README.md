@@ -653,7 +653,7 @@ Each output must carry a value higher than the dust threshold (0.00005430 as of 
 
 The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of $800 USD/BTC:
 
-**Class A
+**Class A**
 0.00006 ($0.05) - Exodus Address Output
 0.00006 ($0.05) - Reference Address Output
 0.00006 ($0.05) - Data Address Output
@@ -661,7 +661,7 @@ The following calculations will demonstrate the perceived cost to the end-user, 
 
 Total perceived cost ~$0.23 per transaction.
 
-**Class B
+**Class B**
 0.00006 ($0.05) - Exodus Address Output
 0.00006 ($0.05) - Reference Address Output
 0.00012 ($0.10) - Per Multisig Output
