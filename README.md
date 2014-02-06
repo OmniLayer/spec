@@ -668,6 +668,8 @@ Total perceived cost ~$0.23 per transaction.
 0.0001 ($0.08) - Bitcoin Transaction Fee  
   
 Total perceived cost ~$0.28 per transaction.  
+
+Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at $800 USB/BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.10.
   
 The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
