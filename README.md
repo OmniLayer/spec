@@ -653,22 +653,22 @@ Each output must carry a value higher than the dust threshold (0.00005430 as of 
 
 The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of $800 USD/BTC:
 
-**Class A**
-0.00006 ($0.05) - Exodus Address Output
-0.00006 ($0.05) - Reference Address Output
-0.00006 ($0.05) - Data Address Output
-0.0001 ($0.08) - Bitcoin Transaction Fee
-
-Total perceived cost ~$0.23 per transaction.
-
-**Class B**
-0.00006 ($0.05) - Exodus Address Output
-0.00006 ($0.05) - Reference Address Output
-0.00012 ($0.10) - Per Multisig Output
-0.0001 ($0.08) - Bitcoin Transaction Fee
-
-Total perceived cost ~$0.28 per transaction.
-
+**Class A**  
+0.00006 ($0.05) - Exodus Address Output  
+0.00006 ($0.05) - Reference Address Output  
+0.00006 ($0.05) - Data Address Output  
+0.0001 ($0.08) - Bitcoin Transaction Fee  
+  
+Total perceived cost ~$0.23 per transaction.  
+  
+**Class B**  
+0.00006 ($0.05) - Exodus Address Output  
+0.00006 ($0.05) - Reference Address Output  
+0.00012 ($0.10) - Per Multisig Output  
+0.0001 ($0.08) - Bitcoin Transaction Fee  
+  
+Total perceived cost ~$0.28 per transaction.  
+  
 The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
 In a class A transaction (note class A allows simple send only):
