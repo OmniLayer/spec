@@ -4,11 +4,11 @@
 Version 0.3.5 (previously version 1.2) Class C Data Storage Method "Provably Prune-able Outputs" Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
-* Peter Todd (https://github.com/petertodd)
 * Maran Hidskes (https://github.com/maran)
 * David Johnston (https://github.com/DavidJohnstonCEO)
 * Ron Gross (https://github.com/ripper234?source=c)
 
+With input by Peter Todd (https://github.com/petertodd)
 
 # Summary
 
