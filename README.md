@@ -214,7 +214,7 @@ This section defines the fields that are used to construct transaction messages.
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-coins-for-bitcoins)
-    *   21: [Offer/Accept Mastercoins for other Master Protocol-derived Currency (currency trade offer)](#selling-master-protocol-derived-coins-for-other-master-protocol-derived-currencies)
+    *   21: [Offer/Accept Master Protocol-Derived Coins for Another Master Protocol-derived Currency (currency trade offer)](#sell-master-protocol-derived-coins-for-another-master-protocol-derived-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-coins-with-bitcoins)
     *   50: [Create a Property](#smart-property)
 
@@ -240,7 +240,7 @@ Note: Master Protocol transactions are not reversible except as explicitly indic
 
 ###Transfer Coins (Simple Send)
 
-Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain).
+Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction does not transfer bitcoins.
 
 If the amount to transfer exceeds the number owned by the sending address, this indicates the user is transferring all of them.
 
@@ -252,9 +252,9 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
 
-### Sell Coins for Bitcoins
+### Sell Mastercoins for Bitcoins
 
-Description: Transaction type 20 posts the terms of an offer to sell Master Protocol-derived coins in the specified currency for bitcoins. A new sell offer is created with Action = 1 (New).
+Description: Transaction type 20 posts the terms of an offer to sell Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New).
 
 If the amount offered exceeds the number owned by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
 
@@ -288,11 +288,11 @@ The cancel will apply to the amount that has not yet been accepted. It's your re
 
 If you want to cancel an offer, use Action = 3 (Cancel) and send the transaction before the full amount for sale has been accepted.
 
-### Purchase Coins with Bitcoins
+### Purchase Mastercoins with Bitcoins
 
-Description: Transaction type 22 posts acceptance of an offer to sell coins in the specified currency for bitcoins. All or some of the coins offered can be purchased with this transaction.
+Description: Transaction type 22 posts acceptance of an offer to sell Mastercoins for bitcoins. All or some of the coins offered can be purchased with this transaction.
 
-The reference address must point to the seller's address, to identify whose offer you are accepting.
+The reference address must point to the seller's address, to identify whose offer you are accepting. The purchaser’s address must be different than the seller’s address.
 
 If you send an offer for more coins than are available by the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address that does not have a matching active Sell Offer, e.g. the Sell offer has been canceled or is all sold out, the Purchase Offer must be invalidated. 
 
@@ -302,7 +302,7 @@ You must send the appropriate amount of bitcoins before the time limit expires t
 
 Please note that all transactions between the Purchase Offer and expiration block should be accumulated and that this value must be used to adjust the Purchase Offer accordingly.
 
-In order to make parsing Master Protocol transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Master Protocol-derived currency. The output can be for any amount, but should be above the dust threshold.
+In order to make parsing Master Protocol transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but should be above the dust threshold.
 
 Master Protocol messages that also have a reference output to the seller address, for instance if the buyer wants to change his offer, should not be counted towards the actual purchase of Master Protocol-derived coins. 
 
@@ -312,23 +312,44 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to be purchased](#field-number-of-coins) = 130,000,000 (1.30000000 Mastercoins)
 
-### Selling Master Protocol-Derived Coins for Other Master Protocol-Derived Currencies
+### Sell Master Protocol-Derived Coins for Another Master Protocol-Derived Currency
 
 Description: Transaction type 21 is used to both publish and accept an offer to sell coins in a Master Protocol-Derived Currency for coins in another Master Protocol-Derived Currency.
 
-If the amount offered exceeds the number owned by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like any other exchange platform.
+If the amount offered exceeds the number available to be sold by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like any other exchange platform.
 
-To accept a sell offer, simply publish the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a price which matches or beats the seller's price. The protocol simply finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers.
+An address cannot create a new Sell Master Protocol-Derived Coins for Other Master Protocol-Derived Currencies offer while that address has an active sell offer with those currencies in the same roles. An active sell offer is one that has not been canceled or fully accepted.
+
+To accept a sell offer, simply publish the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a price which matches or beats the seller's price. The protocol simply finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers. The purchaser’s address must be different than the seller’s address.
 
 Note that when only some coins are purchased, the rest are still for sale with the same terms.
 
-Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 28 bytes:
+Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
 
 1. [Transaction type](#field-transaction-type) = 21 (currency trade offer for another Master Protocol-derived currency)
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount for sale](#field-number-of-coins) = 250,000,000 (2.50000000 Mastercoins) 
 1. [Currency identifier desired](#field-currency-identifier) = 3 for GoldCoin 
 1. [Amount of GoldCoins desired](#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins)
+1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
+
+#### Change an Offer to Sell Master Protocol-Derived Coins for Another Master Protocol-Derived Currency
+
+An offer to sell coins can be changed by using Action = 2 (Update) until either: there are valid corresponding purchase offers for the whole amount offered, or the sell offer is canceled.
+
+The change will apply to the balance that has not yet been accepted. It's your responsibility to determine if the update was successful and how many coins were purchased before the update took effect.
+
+The amount reserved from the available balance for this address will be adjusted to reflect the new amount for sale.
+
+Say you decide you want to change an offer, e.g. the number of coins you are offering for sale, or change the asking price. Send the transaction with the new values and the values that are not changing and Action = 2 (Update) before the whole amount offered has been accepted. 
+
+#### Cancel an Offer to Sell Master Protocol-Derived Coins for Another Master Protocol-Derived Currency
+
+A currency sell offer can be canceled by using Action = 3 (Cancel) until the offer has been fully accepted by valid purchase offers. When a sell offer is canceled, the associated coins are no longer reserved.
+
+The cancel will apply to the amount that has not yet been accepted. It's your responsibility to determine if the cancellation was successful and how many coins were not sold.
+
+If you want to cancel an offer, use Action = 3 (Cancel) and send the transaction before the full amount for sale has been accepted.
 
 ### Smart Property
 
