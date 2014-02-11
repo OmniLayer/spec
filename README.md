@@ -49,6 +49,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 3. Version 0.2 (previously 1.0) released 7/31/2013 (Version used during the fund-raiser)
 4. Version 0.3 (previously 1.1) released 9/9/2013 (Smart Property + improvements for easier parsing & better escrow fund health)
 5. Version 0.3.5 (previously 1.2) released 11/11/2013 (Added "Pay Dividend" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
+6. Version 0.X released XX Feb 2014 (Specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, …) 
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -110,7 +111,6 @@ Technical notes:
 * 1377993874 is the Unix timestamp used to define the end-date of Exodus and thus the start date for the Development Mastercoins vesting.
 
 
-
 ## Embedding Master Protocol Data in the Block Chain
 
 Bitcoin has some little-known advanced features (such as scripting) which many people imagine will enable it to perform fancy new tricks someday. The Master Protocol uses exactly NONE of those advanced features, because support for them is not guaranteed in the future, and the Master Protocol doesn't need them to embed data in the block chain.
@@ -155,29 +155,24 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 16-bit unsigned integer, 2 bytes
 + Valid values: 0 to 65535
 
-### Field: Listing identifier
+### Field: Listing identifier (future)
 + Description: the unique identifier assigned to each sale listing an a per address basis
 + Size: 32-bit unsigned integer, 4 bytes
 + Valid values: 0 to 4,294,967,295
 
-### Field: Property type
-+ Description: indivisible or not
-+ Size: 32-bit unsigned integer, 4 bytes
-+ Valid values:
-
 ### Field: Number of coins
-+ Description: Specifies the number of coins affected by the transaction this field appears in. Note: the number of coins is to be multiplied by 100,000,000 in this field (e.g. 100,000,000 represents 1.0 MSC), which allows for the number of Mastercoins to be specified with the same precision as bitcoins (eight decimal places).
++ Description: Specifies the number of coins affected by the transaction this field appears in. Note: the number of coins is to be multiplied by 100,000,000 in this field (e.g. 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol-derived coins to be specified with the same precision as bitcoins (eight decimal places).
 + Size: 64-bit unsigned integer, 8 bytes
 + Valid values: 1 to 9,223,372,036,854,775,807
 
 ### Field: Property type
 + Description: indivisible or not
-+ Size: 32-bit unsigned integer, 4 bytes
++ Size: 16-bit unsigned integer, 2 bytes
 + Valid values:
     * 1: Indivisible shares
     * 2: Divisible currency
 
-### Field: Response sub-action
+### Field: Response sub-action (future)
 + Description: the seller's response to a buyer's offer to purchase
 + Size: 8-bit unsigned integer, 1 byte
 + Valid values:
@@ -195,7 +190,7 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 8-bit unsigned integer, 1 byte
 + Valid values: 1 to 255 
 
-### Field: Time period in seconds
+### Field: Time period in seconds (future)
 + Description: number of seconds during which an action can be performed
 + Size: 32-bit unsigned integer, 4 bytes
 + Valid values: 1 to 31,536,000 (365.0 days)
@@ -210,7 +205,8 @@ This section defines the fields that are used to construct transaction messages.
 
 ### Field: Transaction type
 + Description: the MSC Protocol function to be performed
-+ Size: 32-bit unsigned integer, 4 bytes
++ Size: 16-bit unsigned integer, 2 bytes
++ Inter-dependencies: [Transaction version](#field-transaction-version)
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-coins-for-bitcoins)
@@ -232,15 +228,24 @@ This section defines the fields that are used to construct transaction messages.
     *   63: [Release Funds and Leave Feedback](#leaving-feedback)
     * 100: [Create a New Child Currency](#new-currency-creation)
 
+### Field: Transaction version
++ Description: the version of the transaction definition, monotonically increasing independently for each transaction type
++ Size: 16-bit unsigned integer, 2 bytes
++ Required/optional: Required
++ Inter-dependencies: [Transaction type](#field-transaction-type)
++ Valid values: 1 to 65535
+
 ## Transaction Definitions
 The Master Protocol Distributed Exchange transactions are listed below. Transactions 0, 20, 21, 22 and 50 are to be implemented in the first deployment, per this spec. They are listed first. The other transactions will be fully defined and implemented in future releases.
+
+Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. Now, the first field in each transaction message is the 2 byte version number, with an initial value of 1. The transaction type field is now a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format described below.
 
 Note: Master Protocol transactions are not reversible except as explicitly indicated by this spec.
 
 
 ###Transfer Coins (Simple Send)
 
-Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction does not transfer bitcoins.
+Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
 
 If the amount to transfer exceeds the number owned by the sending address, this indicates the user is transferring all of them.
 
@@ -248,13 +253,14 @@ If the amount to transfer exceeds the number owned by the sending address, this 
 
 Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are needed. The data stored is:
 
+1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 0
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
 
 ### Sell Mastercoins for Bitcoins
 
-Description: Transaction type 20 posts the terms of an offer to sell Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New).
+Description: Transaction type 20 posts the terms of an offer to sell Mastercoins or Test Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for MSC or 2 for Test MSC.
 
 If the amount offered exceeds the number owned by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
 
@@ -262,6 +268,7 @@ An address cannot create a new Sell offer for a given currency identifier while 
 
 Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 34 bytes:
 
+1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 20 (currency trade offer for bitcoins)
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount for sale](#field-number-of-coins) = 150,000,000 (1.50000000 Mastercoins)
@@ -308,6 +315,7 @@ Master Protocol messages that also have a reference output to the seller address
 
 Say you see an offer such as the one listed above, and wish to initiate a purchase of those coins. Doing so takes 16 bytes:
 
+1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 22 (accept currency trade offer)
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to be purchased](#field-number-of-coins) = 130,000,000 (1.30000000 Mastercoins)
@@ -326,6 +334,7 @@ Note that when only some coins are purchased, the rest are still for sale with t
 
 Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
 
+1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 21 (currency trade offer for another Master Protocol-derived currency)
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount for sale](#field-number-of-coins) = 250,000,000 (2.50000000 Mastercoins) 
@@ -367,8 +376,9 @@ If creating 1,000,000 units of a divisible currency, choose property type 2 and 
 
 Once property has been created, the creator owns them at the address which broadcast the message creating them.
 
-Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 37 bytes:
+Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 35 bytes:
 
+1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 50
 1. [Property Type](#field-property-type) = 1 for indivisible shares
 1. [Property Name](#field-string-null-terminated) = “Quantum Miner Shares\0” (21 bytes)
