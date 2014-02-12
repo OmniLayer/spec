@@ -1,12 +1,13 @@
 The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.3.5 (previously version 1.2) Class C Data Storage Method "Provably Prune-able Outputs" Edition
+Version 0.X Transaction versions & 5 initial transactions Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
 * David Johnston (https://github.com/DavidJohnstonCEO)
 * Ron Gross (https://github.com/ripper234?source=c)
+* Marv Schneider (https://github.com/marv-engine)
 
 With input by Peter Todd (https://github.com/petertodd)
 
@@ -49,7 +50,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 3. Version 0.2 (previously 1.0) released 7/31/2013 (Version used during the fund-raiser)
 4. Version 0.3 (previously 1.1) released 9/9/2013 (Smart Property + improvements for easier parsing & better escrow fund health)
 5. Version 0.3.5 (previously 1.2) released 11/11/2013 (Added "Pay Dividend" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
-6. Version 0.X released XX Feb 2014 (Specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, …) 
+6. Version 0.X released XX Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, …) 
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -233,12 +234,12 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 16-bit unsigned integer, 2 bytes
 + Required/optional: Required
 + Inter-dependencies: [Transaction type](#field-transaction-type)
-+ Valid values: 1 to 65535
++ Valid values: 0 to 65535
 
 ## Transaction Definitions
 The Master Protocol Distributed Exchange transactions are listed below. Transactions 0, 20, 21, 22 and 50 are to be implemented in the first deployment, per this spec. They are listed first. The other transactions will be fully defined and implemented in future releases.
 
-Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. Now, the first field in each transaction message is the 2 byte version number, with an initial value of 1. The transaction type field is now a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format described below.
+Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all spec versions after 0.3.5, the first field in each transaction message is the 2 byte version number, with an initial value of 0. The transaction type field is now a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format associated with that version number.
 
 Note: Master Protocol transactions are not reversible except as explicitly indicated by this spec.
 
@@ -253,7 +254,7 @@ If the amount to transfer exceeds the number owned by the sending address, this 
 
 Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are needed. The data stored is:
 
-1. [Transaction version](#field-transaction-version) = 1
+1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 0
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
@@ -305,7 +306,7 @@ If you send an offer for more coins than are available by the time your transact
 
 Note: Your total expenditures on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
 
-You must send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards. If you send more than the correct amount of bitcoins and the Sell Offer has more coins still available your order will be adjusted upwards.
+You must send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards. The remaining coins will be added back to those available in the Sell Offer if it’s still active. If you send more than the correct amount of bitcoins and the Sell Offer has more coins still available your order will be adjusted upwards. If you do not send any payment before the time limit expires, the coins you were going to purchase will be added back to those available in the Sell Offer if it’s still active.
 
 Please note that all transactions between the Purchase Offer and expiration block should be accumulated and that this value must be used to adjust the Purchase Offer accordingly.
 
@@ -315,7 +316,7 @@ Master Protocol messages that also have a reference output to the seller address
 
 Say you see an offer such as the one listed above, and wish to initiate a purchase of those coins. Doing so takes 16 bytes:
 
-1. [Transaction version](#field-transaction-version) = 1
+1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 22 (accept currency trade offer)
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to be purchased](#field-number-of-coins) = 130,000,000 (1.30000000 Mastercoins)
