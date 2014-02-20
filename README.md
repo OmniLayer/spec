@@ -324,7 +324,7 @@ Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doin
 1. [Minimum bitcoin transaction fee](#field-number-of-coins) = 10,000,000 (require the buyer to pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers)
 1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
 
-Note that some trading of Test MSC was done with version 0 of this message which did not have the action field. Those transactions should be treated as action=1 (new offer) except where the amount is zero, which should be treated as action = 3 (cancel offer).
+Note that some trading of Test MSC was done with version 0 of this message which did not have the action field. Those transactions should be treated as action=3 (cancel offer) when the amount is zero. If the amount is non-zero, it should be treated as action=1 (new offer) unless there is already an offer outstanding from this address, in which case it should be treated as action = 2 (update offer).
 
 #### Change a Coin Sell Offer
 
