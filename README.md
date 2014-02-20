@@ -139,7 +139,7 @@ This section defines the fields that are used to construct transaction messages.
 ### Field: Currency identifier
 + Description: the currency used in the transaction
 + Size: two 32-bit unsigned integers (4 bytes each) or 1 such integer in special cases
-+ Valid values: these form a reference to the transaction in which the currency was created. The first integer is the number of the block in the blockchain and the second is the byte offset within the block of that transaction. Since no currencies were created before block 131072, any block numbers below 131072 can be considered as special values, e.g. "1" for MasterCoin.
++ Valid values: these form a reference to the transaction in which the currency was created. The first integer is the number of the block in the blockchain and the second is the byte offset within the block of that transaction. Since no currencies were created before block 131072, any block numbers below 131072 can be considered as special values, e.g. "1" for MasterCoin. For these special currencies, the byte offset can be skipped.
 
 ### Field: Integer-eight byte
 + Description: used as a multiplier or in other calculations
