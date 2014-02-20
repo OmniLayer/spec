@@ -246,18 +246,21 @@ Note: Master Protocol transactions are not reversible except as explicitly indic
 
 ###Transfer Coins (Simple Send)
 
-Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
+Description: Transaction type 0 transfers coins in the specified currency from the sending address to the address of the specified output index. This transaction can not be used to transfer bitcoins.
 
 If the amount to transfer exceeds the number owned by the sending address, this indicates the user is transferring all of them.
 
 [Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
 
-Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are needed. The data stored is:
+Say you want to transfer 1 Mastercoin to another address. Only 18 bytes are needed. The data stored is:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 0
-1. [Currency identifier](#field-currency-identifier) = 1 for MasterCoin 
+1. [Currency identifier](#field-currency-identifier) = 1 for MasterCoin
+1. [Index of output](#field-integer-two byte) = 0 to (number of txn outputs - 1)
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+
+Multiple transfers can be specified in a single transaction by repeating the last 3 fields more than once. This enables multiple related send operations to be combined in a single MasterCoin transaction, saving space on the blockchain and, by extension, transaction fees for the initiator. One common use case is to send units of several different currencies simultaneously to the same address. Another common use case is to distribute funds to multiple recipients from a single input. Transfers are processed in the order in which they appear in the transaction, so that earlier ones get precedence if there are insufficient funds for all the transfers.
 
 ### Sell Mastercoins for Bitcoins
 
