@@ -275,6 +275,9 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
 
 
+A simple send to a non-existent address will destroy the coins in question, just like it would with bitcoin. A simple send (or any other transaction) referencing a non-existent currency should be treated as invalid.
+
+
 ## Distributed Exchange
 
 The Master Protocol allows users to trade coins without trusting a centralized website. When trading Mastercoins for bitcoins, this can be rather cumbersome, since it isn't possible to automatically match bids with asks, since we can't force the bidder to send bitcoins when a matching ask is found. When trading Mastercoins for other Master Protocol currencies, bids and asks are matched automatically.
