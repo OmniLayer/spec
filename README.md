@@ -257,7 +257,7 @@ Say you want to transfer 1 Mastercoin to another address. Only 18 bytes are need
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 0
 1. [Currency identifier](#field-currency-identifier) = 1 for MasterCoin
-1. [Index of output](#field-integer-two-byte) = 0 to (number of txn outputs - 1)
+1. [Index of output](#field-integer-two byte) = 0 to (number of txn outputs - 1)
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
 
 Multiple transfers can be specified in a single transaction by repeating the last 3 fields more than once. This enables multiple related send operations to be combined in a single MasterCoin transaction, saving space on the blockchain and, by extension, transaction fees for the initiator. One common use case is to send units of several different currencies simultaneously to the same address. Another common use case is to distribute funds to multiple recipients from a single input. Transfers are processed in the order in which they appear in the transaction, so that earlier ones get precedence if there are insufficient funds for all the transfers.
