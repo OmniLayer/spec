@@ -138,8 +138,8 @@ This section defines the fields that are used to construct transaction messages.
 
 ### Field: Currency identifier
 + Description: the currency used in the transaction
-+ Size: two 32-bit unsigned integers (4 bytes each) or 1 such integer in special cases
-+ Valid values: these form a reference to the transaction in which the currency was created. The first integer is the number of the block in the blockchain and the second is the byte offset within the block of that transaction. Since no currencies were created before block 131072, any block numbers below 131072 can be considered as special values, e.g. "1" for MasterCoin. For these special currencies, the byte offset can be skipped.
++ Size: 32-bit unsigned integer, 4 bytes
++ Valid values: 1 to 4,294,967,295 (1 = Mastercoin, 2 = Test Mastercoin)
 
 ### Field: Integer-eight byte
 + Description: used as a multiplier or in other calculations
@@ -372,7 +372,7 @@ The Master Protocol supports creating property tokens to be used for titles, dee
 
 Description: Transaction type 50 is used to create a Smart Property token.
 
-Properties are references by the block number and byte offset of the transaction which created them. Block numbers below 131072 are considered special values, and enable the byte offset to be skipped. Special values include 0 for bitcoin, 1 for Mastercoin and 2 for Test Mastercoins.
+Properties are awarded currency identifiers in the order in which they are created, as will be future data streams. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2.
 
 If creating a title to a house or deed to land, the number of properties should be 1. Don’t set number of properties to 10 for 10 pieces of land – create a new property for each piece of land, since each piece of land inherently has a different value, and they are not interchangeable.
 
@@ -675,7 +675,7 @@ Say you want to create the GoldCoin currency described above, using the Gold dat
 1. Sale/Transfer Penalty = 100,000 for 0.1% (32-bit unsigned integer, 4 bytes, any time GoldCoins are sold or transferred, 0.1% are destroyed, which improves the health of the escrow fund)
 
 
-As with properties, currencies are referred to in general by the block number and byte offset within the block of the transaction which created them. 
+As with properties, currencies are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2, so if GoldCoin is the first Mastercoin-derived currency, it will get a currency identifier of 3. 
 
 The currency held in escrow is the parent currency of the data stream. In this example it is Mastercoins, but it could also be any currency derived from Mastercoins. For instance, GoldCoins could later be held in escrow to support a currency whose data stream uses GoldCoins as a parent currency.
 
