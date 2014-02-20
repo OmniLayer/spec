@@ -138,6 +138,14 @@ Not all features described in this document are active by default. Each feature 
 + Distributed e-commerce features are unlocked as of block # (TBD)
 + Escrow-backed currencies are unlocked as of block # (TBD)
 
+## Transaction versioning
+
+Occasionally it seems prudent to change the format or interpretation of a Master Protocol message in order to improve the feature or fix a bug. To that end, each message has a version number. All Master Protocol implementations are expected to keep pace with changes of this nature, but in the event one falls behind, it should treat addresses which broadcast messages using version numbers it does not recognize as "black holes". That is, any funds or properties which enter the control of that address are considered lost and unspendable, since that address is using a newer version of the Master Protocol. In the event that the out-dated implementation is upgraded to recognize the new message formats, the blockchain can be re-parsed, and nothing will be lost.
+
+This approach allows old versions of the Master Protocol to continue operating using the transactions they recognize without trying to parse messages of unknown meaning.
+
+Generally, an out-dated parsing engine should either be upgraded to rejoin consensus, or retired by the owner. Implementations which are not in consensus can be used to attempt to defraud people
+
 ## Transaction Field Definitions
 
 This section defines the fields that are used to construct transaction messages.
@@ -483,7 +491,7 @@ When marking an address as savings, the reference payment should point to a “g
 
 When a fraudulent transaction is reversed, any pending funds go to the guardian address, rather than going back to the compromised savings address. Also, any funds which remain in the compromised address also go to the guardian wallet.
 
-An address marked as savings can only do simple transfers (transaction type=0). All other transaction types require addresses without a reversibility time window.
+An address marked as savings can only do [Simple Send](#simple-send) transactions (transaction type=0, version=0). All other transaction types and versions should be ignored, as they are invalid from a savings address. By this logic, savings wallets cannot be destroyed by publishing a transaction with an unrecognized version number (see [Transaction Versioning](#transaction-versioning) above) as can other addresses.
 
 ### Marking a Savings Address as Compromised
 
@@ -517,7 +525,7 @@ Marking an address as rate-limited only affects the specified currency. Other cu
 
 When marking an address as rate-limited, the reference payment must point to a “guardian” address authorized to remove the limitation. The guardian address should preferably be from an unused offline or paper wallet. The sending address must be the address to be marked as rate-limited. Note that an address could be marked as savings AND rate limited, with the same or different guardian addresses.
 
-An address marked as rate limited can only do [Simple Send](#simple-send) transactions. All other transaction types require addresses without a rate limitation.
+An address marked as rate limited can only do [Simple Send](#simple-send) transactions (transaction type=0, version=0). All other transaction types and versions should be ignored, as they are invalid from a rate-limited address. By this logic, rate-limited wallets cannot be destroyed by publishing a transaction with an unrecognized version number (see [Transaction Versioning](#transaction-versioning) above) as can other addresses.
 
 ### Removing a rate limitation
 
