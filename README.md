@@ -246,7 +246,7 @@ This section defines the fields that are used to construct transaction messages.
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
     *    1: [Investment Send](#investment-send)
-    *    1: [Restricted Send](#restricted-send)
+    *    2: [Restricted Send](#restricted-send)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-coins-for-bitcoins)
     *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-coins-with-bitcoins)
