@@ -245,6 +245,8 @@ This section defines the fields that are used to construct transaction messages.
 + Inter-dependencies: [Transaction version](#field-transaction-version)
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
+    *    1: [Investment Send](#investment-send)
+    *    1: [Restricted Send](#restricted-send)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-coins-for-bitcoins)
     *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-coins-with-bitcoins)
@@ -347,7 +349,7 @@ Say you decide you want to change an offer, e.g. the number of coins you are off
 
 A currency sell offer can be canceled by using Action = 3 (Cancel) until the offer has been fully accepted by valid purchase offers (transaction type 22). When a sell offer is canceled, the associated coins are no longer reserved.
 
-The cancel will apply to the amount that has not yet been accepted. The UI must incidate if the cancellation was successful and how many coins were not sold.
+The cancel will apply to the amount that has not yet been accepted. The UI must indicate if the cancellation was successful and how many coins were not sold.
 
 If you want to cancel an offer, use Action = 3 (Cancel) and send the transaction before the full amount for sale has been accepted. Note that while the portion of an offer which has been accepted cannot be canceled, sending the cancel message still has an effect, in that it cancels any portion of the offer which has not been accepted, and it prevents accepted coins from being relisted if the buyer fails to send payment. 
 
@@ -367,7 +369,7 @@ Please note that the buyer is allowed to send multiple bitcoin payments between 
 
 In order to make parsing Master Protocol transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but must be above the dust threshold.
 
-Other Master Protocol messages (for instance if the buyer wants to change his offer) is not counted towards the actual purchase, even though bitcoins are sent to the selling address as part of encoding the messages. 
+Other Master Protocol messages (for instance if the buyer wants to change his offer) are not counted towards the actual purchase, even though bitcoins are sent to the selling address as part of encoding the messages. 
 
 Say you see an offer such as the one listed above, and wish to initiate a purchase of those coins. Doing so takes 16 bytes:
 
@@ -380,7 +382,7 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 
 Description: Transaction type 21 is used to both publish and accept an offer to sell coins in a Master Protocol Currency for coins in another Master Protocol Currency.
 
-If the amount offered exceeds the number available to be sold by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like any other exchange platform.
+If the amount offered exceeds the number available to be sold by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like anfy other exchange platform.
 
 An address cannot create a new offer while that address has an active sell offer with the same currencies in the same roles. An active sell offer is one that has not been canceled or fully accepted.
 
@@ -400,7 +402,7 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 
 Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or test Mastercoins), since those currencies are the the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if someday more stable Master Protocol currencies become dominant and users no longer need to exit the Mastercoin ecosystem.
 
-To changing or cancel these order, use the action byte as described earlier for the message selling mastercoins for bitcoins. The only difference is that there are no coins "in limbo" (accepted but not purchased) complicating these messages.
+To change or cancel these order, use the action byte as described earlier for the message selling mastercoins for bitcoins. The only difference is that there are no coins "in limbo" (accepted but not purchased) complicating these messages.
 
 ## Smart Property
 
@@ -410,7 +412,7 @@ Properties are awarded currency identifiers in the order in which they are creat
 
 Every property has a property type, which defines whether it is divisible or not and whether the property replaces or appends a previous property. If creating 1,000,000 units of a divisible currency, choose property type 2 and specify 100,000,000,000,000 for the number of properties (1 million divisible to 8 decimal places). For 1,000,000 indivisible shares in a company, choose property type 1 and specify 1,000,000 for the number of properties. The only difference between divisible and indivisible property types is how they are displayed (i.e. where the decimal point goes).
 
-A property may only be replaced or appended if the issuing address is the same for both the old and new properties. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it. A property which has been replaced by a new property with the number of properties set to zero may be used to indicate that the issuer has abandoned that property entirely. Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values), but the UI should indicate that more property has been appended by the issuer and link to the other properties.
+Only the address that issued a property can replace or append that property. Attempts by other addresses are invalid. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it. Set the number of properties to zero when replacing a property (Property Type 65 or 66) to indicate that the issuer is abandoning that property entirely. Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values), but the UI should indicate that more property has been appended by the issuer and link to the other properties.
 
 Any time the name of a property is displayed, the ID number of the property must also be displayed with it in the format "NAME (ID)", to avoid name collisions. For instance, "Quantum Miner (8)". This is very important to prevent a malicious user from creating a property to impersonate another property.
 
@@ -422,7 +424,7 @@ Description: Transaction type 50 is used to create a new Smart Property with a f
 
 If creating a title to a house or deed to land, the number of properties should be 1. Don’t set number of properties to 10 for 10 pieces of land – create a new property for each piece of land, since each piece of land inherently has a different value, and they are not interchangeable.
 
-Once this property has been created, the creator owns them at the address which broadcast the message creating them.
+Once this property has been created, the tokens are owned by the address which broadcast the message creating the property. 
 
 Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
 
@@ -432,7 +434,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 1. [Property Type](#field-property-type) = 1 for new indivisible shares
 1. [Previous Property ID](#field-property-id) = 0 (to replace or append properties from the same issuing address)
 1. [Property Category](#field-string-null-terminated) = “Companies\0” (10 bytes)
-1. [Property Category](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
+1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
 1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
 1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
 1. [Number Properties](#field-integer-eight-byte) = 1,000,000 indivisible shares
@@ -441,7 +443,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 Description: Transaction type 51 is used to initiate a fundraiser which creates a new Smart Property with a variable number of tokens.
 
-Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of quantum miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself 1000 shares upfront as compensation for all your R&D work so far. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
+Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself 1000 shares upfront as compensation for all your R&D work so far. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
@@ -449,7 +451,7 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 1. [Property Type](#field-property-type) = 1 for new indivisible shares
 1. [Previous Property ID](#field-property-id) = 0 (to replace or append properties from the same issuing address)
 1. [Property Category](#field-string-null-terminated) = “Companies\0” (10 bytes)
-1. [Property Category](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
+1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
 1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
 1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
 1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
@@ -458,17 +460,25 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
 1. [Shares for issuer](#field-integer-eight-byte) = 1000 indivisible shares
 
+### Investment Send
+
+Say you see a fundraiser you wish to invest in. Doing so requires using a transaction identical to version 0 of "simple-send", but with the transaction type of 1:
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = 1
+1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
+1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+
 A few implementation details are important to have here:
 
-+ Funds are raised via simple-send transactions sent to the issuer's bitcoin/mastercoin address in the desired currency. No other transaction types are treated as an investment
-+ Funds raised are locked and cannot be spent or otherwise used until 24 hours after the fundraiser is over (to prevent using the same funds to purchase shares multiple times)
-+ Shares issued are locked and cannot be spent or otherwise used until 24 hours after the fundraiser is over (to prevent undercutting the issuer)
-+ Investments which miss the deadline are invalid (money is automatically returned to sender), as long as they are made within 24 hours after the deadline. Simple sends 24 hours after the deadline ends (and funds are unlocked) are treated as normal simple send transactions rather than attempted investments.
++ Funds are raised via these "investment send" transactions sent to the issuer's bitcoin/mastercoin address in the desired currency. No other transaction types are treated as an investment. If the transaction is in the wrong currency, it is invalid. If the transaction is recorded after the deadline, it is invalid
++ Funds raised are locked and cannot be spent or otherwise used until after the fundraiser is over (to prevent using the same funds to purchase shares multiple times)
++ Shares issued are locked and cannot be spent or otherwise used until after the fundraiser is over (to prevent undercutting the issuer)
 
 
 ### Promote a property
 
-Say that having created your "Quantum Miner" smart property (which was assigned property ID #8) and now want it to show up higher in the list of properties. You decide to spend 3 Mastercoins to promote your smart property so that it is displayed higher in the list than all the spam/scam/experimental properties. Doing so takes 13 bytes: 
+Say that having created your "Quantum Miner" smart property (which was assigned property ID #8) you now want it to show up higher in the list of properties. You decide to spend 3 Mastercoins to promote your smart property so that it is displayed higher in the list than all the spam/scam/experimental properties. Doing so takes 13 bytes: 
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 52
@@ -504,7 +514,16 @@ When marking an address as savings, the reference payment points to a “guardia
 
 When a fraudulent transaction is reversed, any pending funds go to the guardian address, rather than going back to the compromised savings address. Also, any funds which remain in the compromised address also go to the guardian wallet.
 
-An address marked as savings can only do [Simple Send](#simple-send) transactions (transaction type=0, version=0). All other transaction types and versions must be ignored, as they are invalid from a savings address. By this logic, savings wallets cannot be destroyed by publishing a transaction with an unrecognized version number (see [Transaction Versioning](#transaction-versioning) above) as can other addresses.
+### Restricted send
+
+Say you send funds out of a savings wallet. Doing so requires using a transaction identical to version 0 of "simple-send", but with the transaction type of 2:
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = 2
+1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
+1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+
+An address marked as savings can only do this "restricted send" transaction type. All other transaction types must be ignored, as they are invalid from a savings address. This transaction type is also used for sending from rate-limited wallets.
 
 ### Marking a Savings Address as Compromised
 
@@ -538,8 +557,9 @@ Marking an address as rate-limited only affects the specified currency. Other cu
 
 When marking an address as rate-limited, the reference payment must point to a “guardian” address authorized to remove the limitation. The guardian address should preferably be from an unused offline or paper wallet. The sending address must be the address to be marked as rate-limited. Note that an address could be marked as savings AND rate limited, with the same or different guardian addresses.
 
-An address marked as rate limited can only do [Simple Send](#simple-send) transactions (transaction type=0, version=0). All other transaction types and versions must be ignored, as they are invalid from a rate-limited address. By this logic, rate-limited wallets cannot be destroyed by publishing a transaction with an unrecognized version number (see [Transaction Versioning](#transaction-versioning) above) as can other addresses.
 
+An address marked as savings can only do [Restricted Send](#restricted-send) transactions as described above. All other transaction types must be ignored, as they are invalid from a rate-limited address.
+ 
 ### Removing a rate limitation
 
 Removing the rate limitation above takes 8 bytes:
@@ -577,11 +597,11 @@ Since anyone can cheaply register a data stream, and thereby create categories a
 
 If you ever need to change the description/notes for your data stream (for instance, if some poor sport takes down your website), simply re-register it from the same address with the same category, subcategory, and label. When re-registering, you can also change the ticker address by choosing a different address for the reference payment (for instance, if your ticker address gets compromised), or change the display multiplier.
 
-If you wish to cancel your data stream (and all unsettled bets on it), update the datastream to have an empty category, subcategory, and label.
+If you wish to cancel your data stream (and all unsettled bets on it), update the datastream to have an empty category, subcategory, and label  (null character only for each).
 
 ### Publishing Data
 
-Say you decide you would like publish a that today's gold price is 15 Mastercoins per ounce, using the datastream described above. Doing so takes 13 bytes:
+Say you decide you would like publish that today's gold price is 15 Mastercoins per ounce, using the datastream described above. Doing so takes 13 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 31
