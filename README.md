@@ -246,7 +246,6 @@ This section defines the fields that are used to construct transaction messages.
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
     *    1: [Investment Send](#investment-send)
-    *    2: [Restricted Send](#restricted-send)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-coins-for-bitcoins)
     *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-coins-with-bitcoins)
@@ -255,7 +254,8 @@ This section defines the fields that are used to construct transaction messages.
     *   52: [Promote a Property](#promote-a-property)
 
 + To be added in future releases:
-    *    1: [Pay Dividends (Send All)](#pay-dividends-send-all)
+    *    2: [Restricted Send](#restricted-send)
+    *    3: [Pay Dividends (Send All)](#pay-dividends-send-all)
     *   10: [Mark an Address as Savings](#marking-an-address-as-savings)
     *   11: [Mark a Savings Address as Compromised](#marking-a-savings-address-as-compromised)
     *   12: [Mark an Address as Rate-Limited](#marking-an-address-as-rate-limited)
@@ -715,7 +715,7 @@ We are not sure the "pay dividends" message will be feasible, given that it pote
 Say your company has made a huge profit and wishes to pay 1000 MSC evenly distributed among the holders of Quantum Miner digital tokens. Doing so will use 20 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
-1. Transaction type = 1 for "send all" (32-bit unsigned integer, 4 bytes)
+1. Transaction type = 3 for "send all" (32-bit unsigned integer, 4 bytes)
 2. Currency identifier = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
 3. Amount to transfer = 100,000,000,000 (1000.00000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed number owned, but if it does, assume user is transferring all of them)
 4. Currency ID of Payees = 6 for Quantum Miner Shares (32-bit unsigned integer, 4 bytes)
