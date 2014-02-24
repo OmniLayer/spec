@@ -418,6 +418,8 @@ Any time the name of a property is displayed, the ID number of the property must
 
 In order to distinguish legitimate companies and ventures from scams, spam, and experiments, the Master Protocol allows users to spend Mastercoins for the purpose of promoting a smart property. When UI clients display smart properties, the default ordering should be based on how many Mastercoins have been spent for promoting the property, adjusted for how long ago the Mastercoins were spent. Details on promoting a smart property by spending Mastercoins and how that affects sort ordering can be found below.  
 
+The "Property Data" field is general-purpose text, but can be used for things like storing the hash of a contract to ensure it is in the block-chain at property creation (i.e. "Proof of Existence")
+
 ### New Property Creation with Fixed number of Tokens
 
 Description: Transaction type 50 is used to create a new Smart Property with a fixed number of tokens.
@@ -426,7 +428,7 @@ If creating a title to a house or deed to land, the number of properties should 
 
 Once this property has been created, the tokens are owned by the address which broadcast the message creating the property. 
 
-Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
+Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 81 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 50
@@ -437,13 +439,14 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
 1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
 1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
+1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
 1. [Number Properties](#field-integer-eight-byte) = 1,000,000 indivisible shares
 
 ### New Property Creation via Fundraiser with Variable number of Tokens
 
 Description: Transaction type 51 is used to initiate a fundraiser which creates a new Smart Property with a variable number of tokens.
 
-Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself 1000 shares upfront as compensation for all your R&D work so far. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
+Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself 1000 shares upfront as compensation for all your R&D work so far. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 102 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
@@ -454,6 +457,7 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
 1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
 1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
+1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
 1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
 1. [Number Properties per unit invested](#field-integer-eight-byte) = 100 indivisible shares
 1. [Deadline](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT
