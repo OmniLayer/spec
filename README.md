@@ -982,3 +982,50 @@ The bought amount is the total amount a user actually spends on an open Purchase
 Example: 
 
 User B has a valid Purchase Offer to buy 5 MSC from User A. He sends out a transaction that actually purchases 2 MSC. At that point his Purchase Offer has an bought_amount of 2 MSC. If he decides to sent an other 3 MSC later this values gets updated to 5 MSC.
+
+
+
+# Appendix E - Understanding the cost of Master protocol messages
+
+The Master Protocol is at its core a layer of functionality on top of Bitcoin, utilizing the Bitcoin network for cryptographically secured data storage.  As such inherent to this approach are Bitcoin transaction fees.
+
+In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Master Protocol message.  
+
+Each output must carry a value higher than the dust threshold (0.00005430 as of 6/2/14) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
+
+The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of $800 USD/BTC:
+
+**Class A**  
+0.00006 ($0.05) - Exodus Address Output  
+0.00006 ($0.05) - Reference Address Output  
+0.00006 ($0.05) - Data Address Output  
+0.0001 ($0.08) - Bitcoin Transaction Fee  
+  
+Total perceived cost ~$0.23 per transaction.  
+  
+**Class B**  
+0.00006 ($0.05) - Exodus Address Output  
+0.00006 ($0.05) - Reference Address Output  
+0.00012 ($0.10) - Per Multisig Output  
+0.0001 ($0.08) - Bitcoin Transaction Fee  
+  
+Total perceived cost ~$0.28 per transaction.  
+
+Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at $800 USB/BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.10.
+  
+The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
+
+In a class A transaction (note class A allows simple send only):
+* The foundation (by controlling the Exodus address) may redeem the Exodus output  
+* The reference address may redeem the Reference output
+
+In a class B transaction:
+* The foundation may redeem the Exodus output
+* The reference address may redeem the Reference output
+* The sending address may redeem the Multisig output(s)
+
+As we can see from the above, the true cost of a Master Protocol message may be less than that of the perceived cost (as for example the sender may recover some of the cost).  A challenge for communication strategy will be providing awareness on this topic in a clear and simple fashion to the community.
+
+A further consideration relates to how multisig outputs are presented in the bitcoin reference client.  It is technically accurate to state that any of the addresses within a Class B multisig output can redeem, however only one of these addresses (the sending address) actually has a known private key.  The bitcoin reference client however of course has no way of knowing this and so does not include unspent multisig outputs in the displayed balance.  
+
+It is envisaged that in future Master Protocol clients will 'clean up' periodically by redeeming and consolidating unspent multisig outputs.
