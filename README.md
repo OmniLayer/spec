@@ -1,4 +1,4 @@
-﻿The Master Protocol / Mastercoin Complete Specification
+The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
 Version 0.4.5 Smart Property Fundraisers Edition
@@ -281,8 +281,9 @@ The Master Protocol Distributed Exchange transactions are listed below. Transact
 
 Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all spec versions starting with 0.4, the first field in each transaction message is the 2 byte version number, with an initial value of 0 and the transaction type field is a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format associated with that version number.
 
-Note: Master Protocol transactions are not reversible except as explicitly indicated by this spec.
+Master Protocol transactions are not reversible except as explicitly indicated by this spec.
 
+Any Mastercoin transaction from any address that attempts to transfer, reserve, commit coins, or put coins in escrow while that address's available balance for that currency identifier is 0 will be invalidated. 
 
 ##Transferring coins
 
@@ -318,9 +319,9 @@ Consequently, the messages below are different for mastercoin/bitcoin exchange t
 
 Description: Transaction type 20 posts the terms of an offer to sell Mastercoins or Test Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for MSC or 2 for Test MSC.
 
-If the amount offered exceeds the number owned by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like any other exchange platform. For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC. Other outgoing Mastercoin transactions created while this order is still valid will be invalidated.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, will be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell offer amount not yet accepted at the time of the update.
 
-An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received).
+An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) for the same currency identifier.
 
 Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 34 bytes:
 
@@ -931,7 +932,7 @@ These compressed public key 'packets' can then be included in one or multiple OP
 
 
 
-# Appendix B – Regulatory and Legal Complience - Know Your Jurisdiction
+# Appendix B – Regulatory and Legal Compliance - Know Your Jurisdiction
 
 It should be clear by now that the Master Protocol can be used for activities that may be regulated or even prohibited in certain jurisdictions. Anyone working on an implementation of the Master Protocol should be very careful to warn users to know and understand the regulatory environment of their jurisdiction and country of residence in order to not break any laws. It is up to the user to know the laws of their country, and not (for instance) engage in sports betting in a jurisdiction / country where sports betting is not a legal activity.
 
