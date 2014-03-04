@@ -466,6 +466,8 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
 1. [Shares for issuer](#field-integer-eight-byte) = 1000 indivisible shares
 
+A MSC address may only have one fundraiser active at any given time, preventing the need for investors to specify which fundraiser they are investing in when they invest.
+
 ### Investment Send
 
 Say you see a fundraiser you wish to invest in. Doing so requires using a transaction identical to version 0 of "simple-send", but with the transaction type of 1:
