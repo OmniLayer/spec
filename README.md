@@ -365,7 +365,7 @@ If you send an offer for more coins than are available by the time your transact
 
 Note: Your total expenditures on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
 
-You must send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards. The remaining coins will be added back to those available in the Sell Offer if it’s still active. If you send more than the correct amount of bitcoins, your bitcoins will be lost (unless the seller chooses to return them to you). If you do not send any payment before the time limit expires, the coins you were going to purchase will be added back to those available in the Sell Offer if it’s still active.
+You must send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards once the time limit expires. The remaining coins will be added back to those available in the Sell Offer if it’s still active. If you send more than the correct amount of bitcoins, your bitcoins will be lost (unless the seller chooses to return them to you). If you do not send complete payment before the time limit expires, the unpurchased coins will be added back to those available in the Sell Offer if it’s still active.
 
 Please note that the buyer is allowed to send multiple bitcoin payments between the Purchase Offer and expiration block which are accumulated and used to adjust the Purchase Offer accordingly.
 
@@ -465,6 +465,8 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 1. [Deadline](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
 1. [Shares for issuer](#field-integer-eight-byte) = 1000 indivisible shares
+
+A MSC address may only have one fundraiser active at any given time, preventing the need for investors to specify which fundraiser they are investing in when they invest.
 
 ### Investment Send
 
