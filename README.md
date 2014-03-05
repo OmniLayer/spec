@@ -335,7 +335,12 @@ Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doin
 1. [Minimum bitcoin transaction fee](#field-number-of-coins) = 10,000,000 (require the buyer to pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers)
 1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
 
-Note that some trading of Test MSC was done with version 0 of this message which did not have the action field. Those transactions are treated as action=3 (cancel offer) when the amount is zero. If the amount is non-zero, it is treated as action=1 (new offer) unless there is already an offer outstanding from this address, in which case it is treated as action = 2 (update offer).
+Note that some trading of Test MSC was done with version 0 of this message which did not have the Action field. Those transactions are treated as Action=3 (Cancel offer) when the Amount for sale is zero. For version 0 of this message and Amount for sale = 0 (Cancel offer), the values in the following fields are not tested for validity:
+* Amount of bitcoins desired
+* Time limit in blocks
+* Minimum bitcoin transaction fee
+
+For version 0 of this message and Amount for sale is non-zero, it is treated as Action=1 (New offer) unless there is already an offer outstanding from this address for the same Currency identifier, in which case it is treated as Action = 2 (Update offer).
 
 #### Change a Coin Sell Offer
 
@@ -349,7 +354,13 @@ Say you decide you want to change an offer, e.g. the number of coins you are off
 
 #### Cancel a Coin Sell Offer
 
-A currency sell offer can be canceled by using Action = 3 (Cancel) until the offer has been fully accepted by valid purchase offers (transaction type 22). When a sell offer is canceled, the associated coins are no longer reserved.
+A currency sell offer can be canceled by using Action = 3 (Cancel) until the offer has been fully accepted by valid purchase offers ([Purchase Mastercoins with Bitcoins](#purchase-mastercoins-with-bitcoins)). When a sell offer is canceled, the associated coins are no longer reserved.
+
+When canceling a sell offer, the values in the following fields are not tested for validity:
+* Amount for sale
+* Amount of bitcoins desired
+* Time limit in blocks
+* Minimum bitcoin transaction fee
 
 The cancel will apply to the amount that has not yet been accepted. The UI must indicate if the cancellation was successful and how many coins were not sold.
 
