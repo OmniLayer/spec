@@ -247,9 +247,9 @@ This section defines the fields that are used to construct transaction messages.
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
     *    1: [Investment Send](#investment-send)
-    *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-coins-for-bitcoins)
+    *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-mastercoins-for-bitcoins)
     *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
-    *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-coins-with-bitcoins)
+    *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
     *   50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
     *   51: [Create a Property via Fundraiser with Variable number of Tokens](#new-property-creation-via-fundraiser-with-variable-number-of-tokens)
     *   52: [Promote a Property](#promote-a-property)
