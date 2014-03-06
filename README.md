@@ -877,6 +877,8 @@ This appendix will not discuss the varying types of Mastercoin transaction or wh
  
 For the purposes of a simplified overview, parties wishing to develop Mastercoin software should support the decoding of both Class A and Class B transactions, but only need support encoding of Class B transactions. 
 
+Note that for all transaction classes, we have some unused "padding" bytes at the end of most messages. Those bytes are undefined (they are ignored, so they can have any value).
+
 ## Class A transactions (also known as the ‘original’ method) 
 
 Class A transactions were the first class of Mastercoin transaction and store data in the blockchain by utilizing fake Bitcoin addresses to encode transaction data. 
