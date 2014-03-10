@@ -1,4 +1,4 @@
-The Master Protocol / Mastercoin Complete Specification
+﻿The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
 Version 0.4.5.1 Smart Property Fundraisers Edition
@@ -294,7 +294,7 @@ Transfers are unconditional payments from one Mastercoin address to another addr
 
 Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
 
-If the amount to transfer exceeds the number owned by the sending address, this indicates the user is transferring all of them.
+If the amount to transfer exceeds the number owned by the sending address, the send message is invalid.
 
 [Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
 
