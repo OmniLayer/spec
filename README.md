@@ -1010,7 +1010,7 @@ In addition to transaction fees however there are costs associated with the outp
 
 Each output must carry a value higher than the dust threshold (0.00005430 as of 6/2/14) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
 
-The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of $650 USD/BTC:
+The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of 650 USD per BTC:
 
 **Class A**  
 0.00006 ($0.04) - Exodus Address Output  
@@ -1028,7 +1028,7 @@ Total perceived cost ~$0.18 per transaction.
   
 Total perceived cost ~$0.22 per transaction.  
 
-Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at $650 USB/BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
+Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
   
 The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
