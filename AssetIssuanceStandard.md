@@ -1,6 +1,6 @@
 # Proposed Standard for Web Pages Describing Assets Issued over the Bitcoin Network
 
-Original proposal by Gideon Greenspan (http://www.gidgreen.com/ and gideon AT coincolors DOT org) with some input from Ron Gross (https://github.com/ripper234) and J.R. Willett (https://github.com/dacoinminster).
+Original proposal by Gideon Greenspan (http://www.gidgreen.com/ and gideon AT coincolors DOT org) with input from  J.R. Willett (https://github.com/dacoinminster) and Ron Gross (https://github.com/ripper234).
 
 ## Summary
 
@@ -57,7 +57,7 @@ All fields are optional in this specification, though some may be required by ce
 * `icon-url` = absolute URL for icon to show for the asset (PNG only).
 * `feed-url` = absolute URL of an RSS 2.0 feed for the asset.
 
-Any HTML element type can be used to represent these fields. For URL fields, the URL is taken from the `href` attribute of the HTML element which has the `bitcoin-asset-` class. For other fields, the content is taken from the inside of the HTML element which has the `bitcoin-asset-` class. HTML formatting may be included inside that content, though many wallets are expected to strip this formatting and display the content as plain text.
+Any HTML element type can be used to represent these fields. For `-url` fields, the URL is taken from the `href` attribute of the HTML element which has the `bitcoin-asset-...-url` class. For other fields, the content is taken from the inside of the HTML element which has the `bitcoin-asset-...` class. HTML formatting may be included inside that content, though many wallets are expected to strip this formatting and display the content as plain text.
 
 Additional user-defined fields are permitted. Classes which are specific to a protocol should be prefixed with that protocol's name, such as `bitcoin-asset-mastercoin-id` and `bitcoin-asset-coincolors-id` above.
 
@@ -69,7 +69,7 @@ Additional user-defined fields are permitted. Classes which are specific to a pr
 
 * Pages must use UTF-8 encoding to make life easy for wallet developers. In addition, all references to external assets in the metadata should use absolute URLs, to avoid wallets having to resolve relative URLs.
 
-* If there are multiple HTML elements within a single asset definition with the same class`bitcoin-asset-...` class, then only the first element should be considered.
+* If there are multiple HTML elements within a single asset definition with the same `bitcoin-asset-...` class, then only the first element should be considered.
 
 * Two relatively simple asset types can be defined in terms of (a) redemption (bank promises a dollar per asset unit), or (b) license (website gives access to its content for asset holders). For each of these cases, there is a field linking to the redemption process (`redemption`) or the licensed work (`work`).
 
