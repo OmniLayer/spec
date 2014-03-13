@@ -1,4 +1,4 @@
-# Proposed Standard for Web Pages describing Assets Issued over Bitcoin
+# Proposed Standard for Web Pages Describing Assets Issued over the Bitcoin Network
 
 Original proposal by Gideon Greenspan (http://www.gidgreen.com/ and gideon AT coincolors DOT org) with some input from Ron Gross (https://github.com/ripper234) and J.R. Willett (https://github.com/dacoinminster).
 
@@ -14,9 +14,9 @@ This is a proposal under consideration for a standard format for web pages repre
 
 ### Overview
 
-A web page defines an asset using a similar style to [microformats](http://microformats.org). All of the fields describing the asset are regular HTML elements, which are visibile in a web browser by default. These HTML elements are given special CSS classes to indicate their meaning in terms of defining an asset. Since multiple CSS classes can be assigned to an element, presentation-related CSS can be freely used alongside these special classes.
+A web page defines an asset using a similar style to [microformats](http://microformats.org). All of the fields describing the asset use regular HTML elements, which are visibile in a web browser by default. These HTML elements are given special CSS classes to indicate their additional meaning in terms of defining an asset. Since multiple CSS classes can be assigned to an element in HTML, presentation-related CSS can be freely used alongside these special classes.
 
-A web page may include the definition for one or more types of bitcoin asset. Each asset definition is enclosed within an element with class `bitcoin-asset`. Each of field is indicated by a class with the prefix `bitcoin-asset-`, for example `bitcoin-asset-name`. Asset definition web pages should take care to ensure that these elements are properly closed and nested, so they won't cause less resilient HTML parsing libraries to choke.
+A web page may include the definition for one or more types of bitcoin asset. Each asset definition is enclosed within an element with class `bitcoin-asset`. Each field in the definition uses an HTML element with a class prefixed by `bitcoin-asset-`, for example `bitcoin-asset-name`. Asset definition web pages should take care to ensure that these elements are properly closed and nested, so they won't cause fragile HTML parsers to choke.
 
 Asset definition web pages must use UTF-8 encoding.
 
@@ -57,7 +57,7 @@ All fields are optional in this specification, though some may be required by ce
 * `icon` = absolute URL for icon to show for the asset (PNG only).
 * `feed` = absolute URL of an RSS 2.0 feed for the asset.
 
-For URL fields, the URL is taken from the `href` attribute of the HTML element which has the `bitcoin-asset-` class. For other fields, the content is taken from the inside of the HTML element which has the `bitcoin-asset-` class. HTML formatting may be included inside that content, though many wallets are expected to strip this formatting and display the content as plain text.
+Any HTML element type can be used to represent these fields. For URL fields, the URL is taken from the `href` attribute of the HTML element which has the `bitcoin-asset-` class. For other fields, the content is taken from the inside of the HTML element which has the `bitcoin-asset-` class. HTML formatting may be included inside that content, though many wallets are expected to strip this formatting and display the content as plain text.
 
 Additional user-defined fields are permitted. Classes which are specific to a protocol should be prefixed with that protocol's name, such as `bitcoin-asset-mastercoin-id` and `bitcoin-asset-coincolors-id` above.
 
