@@ -1,6 +1,6 @@
 # Proposed Standard for Web Pages Describing Assets Issued over the Bitcoin Network
 
-Original proposal by Gideon Greenspan (http://www.gidgreen.com/ and gideon AT coincolors DOT org) with input from  J.R. Willett (https://github.com/dacoinminster) and Ron Gross (https://github.com/ripper234).
+Original proposal by [Gideon Greenspan](http://www.gidgreen.com/) with input from [J.R. Willett](https://github.com/dacoinminster) and [Ron Gross](https://github.com/ripper234).
 
 ## Summary
 
@@ -18,7 +18,7 @@ A web page defines an asset using a similar style to [microformats](http://micro
 
 A web page may include the definition for one or more types of bitcoin asset. Each asset definition is enclosed within an element with class `bitcoin-asset`. Each field in the definition uses an HTML element with a class prefixed by `bitcoin-asset-`, for example `bitcoin-asset-name`. Asset definition web pages should take care to ensure that these elements are properly closed and nested, so they won't cause fragile HTML parsers to choke.
 
-Asset definition web pages must use UTF-8 encoding and their raw HTML (excluding externally referenced assets) must be no larger than 1 MB in size.
+Asset definition web pages must use UTF-8 encoding and their source HTML (excluding externally referenced assets) must be no larger than 1 MB in size.
 
 ### Example
 
@@ -29,8 +29,8 @@ Below is an example of how an asset definition can be embedded in an HTML web pa
 	<img class="bitcon-asset-icon-url image-center" href="http://www.john-doe-dining.com/bitcoin-credits-icon.png"/>
 	<h1>Name: <span class="bitcoin-asset-name">Credit at John Doe's</span></h1>
 	<h2>Description: <span class="bitcoin-asset-description">Can be used for any purchase at John Doe's, excluding breakfasts.</span></h2>
-	<p>Interest rate: <span class="bitcoin-asset-interest" style="display:none;">1</span>% per annum, from <span class="bitcoin-asset-issue-date">2014-03-01</span>.</p>
-	<p>Expiry date: <span class="bitcoin-asset-expiry-date">2024-02-29</span>.</p>
+	<p>Interest rate: <span class="bitcoin-asset-interest">1</span>% per annum, from <span class="bitcoin-asset-issue-date">2014-03-01</span>.</p>
+	<p>Expiry date: <span class="bitcoin-asset-expiry-date">2024-02-29</span>. After this date, these credits cannot be redeemed.</p>
 	<p><a class="bitcoin-asset-contract-url" href="http://www.john-doe-dining.com/bitcoin-credits-contract.pdf">View contract</a></p>
 	<p><a class="bitcoin-asset-redemption-url" href="http://www.john-doe-dining.com/bitcoin-credits-redeem.php">Use your credits now</a></p>
 	<p><a class="bitcoin-asset-feed-url" href="http://www.john-doe-dining.com/bitcoin-credits-feed.rss">News from John Doe's</a></p>
@@ -52,11 +52,11 @@ All fields are optional in this specification, though some may be required by ce
 * `contract-url` = absolute URL of the contract underlying the asset, maximum size 16 MB.
 * `redemption-url` = absolute URL of the web page where the asset can be redeemed.
 * `work-url` = absolute URL of the content to which the asset grants a license.
-* `issue-date` - date/time formatted as ISO 8601 when the asset was issued.
-* `expiry-date` = date/time formatted as ISO 8601 when the asset will no longer be valid or redeemable.
-* `multiple` = floating point number by which to multiply the asset quantity for display (`e` character not permitted).
-* `interest` = floating point number of interest rate as a positive or negative (for demurrage) percentage (`e` character not permitted).
-* `format` = how to display asset quantities (contains `*` which is substituted for the display value).
+* `issue-date` - date/time when the asset was issued, formatted as [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601).
+* `expiry-date` = date/time when the asset will no longer be valid, formatted as ISO 8601.
+* `multiple` = floating point number to multiply the asset quantity for display (`e` character not permitted).
+* `interest` = floating point percentage interest rate, negative for demurrage (`e` character not permitted).
+* `format` = how to display asset quantities (`*` is substituted for the display value).
 * `format-1` = how to display the asset quantity if the display value is exactly 1.
 * `color` = HTML-style hexadecimal color for displaying the asset.
 * `icon-url` = absolute URL for icon to show for the asset (PNG only), maximum size 1 MB.
@@ -68,29 +68,31 @@ Additional user-defined fields are permitted. Classes which are specific to a pr
 
 ### Notes
 
-* Redirections from the web page are permitted in order to provide a more user-friendly URL. However it is preferable for redirection to take place via Javascript or a `<meta http-equiv="refresh" ...>` tag rather than HTTP 301 or 302 responses, with the metadata still being delivered in the original request. This will help wallets to load the asset definition quickly. In any event, a maximum of 5 redirections are permitted.
+* Redirections from the web page are permitted in order to provide a more user-friendly URL. It is preferable for redirectiona to take place via Javascript or a `<meta http-equiv="refresh" ...>` tag rather than HTTP 301 or 302 responses, with the metadata still being delivered in the original request. This will help wallets to load the asset definition quickly. In any event, a maximum of 5 redirection hops are permitted.
 
 * Having the contract as a separate referenced file (rather than inline in the metadata) allows it to be displayed or downloaded by any web browser as well as by wallets.
 
-* Pages must use UTF-8 encoding to make life easy for wallet developers. In addition, all references to external assets in the metadata should use absolute URLs, to avoid wallets having to resolve relative URLs.
+* Pages must use UTF-8 encoding to make life easy for wallet developers.
+
+* All references to external assets in the metadata should use absolute URLs, to avoid wallets having to resolve relative URLs.
 
 * If there are multiple HTML elements within a single asset definition with the same `bitcoin-asset-...` class, then only the first element should be considered.
 
-* Two relatively simple asset types can be defined in terms of (a) redemption (bank promises a dollar per asset unit), or (b) license (website gives access to its content for asset holders). For each of these cases, there is a field linking to the redemption process (`redemption-url`) or the licensed work (`work-url`).
+* Two relatively simple asset types can be defined in terms of (a) redemption (e.g. a bank promises one cent per asset unit), or (b) license (a website grants access to its content for asset holders). For these cases, there is a field linking to the redemption process (`redemption-url`) or the licensed work (`work-url`) respectively.
 
-* Linked contracts must be in a self-contained format such as PDF, UTF-8 encoded plain text, JPEG or PNG. The file type will be determined based on the URL suffix `.pdf`, `.txt`, `.jpg`/`.jpeg` or `.png` so that wallets don't need to read the MIME type returned by the web server. Wallets must explicitly block contracts in HTML format, since HTML web pages can reference external assets such as images whose substitution can completely change the HTML's meaning.
+* Linked contracts must be in a self-contained format such as PDF, UTF-8 encoded plain text, JPEG or PNG. The file type will be determined based on the URL suffix `.pdf`, `.txt`, `.jpg`/`.jpeg` or `.png` so that wallets don't need to interpret the MIME type returned by the web server. Wallets must explicitly block contracts in HTML format, since HTML web pages can reference external assets such as images whose substitution can completely change their meaning.
 
-* If present, the `multiple` and `interest` fields modify the raw integer quantity of units, before it is displayed in a wallet. (The actual number of units held can only be changed by transactions on the blockchain.) The `interest` field is treated as a percentage per annum, beginning from the `issue-date`, and may be negative to indicate demurrage. In quasi-code, the display amount would be calculated as:
+* If present, the `multiple` and `interest` fields modify the raw integer quantity of units, before it is displayed in a wallet. (The raw number of units held can only be changed by transactions on the blockchain.) The `interest` field is treated as a percentage per annum, beginning from the `issue-date`, and may be negative to indicate demurrage. In quasi-code, the display amount would be calculated as:
 
 ```
-display=raw_units_held
-interest=get_asset_definition_field('interest')
-issue_date=get_asset_definition_field('issue-date')
+display=raw_units_held;
+interest=get_asset_definition_field('interest');
+issue_date=get_asset_definition_field('issue-date');
 
 if (is_valid_floating_point(interest) && is_valid_iso_8601(issue_date)) {
-	seconds_elapsed=time_now_in_seconds()-iso_8601_to_seconds(issue_date)
-	years_elapsed=seconds_elapsed/31557600 // assume 365.25 days per year
-	display*=power(1.0+interest/100, years_elapsed)
+	seconds_elapsed=time_now_in_seconds()-iso_8601_to_seconds(issue_date);
+	years_elapsed=seconds_elapsed/31557600 // assume 365.25 days per year;
+	display*=power(1.0+interest/100, years_elapsed);
 }
 
 if (is_valid_floating_point(multiple))
@@ -105,4 +107,4 @@ if (is_valid_floating_point(multiple))
 
 * The attribute `style="display:none;"` can be used to make any field invisible in web browsers.
 
-* Online wallets should always load asset definition web pages in separate frame, iframe, tab or window, in order to prevent the possibility of a cross-site scripting (XSS) attack by Javascript on the page.
+* Online wallets should always display asset definition web pages in separate a frame, iframe, tab or window, in order to prevent cross-site scripting (XSS) attacks by Javascript on the page.
