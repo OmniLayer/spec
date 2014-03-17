@@ -459,7 +459,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 Description: Transaction type 51 is used to initiate a fundraiser which creates a new Smart Property with a variable number of tokens.
 
-Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 96 bytes:
+Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself 1000 shares upfront as compensation for all your R&D work so far. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 102 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
@@ -475,6 +475,7 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 1. [Number Properties per unit invested](#field-integer-eight-byte) = 100 indivisible shares
 1. [Deadline](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
+1. [Shares for issuer](#field-integer-eight-byte) = 1000 indivisible shares
 
 A MSC address may only have one fundraiser active at any given time, preventing the need for investors to specify which fundraiser they are investing in when they invest.
 
