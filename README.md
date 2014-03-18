@@ -111,7 +111,7 @@ The technical details for both Class A and Class B transactions can be found in 
 
 ## Special Considerations to Avoid Invalid Transactions
 
-Not every bitcoin wallet lets you choose which address bitcoins come from when you make a payment, and Mastercoin transactions must all come from the address which holds the Mastercoins. If a bitcoin wallet contains bitcoins stored in multiple addresses, the wallet must first consolidate the bitcoins by sending ALL of them to the address which is going to initiate a Mastercoin transaction. Then, any Mastercoin-related bitcoin transactions will be sent from that address. Of course, mastercoin wallets hide this complexity from the user.
+Not every bitcoin wallet lets you choose which address bitcoins come from when you make a payment, and Mastercoin transactions must all come from the address which holds the Mastercoins being used. If a bitcoin wallet contains bitcoins stored in multiple addresses, the user (or Master Protocol software) must first ensure that the address which is going to send the Mastercoin transaction has sufficient balance in bitcoins to create the transaction. Then, the Mastercoin-related transaction can be sent successfully from that address. 
 
 Wallets which do not allow you to consolidate to one address and send from that address (such as online web wallet providers) will not work for Mastercoin unless they are modified to do so. For this reason, **attempting to purchase Mastercoins from an online web wallet will likely result in the permanent loss of those Mastercoins.**
 
@@ -459,7 +459,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 Description: Transaction type 51 is used to initiate a fundraiser which creates a new Smart Property with a variable number of tokens.
 
-Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself 1000 shares upfront as compensation for all your R&D work so far. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 102 bytes:
+Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 96 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
@@ -475,7 +475,6 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 1. [Number Properties per unit invested](#field-integer-eight-byte) = 100 indivisible shares
 1. [Deadline](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
-1. [Shares for issuer](#field-integer-eight-byte) = 1000 indivisible shares
 
 A MSC address may only have one fundraiser active at any given time, preventing the need for investors to specify which fundraiser they are investing in when they invest.
 
@@ -1010,25 +1009,25 @@ In addition to transaction fees however there are costs associated with the outp
 
 Each output must carry a value higher than the dust threshold (0.00005430 as of 6/2/14) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
 
-The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of 650 USD per BTC:
+The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of $800 USD/BTC:
 
 **Class A**  
-0.00006 ($0.04) - Exodus Address Output  
-0.00006 ($0.04) - Reference Address Output  
-0.00006 ($0.04) - Data Address Output  
-0.0001 ($0.07) - Bitcoin Transaction Fee  
+0.00006 ($0.05) - Exodus Address Output  
+0.00006 ($0.05) - Reference Address Output  
+0.00006 ($0.05) - Data Address Output  
+0.0001 ($0.08) - Bitcoin Transaction Fee  
   
-Total perceived cost ~$0.18 per transaction.  
+Total perceived cost ~$0.23 per transaction.  
   
 **Class B**  
-0.00006 ($0.04) - Exodus Address Output  
-0.00006 ($0.04) - Reference Address Output  
-0.00012 ($0.7) - Per Multisig Output  
-0.0001 ($0.07) - Bitcoin Transaction Fee  
+0.00006 ($0.05) - Exodus Address Output  
+0.00006 ($0.05) - Reference Address Output  
+0.00012 ($0.10) - Per Multisig Output  
+0.0001 ($0.08) - Bitcoin Transaction Fee  
   
-Total perceived cost ~$0.22 per transaction.  
+Total perceived cost ~$0.28 per transaction.  
 
-Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
+Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at $800 USB/BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.10.
   
 The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
