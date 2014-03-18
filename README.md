@@ -58,7 +58,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 # Master Protocol / Mastercoin Terminology
 
-* The term M.A.S.T.E.R. is an acronym for "Metadata Archive of Standard Transaction Embedding Records" 
+* The term M.A.S.T.E.R. is an acronym for "Metadata Archival by Standard Transaction Embedding Records" 
 * The term "Master Protocol" applies to the specification and the clients that implement its features.
 * The term "MSC Protocol" is used as the abbreviation for "Master Protocol". 
 * The term "Mastercoins" applies to the digital tokens that access the features of the "Master Protocol" clients.
