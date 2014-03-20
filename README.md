@@ -43,6 +43,19 @@ The proposed protocol layers can be visualized as follows, with arrows represent
 
 Note that all transfers of value are still stored in the normal bitcoin block chain, but higher layers of the protocol assign additional meaning to some transactions.
 
+
+# Purpose of this Document
+
+The Master Protocol / Mastercoin Complete Specification intends to define the requirements of a bitcoin transaction that are necessary to interact on the Master Protocol layer. A bitcoin transaction that meets specification as detailed in this document is to be considered valid, and similarly, one that does not meet specification invalid. The following details The Master Protocol / Mastercoin Complete Specification revision control plan, and requirements of future revisions.
+
+* The Master Protocol / Mastercoin Complete Specification will require revision as the Master Protocol is developed and the bitcoin ecosystem changes. A revision will be publicly released prior to superseding the current specification.
+* The time at which a revision supersedes the current specification is to be defined by the block height in which a specific unspent output is spent and first confirmed. The unspent output is required to have 6 confirmations and be specified on the revised document at the time of public release.
+* At the moment a revision supersedes the previous version all Mastercoin balances are to be considered correct and valid according to consensus. Under no circumstances will a revision change the validity of Mastercoin transactions prior to and including the block in which the revision supersedes the previous.
+* A revision will not specify requirements that cannot or will not be considered active immediately upon confirmation of that revision.
+* A revision is considered valid when the transaction specified in the document has an output that stores the hash of the revision, the transaction is signed by the an entity determined by the Mastercoin Foundation to have that right, and the document has been publicly and previously released.
+* The first revision of The Master Protocol / Mastercoin Complete Specification to be stored in the blockchain is to be followed by a transaction which stores the hash of a list of all addresses with a positive Mastercoin balance in the blockchain. This serves as a snapshot of all valid Mastercoin transactions up to the point in time that the first revision is stored in the blockchain, and establishes a framework by which an individual can independently prove the validity of a Mastercoin transaction at any point in time.
+
+
 # Document History
 
 1. Version 0.1 (previously 0.5) released 6 Jan 2012 (No packet definitions, overly-complicated currency stabilization)
@@ -53,6 +66,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 6. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
 6. Version 0.4.5 released 20 Feb 2014 (added smart property fundraisers, other improvements to future features)
 7. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
+8. Version 0.4.6 released 3 Mar 2014 (Minor spelling and terminology, relaxed Class B transaction requirements, added section "Purpose of this Document," added block height at which decentralized exchange was enabled, and detailed a method of specification revision control and effect on past transactions)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -96,7 +110,7 @@ Technical notes:
 * Any Mastercoin implementation implementing Exodus balance must recalculate the Development Mastercoin amount on each new block found and use the block timestamp for y.
 * When calculating the years since the Mastercoin sale we assume a year is 31556926 seconds.
 * 1377993874 is the Unix timestamp used to define the end-date of Exodus and thus the start date for the Development Mastercoins vesting.
-* Current implementations do not have Test MSC which vest alongside dev MSC, but such coins may be recognized at some point in the future if it is deemed desireable 
+* Current implementations do not have Test MSC which vest alongside dev MSC, but such coins may be recognized at some point in the future if it is deemed desirable 
 
 
 ## Embedding Master Protocol Data in the Block Chain
@@ -133,7 +147,7 @@ Also, in many cases a user may wish to do something with Mastercoins recently se
 
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
-+ Mastercoin/bitcoin distributed exchange features are unlocked as of block # (TBD)
++ Mastercoin/bitcoin distributed exchange features are unlocked as of block # (290630)
 + Smart property features are unlocked as of block # (TBD)
 + Savings wallets and rate-limited wallets are unlocked as of block # (TBD)
 + Data feeds and simple betting are unlocked as of block # (TBD)
@@ -278,11 +292,11 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values: 0 to 65535
 
 # Transaction Definitions
-The Master Protocol Distributed Exchange transactions are listed below. Transactions 0, 20, 21, 22 and 50 are to be implemented in the first deployment, per this spec. They are listed first. The other transactions will be fully defined and implemented in future releases.
+The Master Protocol Distributed Exchange transactions are listed below. Transactions 0, 20, 21, 22 and 50 are to be implemented in the first deployment, per this specification. They are listed first. The other transactions will be fully defined and implemented in future releases.
 
-Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all spec versions starting with 0.4, the first field in each transaction message is the 2 byte version number, with an initial value of 0 and the transaction type field is a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format associated with that version number.
+Each transaction definition has its own version number to enable support for changes to each transaction definition. Up through version 0.3.5 of this specification, the transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all specification versions starting with 0.4, the first field in each transaction message is the 2 byte version number, with an initial value of 0 and the transaction type field is a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this specification. If the value is at least 1, then the message is in the format associated with that version number.
 
-Master Protocol transactions are not reversible except as explicitly indicated by this spec.
+Master Protocol transactions are not reversible except as explicitly indicated by this specification.
 
 Any Mastercoin transaction from any address that attempts to transfer, reserve, commit coins, or put coins in escrow while that address's available balance for that currency identifier is 0 will be invalidated. 
 
@@ -907,13 +921,13 @@ NOTE: Class A transactions are restricted to the ‘simple send’ transaction t
 
 ## Class B transactions (also known as the ‘multisig’ method) 
 
-Class B transactions attempt to address the UTXO ‘bloat’ issue by storing data in the blockchain by utilizing ‘1-of-n’ multisignature outputs where one of the signatories is always the sender.   
+Class B transactions attempt to address the UTXO ‘bloat’ issue by storing data in the blockchain by utilizing ‘1-of-n’ multisignature outputs where one of the recipients is typically that of the sender.   
 
 By adopting a ‘1-of-n’ approach (credit Tachikoma @ bitcointalk) we can increase n to the number of packets (public keys) needed to store the transaction data while maintaining the ability of the sender to redeem the output.  
 
-NOTE: The reference client currently supports a maximum value of 3 for n.  As one signatory must be the sender for redemption purposes, there is a current limit of 2 data packets per output.  A number of multisig outputs can be combined to increase the space available for transaction data as required.  On decoding all Mastercoin packets from all multisig outputs are ordered via their sequence number and evaluated as a continuous data stream. 
+NOTE: The reference client currently supports a maximum value of 3 for n.  As one recipient is typically the sender for redemption purposes, there is usually a limit of 2 data packets per output.  A number of multisignature outputs can be combined to increase the space available for transaction data as required.  On decoding all Mastercoin packets from all multisignature outputs are ordered via their sequence number and evaluated as a continuous data stream. 
 
-Transaction data is encoded into one or a number of compressed public keys which are obfuscated and then have their last byte manipulated to form a valid ECDSA point.  These compressed public keys then can be included as signatories in a multisig output. 
+Transaction data is encoded into one or a number of compressed public keys which are obfuscated and then have their last byte manipulated to form a valid ECDSA point.  These compressed public keys then can be included as recipients in a multisignature output. 
 
 The size of a Mastercoin packet in a compressed public key is thus 31 bytes (33 bytes minus the first and last bytes for the key identifier (02) and ECDSA manipulation byte).   The Mastercoin packet reserves the first byte for the sequence number, providing a total of 30 bytes per packet for Mastercoin transaction data.  The range of sequence numbers in a Class B transaction is 1 to 255, providing for a total 7,650 bytes maximum actual transaction data storage per Mastercoin Class B transaction. 
 
@@ -942,8 +956,8 @@ These compressed public key 'packets' can then be included in one or multiple OP
 * Has a single or the largest input signed by the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
-* Has one or more 1-of-n OP_CHECKMULTISIG outputs each containing at least two compressed public keys, one of which must be the senders address
-* Has all output values above the 'dust' threshold (the threshold is higher for multisig outputs)  
+* Has one or more 1-of-n OP_CHECKMULTISIG outputs each containing at least one compressed public key, and typically the senders public key.
+* Has all output values above the 'dust' threshold (the threshold is higher for multisignature outputs)  
 * An additional output is permitted for the remainder of the input (the 'change' address) however this output must be addressed to the sending address   
 
 
