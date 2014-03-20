@@ -80,7 +80,7 @@ Additional user-defined fields are permitted. Fields which are specific to a pro
 
 * Linked contracts (`contract_url`) must be in a self-contained format such as PDF, UTF-8 encoded plain text, JPEG or PNG. The file type will be determined based on the URL suffix `.pdf`, `.txt`, `.jpg`/`.jpeg` or `.png` so that wallets don't need to interpret the MIME type returned by the web server. Contracts should be no more than 16 MB in size. Wallets must explicitly block contracts in HTML format, since HTML web pages can reference external assets such as images whose substitution can completely change their meaning.
 
-* The `format`, `format_1`, `color`, `icon_url` and `image-url` fields enable visual control over how asset quantities are displayed in wallets. Icons should be square PNGs (with transparency permitted) at least 32x32 pixels in size, which the wallet can scale as necessary. Images can be PNGs or JPEGs and should be at least 128x128 pixels in size, not necessarily square. Both have a maximum size of 1 MB.
+* The `format`, `format_1`, `color`, `icon_url` and `image_url` fields enable visual control over how asset quantities are displayed in wallets. Icons should be square PNGs (with transparency permitted) at least 32x32 pixels in size, which the wallet can scale as necessary. Images can be PNGs or JPEGs and should be at least 128x128 pixels in size, not necessarily square. Both have a maximum size of 1 MB.
 
 * If present, the `multiple` and `interest_rate` fields modify the raw integer quantity of units, before it is displayed in a wallet. (The raw number of units held can only be changed by transactions on the blockchain.) The `interest_rate` field is treated as a percentage per annum, beginning from the `issue_date`, and may be negative to indicate demurrage. In quasi-code, the display amount would be calculated as:
 
@@ -114,4 +114,11 @@ else if (is_not_empty(format) && string_contains(format, '*'))
 
 * The `feed_url` field enables notifications to be issued to asset holders via RSS 2.0, for inclusion in a wallet news feed. The maximum size of the feed is 1 MB.
 
-* An asset definition JSON can be embedded inside a web page by `\uXXXX`-escaping the characters `(` `)` `<` `>` inside the JSON, and inserting it into the code `<script>if (typeof _bitcoin_asset_specification_ === "function") _bitcoin_asset_specification_(JSON_HERE); </script>`. Using this encoding, the JSON can be easily extracted from the raw HTML using a regular expression (no DOM parsing) and will also be accessible to Javascript on the page.
+* An asset definition JSON can be embedded inside a web page by `\uXXXX`-escaping the characters `(` `)` `<` `>` inside the JSON, and inserting it into the code below. Using this encoding, the JSON can be easily extracted from the raw HTML using a regular expression (no DOM parsing) and will also be accessible to Javascript on the page.
+
+```
+<script>
+if (typeof _bitcoin_asset_specification_ === "function")
+	_bitcoin_asset_specification_(JSON_HERE);
+</script>
+```
