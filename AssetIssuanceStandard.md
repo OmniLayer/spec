@@ -50,9 +50,9 @@ Assets definitions use [JSON](http://www.json.org) format with UTF-8 encoding an
 
 All fields are optional in this specification, though some may be required by certain protocols:
 
-* `name` = full name of the asset for display.
-* `name_short` = short name of the asset for display.
-* `issuer` = full name of the issuer for display.
+* `name` = full name of the asset for display, up to 64 characters.
+* `name_short` = short name of the asset for display, up to 16 characters.
+* `issuer` = full legal name of the issuer for display.
 * `type` = type of the asset, examples: `"Credit"`, `"Stock"`, `"Bond"`, `"Cash"`, `"Licence"`, `"Coupon"`, `"Property"`.
 * `currency` = 3-character [ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code, if relevant.
 * `description` = more information about the asset for display (up to a few sentences).
@@ -67,8 +67,8 @@ All fields are optional in this specification, though some may be required by ce
 * `feed_url` = absolute URL of an RSS 2.0 feed for the asset, maximum size 1 MB.
 * `color` = HTML-style hexadecimal color for displaying the asset, with preceding `#`.
 * `multiple` = number by which to multiply the asset quantity for display.
-* `format` = how to display asset quantities (`*` is substituted for the display value).
-* `format_1` = how to display the asset quantity if the display value is exactly 1.
+* `format` = how to display asset quantities (`*` is substituted for the display value), up to 20 characters.
+* `format_1` = how to display the asset quantity if the display value is exactly 1, up to 20 characters.
 
 Additional user-defined fields are permitted. Fields which are specific to a protocol should be prefixed with that protocol's name, such as `mastercoin_id`, `coinprism_sources` and `coincolors_id` in the example above.
 
