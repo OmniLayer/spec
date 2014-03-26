@@ -135,7 +135,7 @@ Also, in many cases a user may wish to do something with Mastercoins recently se
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
 + Mastercoin/bitcoin distributed exchange features are unlocked as of block # (TBD)
-+ Smart property features are unlocked as of block # (TBD)
++ Smart property features are unlocked as of block #290630
 + Savings wallets and rate-limited wallets are unlocked as of block # (TBD)
 + Data feeds and simple betting are unlocked as of block # (TBD)
 + Contract-for-difference bets are unlocked as of block # (TBD)
