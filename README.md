@@ -441,7 +441,7 @@ If creating a title to a house or deed to land, the number of properties should 
 
 Once this property has been created, the tokens are owned by the address which broadcast the message creating the property. 
 
-Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 81 bytes:
+Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 50
@@ -451,7 +451,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 1. [Property Category](#field-string-null-terminated) = “Companies\0” (10 bytes)
 1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
 1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
-1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
+1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
 1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
 1. [Number Properties](#field-integer-eight-byte) = 1,000,000 indivisible shares
 
@@ -459,7 +459,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 Description: Transaction type 51 is used to initiate a fundraiser which creates a new Smart Property with a variable number of tokens.
 
-Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself 1000 shares upfront as compensation for all your R&D work so far. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 102 bytes:
+Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself 1000 shares upfront as compensation for all your R&D work so far. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
@@ -469,7 +469,7 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 1. [Property Category](#field-string-null-terminated) = “Companies\0” (10 bytes)
 1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
 1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
-1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
+1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
 1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
 1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
 1. [Number Properties per unit invested](#field-integer-eight-byte) = 100 indivisible shares
@@ -597,7 +597,7 @@ The Master Protocol allows users to publish data onto the bitcoin block-chain, w
 ### Registering a Data Stream
 (AKA Data Feed)
 
-Say you decide you would like to start publishing the price of Gold in the block chain. Registering your data stream takes a varying number of bytes due to the use of null-terminated strings. This example uses 58 bytes:
+Say you decide you would like to start publishing the price of Gold in the block chain. Registering your data stream takes a varying number of bytes due to the use of null-terminated strings. This example uses 57 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 30
@@ -606,7 +606,7 @@ Say you decide you would like to start publishing the price of Gold in the block
 1. [Category](#field-string-null-terminated) = “Commodities\0” (12 bytes)
 1. [Sub-Category](#field-string-null-terminated) = “Metals\0” (7 bytes)
 1. [Label](#field-string-null-terminated) = “Gold\0” (5 bytes) (if a second “Gold” is registered in this sub-category, it will be shown as “Gold-2”)
-1. [Description/Notes](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
+1. [Description/Notes](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your description!)
 
 The reference payment must be to the bitcoin address which will be publishing the data. 
 
@@ -759,7 +759,7 @@ Say you want to sell a Bible for 0.001 Mastercoins. Creating a sell offer will u
 4. Item category = "Contraband\0" (11 bytes)
 5. Item subcategory = "Forbidden Books\0" (16 bytes)
 6. Item title = "Bible, NASB\0" (12 bytes)
-7. Description/Notes = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
+7. Description/Notes = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your description!)
 
 Every sale offer published by a given address gets a 32-bit "Listing ID" number assigned, which increments for each item offered for sale from that address. We'll assume this is the first item offered for sale from this address (Listing ID=0).
 
@@ -799,7 +799,7 @@ Once a buyer has been accepted, they may release funds held in escrow (or destro
 1. Transaction type = 63 for Release Funds and Leave Feedback (32-bit unsigned integer, 4 bytes)
 2. Listind ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
 3. Percentage of funds to release = 105% (65536*1.05 68813) (32-bit unsigned integer, 4 bytes)
-4. Text feedback = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your feedback!)
+4. Text feedback = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your feedback!)
 
 The reference address points to the address which listed the Bible for sale. Funds which are not released are permanently destroyed. Specifying more than 100% signifies an additional tip beyond the funds held in escrow. Funds are released automatically after 60 days if the buyer never leaves feedback. In addition to the text feedback, each transaction gets "1 star" to "5 stars" based on the following criteria:
 
