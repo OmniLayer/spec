@@ -223,8 +223,8 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 8-bit unsigned integer, 1 byte
 + Valid values: 1 to 255 
 
-### Field: GMT Datetime
-+ Description: Datetime, assuming GMT timezone (the same timezone used by the bitcoin blockchain)
+### Field: UTC Datetime
++ Description: Datetime, assuming UTC timezone (the same timezone used by the bitcoin blockchain)
 + Size: 64-bits standard unix timestamp, 8 bytes
 + Valid values: http://en.wikipedia.org/wiki/Unix_time 
 
@@ -378,7 +378,7 @@ Note: Your total expenditures on bitcoin transaction fees while accepting the pu
 
 You must send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards once the time limit expires. The remaining coins will be added back to those available in the Sell Offer if it’s still active. If you send more than the correct amount of bitcoins, your bitcoins will be lost (unless the seller chooses to return them to you). If you do not send complete payment before the time limit expires, the unpurchased coins will be added back to those available in the Sell Offer if it’s still active.
 
-Please note that the buyer is allowed to send multiple bitcoin payments between the Purchase Offer and expiration block which are accumulated and used to adjust the Purchase Offer accordingly.
+Please note that the buyer is allowed to send multiple bitcoin payments between the Purchase Offer and expiration block which are accumulated and used to adjust the Purchase Offer accordingly. The buyer's Mastercoin available balance is credited with the purchased coins when each bitcoin payment is processed.
 
 In order to make parsing Master Protocol transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but must be above the dust threshold.
 
@@ -475,7 +475,7 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
 1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
 1. [Number Properties per unit invested](#field-integer-eight-byte) = 100 indivisible tokens
-1. [Deadline](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT
+1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
 1. [Percentage for issuer](#field-integer-one-byte) = 12
 
@@ -483,12 +483,12 @@ A MSC address may have only one fundraiser active at any given time, eliminating
 
 ### Investing in a Fundraiser
 
-Investing in a fundraiser is accomplished with the [Simple Send](#transfer-coins-simple-send) transaction. You can use multiple Simple Send messages to make multiple investments in the fundraiser. In order to invest in the fundraiser, the currency id must match the "Currency identifier desired" value in the fundraiser and each Simple Send message must be confirmed by the "Deadline" value in the fundraiser. The sending address will receive the number of tokens calculated as the number of coins invested divided by the "Number Properties per unit invested" value in the fundraiser, to eight decimal places.
+Investing in a fundraiser is accomplished with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple investments in the fundraiser. In order to invest in the fundraiser, the currency id must match the "Currency identifier desired" value in the fundraiser and each Simple Send message must be confirmed by the "Deadline" value in the fundraiser. The sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, to eight decimal places.
 
 A few details are important to have here:
 
 + If the transaction is not in the correct currency, no investment will be made and no tokens will be received.
-+ If the transaction is confirmed after the fundraiser deadline, no investment will be made and no tokens will be received.
++ If the transaction is confirmed after the fundraiser deadline, no investment will be made and no tokens will be received. 
 + Funds raised are locked and cannot be spent or otherwise used until after the fundraiser deadline (to prevent using the same funds to purchase tokens multiple times).
 + Tokens issued are locked and cannot be spent or otherwise used until after the fundraiser deadline (to prevent undercutting the issuer).
 
@@ -634,7 +634,7 @@ Say you want to use USDCoins (another hypothetical currency derived from Masterc
 3. Data Stream identifier = 3 for the Gold ticker, per our data stream example (32-bit unsigned integer, 4 bytes)
 4. Bet Type = 35 for “Will not exceed on or before” (See table below) (16-bit unsigned integer, 2 bytes)
 5. Bet threshold (Non-CFDs only) = 200,000 (0.00200000 BTC, which equates to a ticker value of 20 per our data stream example) **OR** Leverage (CFDs only) = 65536 (1x leverage) (32-bit unsigned integer, 4 bytes)
-1. [Settlement Date](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT (8 bytes)
+1. [Settlement Date](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (8 bytes)
 7. Amount of wager = 20,000,000,000 (200.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
 8. Amount of counter-wager = 10,000,000,000 (100.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
 
@@ -711,7 +711,7 @@ Say you see a bet which you would like to accept. Simply publish the inverse bet
 3. Data Stream identifier = 3 for the Gold ticker, per our data stream example (32-bit unsigned integer, 4 bytes)
 4. Bet Type = 34 for “Will exceed on or before” (See table above) (16-bit unsigned integer, 2 bytes)
 5. Bet threshold (Non-CFDs only) = 200,000 (0.00200000 BTC, which equates to a ticker value of 20 per our data stream example) **OR** Leverage (CFDs only) = 65536 (1x leverage) (32-bit unsigned integer, 4 bytes)
-1. [Settlement Date](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT (8 bytes)
+1. [Settlement Date](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (8 bytes)
 7. Amount of wager = 5,000,000,000 (50.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
 8. Amount of counter-wager = 10,000,000,000 (100.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
 
@@ -769,7 +769,7 @@ Say you see the Bible listed above and wish to purchase it. However, you have no
 1. [Transaction version](#field-transaction-version) = 0 (2 bytes)
 1. Transaction type = 61 for Initiate purchase from listing  (2 bytes)
 1. Listing ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
-1. [Expiration Date](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT (8 bytes)
+1. [Expiration Date](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (8 bytes)
 1. Offered price = 110,000 (0.00110000 Mastercoins) (64-bit unsigned integer, 8 bytes)
 
 The reference address points to the address which listed the Bible for sale. The seller now has 3 days to accept this buyer before the offer expires. The buyer's money is now locked in escrow until their offer expires or the purchase is complete.
