@@ -157,13 +157,17 @@ This section defines the fields that are used to construct transaction messages.
 ### Field: Currency identifier
 + Description: the currency used in the transaction
 + Size: 32-bit unsigned integer, 4 bytes
-+ Valid values: 1 to 2,147,483,647
-    * 1 = Mastercoin
-    * 2 = Test Mastercoin (Test MSC currencies and properties have the most significant bit set, so internally they have values starting with 0x80000003)
++ Inter-dependencies: [Ecosystem](#field-ecosystem)
++ Valid values: 
+    * 1 and 3 to 2,147,483,647 in the real MSC ecosystem (2,147,483,646 unique values)
+        * 1 = Mastercoin
+    * 2 and 2,147,483,650 to 4,294,967,295 in the Test MSC ecosystem (Test MSC currencies and properties have the most significant bit set, values start with 0x80000003, yielding 2,147,483,645 unique values)
+        * 2 = Test Mastercoin 
 
 ### Field: Ecosystem
 + Description: Specifies whether a smart property is traded against test MSC or real MSC
 + Size: 8-bit unsigned integer, 1 byte
++ Inter-dependencies: [Currency Identifier](#field-currency-identifier)
 + Valid values: 1 for MSC, 2 for Test MSC
 
 ### Field: Integer-eight byte
@@ -215,9 +219,9 @@ This section defines the fields that are used to construct transaction messages.
     * 2: Reject
     * 3: Contact
 
-### Field: String null-terminated
+### Field: String 255 byte null-terminated
 + Description: a variable length string terminated with a \0 byte
-+ Size: variable
++ Size: variable, up to 255 bytes, plus the null terminator
 + Valid values: UTF-8
 
 ### Field: Time period in blocks
@@ -434,6 +438,8 @@ The attributes of an existing property cannot be changed. However, a new propert
 
 Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values), but the UI should indicate that more property has been appended by the issuer and link to the other properties.
 
+A property can be replaced and appended multiple times, even abandoning and un-abandoning it more than once. The UI should provide a way to present a property's history of replacement and appending properties.
+ 
 The Ecosystem for the property must be the same as the ecosystem for the "Currency identifier desired", i.e. both must be in the Mastercoin ecosystem or both must be in the Test Mastercoin ecosystem.
 
 Any time the name of a property is displayed, the ID number of the property must also be displayed with it in the format "NAME (ID)", to avoid name collisions. For instance, "Quantum Miner (8)". This is very important to prevent a malicious user from creating a property to impersonate another property.
@@ -441,6 +447,8 @@ Any time the name of a property is displayed, the ID number of the property must
 To help distinguish legitimate companies and ventures from scams, spam, and experiments, the Master Protocol allows users to spend Mastercoins for the purpose of promoting a smart property. When UI clients display smart properties, the default ordering should be based on how many Mastercoins have been spent for promoting the property, adjusted for how long ago the Mastercoins were spent. Details on promoting a smart property by spending Mastercoins and how that affects sort ordering can be found below.  
 
 The "Property Data" field is general-purpose text, but can be used for things like storing the hash of a contract to ensure it is in the block-chain at property creation (i.e. "Proof of Existence").
+
+
 
 ### New Property Creation with Fixed number of Tokens
 
@@ -457,11 +465,11 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
 1. [Property Type](#field-property-type) = 1 for new indivisible tokens
 1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
-1. [Property Category](#field-string-null-terminated) = “Companies\0” (10 bytes)
-1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
-1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
-1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
-1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
+1. [Property Category](#field-string-255-byte-null-terminated) = “Companies\0” (10 bytes)
+1. [Property Subcategory](#field-string-255-byte-null-terminated) = “Bitcoin Mining\0” (15 bytes)
+1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
+1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
+1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
 1. [Number Properties](#field-integer-eight-byte) = 1,000,000 indivisible tokens
 
 ### New Property Creation via Fundraiser with Variable number of Tokens
@@ -475,11 +483,11 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
 1. [Property Type](#field-property-type) = 1 for new indivisible tokens
 1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
-1. [Property Category](#field-string-null-terminated) = “Companies\0” (10 bytes)
-1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
-1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
-1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
-1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
+1. [Property Category](#field-string-255-byte-null-terminated) = “Companies\0” (10 bytes)
+1. [Property Subcategory](#field-string-255-byte-null-terminated) = “Bitcoin Mining\0” (15 bytes)
+1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
+1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
+1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
 1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
 1. [Number Properties per unit invested](#field-integer-eight-byte) = 100 indivisible tokens
 1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
@@ -609,10 +617,10 @@ Say you decide you would like to start publishing the price of Gold in the block
 1. [Transaction type](#field-transaction-type) = 30
 1. [Ecosystem](#field-ecosystem) = 1 for useable within Mastercoin ecosystem (as opposed to Test Mastercoin)
 1. [Parent currency identifier](#field-currency-identifier) = 1 for Mastercoin (the price of Gold will be published in units of Mastercoin)
-1. [Category](#field-string-null-terminated) = “Commodities\0” (12 bytes)
-1. [Sub-Category](#field-string-null-terminated) = “Metals\0” (7 bytes)
-1. [Label](#field-string-null-terminated) = “Gold\0” (5 bytes) (if a second “Gold” is registered in this sub-category, it will be shown as “Gold-2”)
-1. [Description/Notes](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your description!)
+1. [Category](#field-string-255-byte-null-terminated) = “Commodities\0” (12 bytes)
+1. [Sub-Category](#field-string-255-byte-null-terminated) = “Metals\0” (7 bytes)
+1. [Label](#field-string-255-byte-null-terminated) = “Gold\0” (5 bytes) (if a second “Gold” is registered in this sub-category, it will be shown as “Gold-2”)
+1. [Description/Notes](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your description!)
 
 The reference payment must be to the bitcoin address which will be publishing the data. 
 
