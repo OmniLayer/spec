@@ -53,7 +53,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 6. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
 6. Version 0.4.5 released 20 Feb 2014 (added smart property fundraisers, other improvements to future features)
 7. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
-8. Version 0.4.5.2 released 27 Mar 2014 (clarified details of smart property creation)
+8. Version 0.4.5.2 released 31 Mar 2014 (clarified details of smart property creation)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -134,8 +134,8 @@ Also, in many cases a user may wish to do something with Mastercoins recently se
 
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
-+ Mastercoin/bitcoin distributed exchange features are unlocked as of block # (TBD)
-+ Smart property features are unlocked as of block #290630
++ Mastercoin/bitcoin distributed exchange features are unlocked as of block #290630
++ Smart property features are unlocked as of block # (TBD)
 + Savings wallets and rate-limited wallets are unlocked as of block # (TBD)
 + Data feeds and simple betting are unlocked as of block # (TBD)
 + Contract-for-difference bets are unlocked as of block # (TBD)
@@ -157,7 +157,9 @@ This section defines the fields that are used to construct transaction messages.
 ### Field: Currency identifier
 + Description: the currency used in the transaction
 + Size: 32-bit unsigned integer, 4 bytes
-+ Valid values: 1 to 4,294,967,295  (1 = Mastercoin, 2 = Test Mastercoin, Test MSC currencies and properties have the most significant bit set)
++ Valid values: 1 to 2,147,483,647
+    * 1 = Mastercoin
+    * 2 = Test Mastercoin (Test MSC currencies and properties have the most significant bit set, so internally they have values starting with 0x80000003)
 
 ### Field: Ecosystem
 + Description: Specifies whether a smart property is traded against test MSC or real MSC
@@ -413,21 +415,26 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 1. [Amount of GoldCoins desired](#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins)
 1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
 
-Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or test Mastercoins), since those currencies are the the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if someday more stable Master Protocol currencies become dominant and users no longer need to exit the Mastercoin ecosystem.
+Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if someday more stable Master Protocol currencies become dominant and users no longer need to exit the Mastercoin ecosystem.
 
 To change or cancel these order, use the action byte as described earlier for the message selling mastercoins for bitcoins. The only difference is that there are no coins "in limbo" (accepted but not purchased) complicating these messages.
 
 ## Smart Property
 
-The Master Protocol supports creating property tokens to be used for titles, deeds, user-backed currencies, and even investments in a company. Whenever property is created, it gets assigned the next available currency ID, so any property can be bought, sold, transferred, and used for betting, just as other Master Protocol currencies are.
+The Master Protocol supports the creation of property tokens to be used for titles, deeds, user-backed currencies, and even investments in a company. Property tokens can be bought, sold, transferred, and used for betting, just as Master Protocol currencies are.
 
-Properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2. Additional properties and currencies therefore start at ID #3. Properties issued and traded using test MSC are kept completely distinct from those issued and traded using real MSC, so the ID numbering systems for the two ecosystems are independent. Test Mastercoin properties have the most significant bit set to distinguish them from real properties, and they cannot be traded against real Mastercoins nor otherwise interact with non-test properties. Test MSC property IDs  also start numbering from 3, but with the most significant bit set. In sandbox environments using only Test MSC, these IDs can be displayed without the MSB set, for easier reading.
+Properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2. Additional properties and currencies therefore start at ID #3. Properties issued and traded using real MSC are kept completely distinct from those issued and traded using Test MSC, so the ID numbering systems for the two [ecosystems](https://github.com/marv-engine/spec/blob/smart_prop_fixes/README.md#field-ecosystem) are independent. Test Mastercoin properties have the most significant bit set to distinguish them from real properties, and they cannot be traded against real Mastercoins nor otherwise interact with non-test properties. Test MSC property IDs  also start numbering from 3, but with the most significant bit set. In sandbox environments using only Test MSC, these IDs can be displayed without the MSB set, for easier reading.
 
 Every property has a property type, which defines whether it is divisible or not and whether the property replaces or appends a previous property. If creating 1,000,000 units of a divisible currency, choose property type 2 and specify 100,000,000,000,000 for the number of properties (1 million divisible to 8 decimal places). For 1,000,000 indivisible tokens for a company, choose property type 1 and specify 1,000,000 for the number of properties. The only difference between divisible and indivisible property types is how they are displayed (i.e. where the decimal point goes).
 
-Only the address that issued a property can replace or append that property. Attempts by other addresses are invalid. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it. Set the number of properties to zero when replacing a property (Property Type 65 or 66) to indicate that the issuer is abandoning that property entirely. Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values), but the UI should indicate that more property has been appended by the issuer and link to the other properties.
+The attributes of an existing property cannot be changed. However, a new property can be created to replace or append an existing property. Only the address that issued a property can replace or append that property. Attempts by other addresses are invalid. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it.  To indicate that the issuer is abandoning a property entirely:
+* set Previous Property ID to that property's id,
+* set Number Properties to zero, and
+* use one of the "replace" values for [Property Type](https://github.com/marv-engine/spec/blob/smart_prop_fixes/README.md#field-property-type) (see transaction types [50](https://github.com/marv-engine/spec/blob/smart_prop_fixes/README.md#new-property-creation-with-fixed-number-of-tokens) and [51](https://github.com/marv-engine/spec/blob/smart_prop_fixes/README.md#new-property-creation-via-fundraiser-with-variable-number-of-tokens), below). 
 
-The Ecosystem for the property must be the same as for the "Currency identifier desired", i.e. both must be in the Mastercoin ecosystem or both must be in the Test Mastercoin ecosystem.
+Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values), but the UI should indicate that more property has been appended by the issuer and link to the other properties.
+
+The Ecosystem for the property must be the same as the ecosystem for the "Currency identifier desired", i.e. both must be in the Mastercoin ecosystem or both must be in the Test Mastercoin ecosystem.
 
 Any time the name of a property is displayed, the ID number of the property must also be displayed with it in the format "NAME (ID)", to avoid name collisions. For instance, "Quantum Miner (8)". This is very important to prevent a malicious user from creating a property to impersonate another property.
 
@@ -449,7 +456,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 1. [Transaction type](#field-transaction-type) = 50
 1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
 1. [Property Type](#field-property-type) = 1 for new indivisible tokens
-1. [Previous Property ID](#field-property-id) = 0 (for a new smart property, or the property ID from the same issuing address that is to be replaced or appended)
+1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
 1. [Property Category](#field-string-null-terminated) = “Companies\0” (10 bytes)
 1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
 1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
@@ -467,10 +474,10 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Transaction type](#field-transaction-type) = 51
 1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
 1. [Property Type](#field-property-type) = 1 for new indivisible tokens
-1. [Previous Property ID](#field-property-id) = 0 (for a new smart property, or the property ID from the same issuing address that is to be replaced or appended)
+1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
 1. [Property Category](#field-string-null-terminated) = “Companies\0” (10 bytes)
 1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
-1. [Property tokens](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
+1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
 1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
 1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
 1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
@@ -483,7 +490,9 @@ A MSC address may have only one fundraiser active at any given time, eliminating
 
 ### Investing in a Fundraiser
 
-Investing in a fundraiser is accomplished with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple investments in the fundraiser. In order to invest in the fundraiser, the currency id must match the "Currency identifier desired" value in the fundraiser and each Simple Send message must be confirmed by the "Deadline" value in the fundraiser. The sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, to eight decimal places.
+Investing in a fundraiser is accomplished with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple investments in the fundraiser. In order to invest in the fundraiser, the currency id must match the "Currency identifier desired" value in the fundraiser and each Simple Send message must be confirmed by the "Deadline" value in the fundraiser.
+
+For divisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, to eight decimal places. For indivisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, rounded down to an integer number of tokens (with no fractional portion). The UI should accurately display the number of tokens that will be received.
 
 A few details are important to have here:
 
@@ -1006,7 +1015,7 @@ The Master Protocol is at its core a layer of functionality on top of Bitcoin, u
 
 In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Master Protocol message.  
 
-Each output must carry a value higher than the dust threshold (0.00005430 as of 6 Feb 2014) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
+Each output must carry a value higher than the dust threshold (0.00005460 as of 6 Feb 2014) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
 
 The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of 650 USD per BTC:
 
