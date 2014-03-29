@@ -477,7 +477,30 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
 1. [Shares for issuer](#field-integer-eight-byte) = 1000 indivisible shares
 
-A MSC address may only have one fundraiser active at any given time, preventing the need for investors to specify which fundraiser they are investing in when they invest.
+A MSC address may only have one fundraiser active at any given time, preventing the need for investors to specify which fundraiser they are investing in when they invest
+
+### Open Ended Fundraiser with Creation/Redemption
+
+Description: Transaction type 53 is used to offer a fund similar in structure to an ETF, where the supply of shares is variable over time, shares are created when a delivery of MSC is made to a designated feeder address, and shares are destroyed when sent to the same feeder address, which initiates a redemption process. The funds in the feeder address are not locked-up, further updates will allow the creation of rules around how and where funds are allocated.
+
+Consider a hedge fund that wants to allow new customers to invest and redeem shares in a liquid manner, they offer their fund in an open-ended fashion, anyone who wants to invest can send MSC to the feeder address and receive a number of shares proportiona to NAV. The NAV will later be automatically audited and published to the block-chain, but in the initial version the fund publishes NAV once per day. Investors can then trade shares between each other for easy liquidity, with the hedge fund buying and selling it's own shares to arbitrage them agaist their redemption value. In this manner the shares can reflect the net value of the fund's investment performance, with the fund growing it's assets-under-management by issueing new shares.
+
+To generate the fund, the issuers first send MSC to the feeder address to create the first shares and post them for sale, creating a reference point for the fund's Net-Asset-Value, a transaction type 2, and then further creation events follow as:
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = 53
+1. [Ecosystem](#field-ecosystem) = 1 for tradeable within Mastercoin ecosystem (as opposed to Test Mastercoin)
+1. [Property Type](#field-property-type) = 130 for new indivisible shares
+1. [Previous Property ID](#field-property-id) = 0 (to replace or append properties from the same issuing address)
+1. [Property Category](#field-string-null-terminated) = “ETFs\0” (10 bytes)
+1. [Property Subcategory](#field-string-null-terminated) = “Actively Managed Funds\0” (15 bytes)
+1. [Property Name](#field-string-null-terminated) = “CryptoCapital\0” (14 bytes)
+1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
+1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
+1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
+1. [Number Properties per unit invested](#field-integer-eight-byte) = totalShares/last.NAV
+1. [Deadline](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT
+
 
 ### Investment Send
 
