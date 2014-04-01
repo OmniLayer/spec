@@ -767,6 +767,20 @@ Note that this transaction is very similar to "simple send", with just one extra
 
 Another use-case for this transaction type would be a giveaway, where someone wants to raise interest in their new coin or property by giving some away to everyone who owns (for instance) Mastercoins.
 
+### Mark Address as Automatic Dividend Dispensary
+
+Although manual administration of dividends could work periodically, many applications of dividend payments will depend on automated logic of other financial instruments. Introducing a timer interval to an address that automatically looks up addresses containing its target smart property and paying proportionally to the number of units at those addresses provides an important building block for financial instruments. In order to reduce spam, we can install a minimum time interval at the protocol level, in the below example a 6-hour interval is used:
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = 15
+2. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin (must push)
+3. [Time Interval](#field-time-period-in-seconds) = 21600
+4. [Currency identifier] (#field-currency-identifier) = N for user-created fundraise share or currency that attracts payout.
+
+This function can be used to distribute profits by having a separate fund address push a certain amount of currency to the dividend dispenser address, based on a mathematical formula. This function could also tie in with escrow funds to facilitate standardized CFD contracts. 
+
+The payments are, by default, sent without fee because the confirmation time is less relevant in a passive income vehicle - however, it could be possible to add a field specifying a minimum threshold of BTC or MSC needed to trigger a payout at an address when a given timer resets to 0, such that average payout is above some reasonable threshold (such as .1 MSC or .001 BTC) and a .0001 BTC fee is attached to each pay-out. 
+
 
 ## Distributed E-Commerce
 
