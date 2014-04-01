@@ -253,6 +253,7 @@ This section defines the fields that are used to construct transaction messages.
     *   50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
     *   51: [Create a Property via Fundraiser with Variable number of Tokens](#new-property-creation-via-fundraiser-with-variable-number-of-tokens)
     *   52: [Promote a Property](#promote-a-property)
+    *   53: [Close a Fundraiser Manually](#close-a-fundraiser-manually)
 
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
@@ -512,6 +513,15 @@ To accomplish this time-weighting, a promotion is worth (# Mastercoins spent) * 
 UIs will probably also choose to offer other sort orderings, such as by transaction volume, removing the need to continually promote a property once it is well-established. Categories and subcategories should be similarly sorted, using the sum of the promotions they contain by default with other sorting available such as the sum of the transaction volumes. UI designers should expect the number of spammy properties, categories, and sub-categories to be quite large, so intelligent sorting will be important.
 
 In the Test Mastercoin ecosystem, test MSC are destroyed instead of real MSC.
+
+### Close a Fundraiser Manually
+
+Since fundraisers are generally open-ended, it leaves the potential that raising far more money than intended could dilute shares sold early in the fundraiser to an unacceptable level.  To prevent this, a client can issue a command to close the fundraiser manually.  Purchase requests for a fundraiser issued after this request will be marked invalid.
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = 53
+1. [Ecosystem](#field-ecosystem) = 1 for a property within the Mastercoin ecosystem (as opposed to Test Mastercoin)
+1. [Property ID](#field-property-id) = 8
 
 # Future Transactions
 
