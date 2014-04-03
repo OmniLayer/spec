@@ -1,7 +1,7 @@
 The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.2 Smart Property Fundraisers Edition
+Version 0.4.5.3 Smart Property Fundraisers Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -46,14 +46,15 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 # Document History
 
 1. Version 0.1 (previously 0.5) released 6 Jan 2012 (No packet definitions, overly-complicated currency stabilization)
-2. Version 0.1.9 (previously 0.7) released 29 Jul 2013 (Preview of 0.2, but without revealing the Exodus Address)
-3. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the fund-raiser)
-4. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
-5. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Pay Dividend" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
-6. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
-6. Version 0.4.5 released 20 Feb 2014 (added smart property fundraisers, other improvements to future features)
-7. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
-8. Version 0.4.5.2 released 31 Mar 2014 (clarified details of smart property creation)
+1. Version 0.1.9 (previously 0.7) released 29 Jul 2013 (Preview of 0.2, but without revealing the Exodus Address)
+1. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the fund-raiser)
+1. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
+1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Pay Dividend" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
+1. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
+1. Version 0.4.5 released 20 Feb 2014 (added smart property fundraisers, other improvements to future features)
+1. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
+1. Version 0.4.5.2 released 31 Mar 2014 (clarified details of smart property creation)
+1. Version 0.4.5.3 released 3 Apr 2014 (corrected details of smart property administration)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -161,7 +162,7 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values: 
     * 1 and 3 to 2,147,483,647 in the real MSC ecosystem (2,147,483,646 unique values)
         * 1 = Mastercoin
-    * 2 and 2,147,483,650 to 4,294,967,295 in the Test MSC ecosystem (Test MSC currencies and properties have the most significant bit set, values start with 0x80000003, yielding 2,147,483,645 unique values)
+    * 2 and 2,147,483,651 to 4,294,967,295 in the Test MSC ecosystem (Test MSC currencies and properties have the most significant bit set, values start with 0x80000003, yielding 2,147,483,646 unique values)
         * 2 = Test Mastercoin 
 
 ### Field: Ecosystem
@@ -428,18 +429,16 @@ To change or cancel these order, use the action byte as described earlier for th
 
 The Master Protocol supports the creation of property tokens to be used for titles, deeds, user-backed currencies, and even investments in a company. Property tokens can be bought, sold, transferred, and used for betting, just as Master Protocol currencies are.
 
-Properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2. Additional properties and currencies therefore start at ID #3. Properties issued and traded using real MSC are kept completely distinct from those issued and traded using Test MSC, so the ID numbering systems for the two [ecosystems](https://github.com/marv-engine/spec/blob/smart_prop_fixes/README.md#field-ecosystem) are independent. Test Mastercoin properties have the most significant bit set to distinguish them from real properties, and they cannot be traded against real Mastercoins nor otherwise interact with non-test properties. Test MSC property IDs  also start numbering from 3, but with the most significant bit set. In sandbox environments using only Test MSC, these IDs can be displayed without the MSB set, for easier reading.
+Properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2. Additional properties and currencies therefore start at ID #3. Properties issued and traded using real MSC are kept completely distinct from those issued and traded using Test MSC, so the ID numbering systems for the two [ecosystems](#field-ecosystem) are independent. Test Mastercoin properties have the most significant bit set to distinguish them from real properties, and they cannot be traded against real Mastercoins nor otherwise interact with non-test properties. Test MSC property IDs  also start numbering from 3, but with the most significant bit set. In sandbox environments using only Test MSC, these IDs can be displayed without the MSB set, for easier reading.
 
 Every property has a property type, which defines whether it is divisible or not and whether the property replaces or appends a previous property. If creating 1,000,000 units of a divisible currency, choose property type 2 and specify 100,000,000,000,000 for the number of properties (1 million divisible to 8 decimal places). For 1,000,000 indivisible tokens for a company, choose property type 1 and specify 1,000,000 for the number of properties. The only difference between divisible and indivisible property types is how they are displayed (i.e. where the decimal point goes).
 
 The attributes of an existing property cannot be changed. However, a new property can be created to replace or append an existing property. Only the address that issued a property can replace or append that property. Attempts by other addresses are invalid. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it.  To indicate that the issuer is abandoning a property entirely:
 * set Previous Property ID to that property's id,
 * set Number Properties to zero, and
-* use one of the "replace" values for [Property Type](https://github.com/marv-engine/spec/blob/smart_prop_fixes/README.md#field-property-type) (see transaction types [50](https://github.com/marv-engine/spec/blob/smart_prop_fixes/README.md#new-property-creation-with-fixed-number-of-tokens) and [51](https://github.com/marv-engine/spec/blob/smart_prop_fixes/README.md#new-property-creation-via-fundraiser-with-variable-number-of-tokens), below). 
+* use one of the "replace" values for [Property Type](#field-property-type) (see transaction types [50](#new-property-creation-with-fixed-number-of-tokens) and [51](#new-property-creation-via-fundraiser-with-variable-number-of-tokens), below). 
 
-Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values), but the UI should indicate that more property has been appended by the issuer and link to the other properties.
-
-A property can be replaced and appended multiple times, even abandoning and un-abandoning it more than once. The UI should provide a way to present a property's history of replacement and appending properties.
+A property can be replaced and appended multiple times, even abandoning and un-abandoning it more than once. Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values). When displaying a property, the UI should provide links to any related properties. Related properties are the property which was replaced or appended by this property (if there is one) as well as any properties from the same issuer which replace or append this property.
  
 The Ecosystem for the property must be the same as the ecosystem for the "Currency identifier desired", i.e. both must be in the Mastercoin ecosystem or both must be in the Test Mastercoin ecosystem.
 
@@ -448,8 +447,6 @@ Any time the name of a property is displayed, the ID number of the property must
 To help distinguish legitimate companies and ventures from scams, spam, and experiments, the Master Protocol allows users to spend Mastercoins for the purpose of promoting a smart property. When UI clients display smart properties, the default ordering should be based on how many Mastercoins have been spent for promoting the property, adjusted for how long ago the Mastercoins were spent. Details on promoting a smart property by spending Mastercoins and how that affects sort ordering can be found below.  
 
 The "Property Data" field is general-purpose text, but can be used for things like storing the hash of a contract to ensure it is in the block-chain at property creation (i.e. "Proof of Existence").
-
-
 
 ### New Property Creation with Fixed number of Tokens
 
@@ -495,20 +492,22 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
 1. [Percentage for issuer](#field-integer-one-byte) = 12
 
-A MSC address may have only one fundraiser active at any given time, eliminating the need for investors to specify which fundraiser from that address they are investing in when they invest.
+Funds raised are locked and cannot be spent or otherwise used until after the fundraiser deadline or the fundraiser is manually closed (to prevent using the same funds to purchase tokens multiple times).
+
+A MSC address may have only one fundraiser active per ecosystem at any given time, eliminating the need for investors to specify which fundraiser from that address they are investing in when they invest.
 
 ### Investing in a Fundraiser
 
-Investing in a fundraiser is accomplished with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple investments in the fundraiser. In order to invest in the fundraiser, the currency id must match the "Currency identifier desired" value in the fundraiser and each Simple Send message must be confirmed by the "Deadline" value in the fundraiser.
+Investing in a fundraiser is accomplished by sending coins to the fundraiser's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple investments in the fundraiser. In order to invest in the fundraiser, the currency id must match the "Currency identifier desired" value in the fundraiser and each Simple Send message must be confirmed by the "Deadline" value in the fundraiser.
 
 For divisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, to eight decimal places. For indivisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, rounded down to an integer number of tokens (with no fractional portion). The UI should accurately display the number of tokens that will be received.
 
 A few details are important to have here:
 
-+ If the transaction is not in the correct currency, no investment will be made and no tokens will be received.
-+ If the transaction is confirmed after the fundraiser deadline, no investment will be made and no tokens will be received. 
-+ Funds raised are locked and cannot be spent or otherwise used until after the fundraiser deadline (to prevent using the same funds to purchase tokens multiple times).
-+ Tokens issued are locked and cannot be spent or otherwise used until after the fundraiser deadline (to prevent undercutting the issuer).
++ If the transaction is not in the correct currency, no investment will be made and no tokens will be received, but the Simple Send itself will complete if it is valid.
++ Investment will be applied to whatever fundraiser is active at the time of confirmation if the currency specified matches the fundraiser's "Currency identifier desired".
++ If the transaction is confirmed after the fundraiser deadline or if for any other reason no fundraiser is active, no investment will be made and no tokens will be received, but the Simple Send itself will complete.
++ Tokens received are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
 
 ### Promote a property
 
@@ -530,12 +529,13 @@ In the Test Mastercoin ecosystem, test MSC are destroyed instead of real MSC.
 
 ### Close a Fundraiser Manually
 
-Since fundraisers are generally open-ended, it leaves the potential that raising far more money than intended could dilute shares sold early in the fundraiser to an unacceptable level.  To prevent this, a client can issue a command to close the fundraiser manually.  Purchase requests for a fundraiser issued after this request will be marked invalid.
+Since fundraisers are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the fundraiser to an unacceptable level.  To prevent this, the address that created the fundraiser can issue a command to close the fundraiser manually.  It is invalid to attempt to close a fundraiser that is not active. Closing an active fundraiser requires 8 bytes. For example, to close the fundraiser that was assigned Property ID 9, the transaction message is:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 53
-1. [Ecosystem](#field-ecosystem) = 1 for a property within the Mastercoin ecosystem (as opposed to Test Mastercoin)
-1. [Property ID](#field-property-id) = 8
+1. [Property ID](#field-property-id) = 9
+
+Note that attempts to invest in a closed fundraiser will result in no investment in that fundraiser and no tokens for that fundraiser will be received. See [Investing in a Fundraiser](#investing-in-a-fundraiser) for details.
 
 # Future Transactions
 
