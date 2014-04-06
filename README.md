@@ -1,7 +1,7 @@
 The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.3 Smart Property Fundraisers Edition
+Version 0.4.5.3 Smart Property Crowdsale Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -51,7 +51,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
 1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Pay Dividend" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
 1. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
-1. Version 0.4.5 released 20 Feb 2014 (added smart property fundraisers, other improvements to future features)
+1. Version 0.4.5 released 20 Feb 2014 (added smart property crowdsale, other improvements to future features)
 1. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
 1. Version 0.4.5.2 released 31 Mar 2014 (clarified details of smart property creation)
 1. Version 0.4.5.3 released 3 Apr 2014 (corrected details of smart property administration)
@@ -258,9 +258,9 @@ This section defines the fields that are used to construct transaction messages.
     *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
     *   50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
-    *   51: [Create a Property via Fundraiser with Variable number of Tokens](#new-property-creation-via-fundraiser-with-variable-number-of-tokens)
+    *   51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
     *   52: [Promote a Property](#promote-a-property)
-    *   53: [Close a Fundraiser Manually](#close-a-fundraiser-manually)
+    *   53: [Close a Crowdsale Manually](#close-a-crowdsale-manually)
 
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
@@ -436,7 +436,7 @@ Every property has a property type, which defines whether it is divisible or not
 The attributes of an existing property cannot be changed. However, a new property can be created to replace or append an existing property. Only the address that issued a property can replace or append that property. Attempts by other addresses are invalid. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it.  To indicate that the issuer is abandoning a property entirely:
 * set Previous Property ID to that property's id,
 * set Number Properties to zero, and
-* use one of the "replace" values for [Property Type](#field-property-type) (see transaction types [50](#new-property-creation-with-fixed-number-of-tokens) and [51](#new-property-creation-via-fundraiser-with-variable-number-of-tokens), below). 
+* use one of the "replace" values for [Property Type](#field-property-type) (see transaction types [50](#new-property-creation-with-fixed-number-of-tokens) and [51](#new-property-creation-via-crowdsale-with-variable-number-of-tokens), below). 
 
 A property can be replaced and appended multiple times, even abandoning and un-abandoning it more than once. Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values). When displaying a property, the UI should provide links to any related properties. Related properties are the property which was replaced or appended by this property (if there is one) as well as any properties from the same issuer which replace or append this property.
  
@@ -470,11 +470,11 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
 1. [Number Properties](#field-integer-eight-byte) = 1,000,000 indivisible tokens
 
-### New Property Creation via Fundraiser with Variable number of Tokens
+### New Property Creation via Crowdsale with Variable number of Tokens
 
-Description: Transaction type 51 is used to initiate a fundraiser which creates a new Smart Property with a variable number of tokens.
+Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens.
 
-Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself is *in addition* to the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
+Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself is *in addition* to the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
@@ -492,21 +492,21 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
 1. [Percentage for issuer](#field-integer-one-byte) = 12
 
-Funds raised are locked and cannot be spent or otherwise used until after the fundraiser deadline or the fundraiser is manually closed (to prevent using the same funds to purchase tokens multiple times).
+Funds raised are locked and cannot be spent or otherwise used until after the crowdsale deadline or the crowdsale is manually closed (to prevent using the same funds to purchase tokens multiple times).
 
-A MSC address may have only one fundraiser active per ecosystem at any given time, eliminating the need for investors to specify which fundraiser from that address they are investing in when they invest.
+A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase.
 
-### Investing in a Fundraiser
+### Participating in a Crowdsale
 
-Investing in a fundraiser is accomplished by sending coins to the fundraiser's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple investments in the fundraiser. In order to invest in the fundraiser, the currency id must match the "Currency identifier desired" value in the fundraiser and each Simple Send message must be confirmed by the "Deadline" value in the fundraiser.
+Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and each Simple Send message must be confirmed by the "Deadline" value in the crowdsale.
 
 For divisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, to eight decimal places. For indivisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, rounded down to an integer number of tokens (with no fractional portion). The UI should accurately display the number of tokens that will be received.
 
 A few details are important to have here:
 
-+ If the transaction is not in the correct currency, no investment will be made and no tokens will be received, but the Simple Send itself will complete if it is valid.
-+ Investment will be applied to whatever fundraiser is active at the time of confirmation if the currency specified matches the fundraiser's "Currency identifier desired".
-+ If the transaction is confirmed after the fundraiser deadline or if for any other reason no fundraiser is active, no investment will be made and no tokens will be received, but the Simple Send itself will complete.
++ If the transaction is not in the correct currency, no purchase will be made and no tokens will be received, but the Simple Send itself will complete if it is valid.
++ Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches the crowdsale's "Currency identifier desired".
++ If the transaction is confirmed after the crowdsale deadline or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be received, but the Simple Send itself will complete.
 + Tokens received are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
 
 ### Promote a property
@@ -527,15 +527,15 @@ UIs will probably also choose to offer other sort orderings, such as by transact
 
 In the Test Mastercoin ecosystem, test MSC are destroyed instead of real MSC.
 
-### Close a Fundraiser Manually
+### Close a crowdsale Manually
 
-Since fundraisers are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the fundraiser to an unacceptable level.  To prevent this, the address that created the fundraiser can issue a command to close the fundraiser manually.  It is invalid to attempt to close a fundraiser that is not active. Closing an active fundraiser requires 8 bytes. For example, to close the fundraiser that was assigned Property ID 9, the transaction message is:
+Since crowdsales are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the crowdsale to an unacceptable level.  To prevent this, the address that created the crowdsale can issue a command to close the crowdsale manually.  It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 53
 1. [Property ID](#field-property-id) = 9
 
-Note that attempts to invest in a closed fundraiser will result in no investment in that fundraiser and no tokens for that fundraiser will be received. See [Investing in a Fundraiser](#investing-in-a-fundraiser) for details.
+Note that attempts to participate in a closed crowsale will result in no investment in that crowdsale and no tokens from that crowdsale will be received. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
 
 # Future Transactions
 
