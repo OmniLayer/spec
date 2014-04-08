@@ -833,7 +833,7 @@ The reference address points to the address which listed the Bible for sale. Fun
 * 4 Stars: Tip < 10%
 * 5 Stars: Tip >= 10%
 
-In order to avoid people gaming the reputation system, some coins must be destroyed with every purchase. The percentage of coins destroyed goes down with each new purchase. The percentage is calculated as 2\*(value of this purchase) / (value of all purchases, including this one). Note that this formula causes 50% of the coins from the first purchase to be destroyed.
+In order to avoid people gaming the reputation system, some coins must be destroyed with every purchase. The percentage of coins destroyed goes down with each new purchase. The percentage is calculated as (value of this purchase) / (2 \* value of all purchases, including this one). Note that this formula causes 50% of the coins from the first purchase to be destroyed.
 
 ## Escrow-Backed User Currencies (experimental proposed feature)
 
