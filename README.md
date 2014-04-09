@@ -1,7 +1,7 @@
 The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.3 Smart Property Crowdsale Edition
+Version 0.4.5.4 Smart Property Crowdsale Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -55,12 +55,13 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
 1. Version 0.4.5.2 released 31 Mar 2014 (clarified details of smart property creation)
 1. Version 0.4.5.3 released 3 Apr 2014 (corrected details of smart property administration)
+1. Version 0.4.5.4 released 10 Apr 2014 (corrected/clarified invalid Simple Sends)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
 # Master Protocol / Mastercoin Terminology
 
-* The term M.A.S.T.E.R. is an acronym for "Metadata Archival of Standard Transaction Embedding Records" 
+* The term M.A.S.T.E.R. is an acronym for "Metadata Archive of Standard Transaction Embedding Records" 
 * The term "Master Protocol" applies to the specification and the clients that implement its features.
 * The term "MSC Protocol" is used as the abbreviation for "Master Protocol". 
 * The term "Mastercoins" applies to the digital tokens that access the features of the "Master Protocol" clients.
@@ -294,15 +295,22 @@ Master Protocol transactions are not reversible except as explicitly indicated b
 
 Any Mastercoin transaction from any address that attempts to transfer, reserve, commit coins, or put coins in escrow while that address's available balance for that currency identifier is 0 will be invalidated. 
 
-##Transferring coins
+## Transferring coins
 
-Transfers are unconditional payments from one Mastercoin address to another address, set of addresses, or to the owners of a specific property (i.e. dividends)
+Transfers are unconditional payments from one Mastercoin address to another address, set of addresses, or to the owners of a specific property (i.e. dividends).
 
-###Transfer Coins (Simple Send)
+### Transfer Coins (Simple Send)
 
 Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
 
-If the amount to transfer exceeds the number owned by the sending address, this indicates the user is transferring all of them.
+The transaction is invalid if any of the following conditions is true:
+* the amount to transfer is zero
+* the sending address has zero coins in its available balance for the specified currency identifier
+* the amount to transfer exceeds the number owned and available by the sending address
+* the specified currency identifier is non-existent
+* the specified currency identifier is 0 (bitcoin)
+
+A simple send to a non-existent address will destroy the coins in question, just like it would with bitcoin.
 
 [Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
 
@@ -312,10 +320,6 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 1. [Transaction type](#field-transaction-type) = 0
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
-
-
-A simple send to a non-existent address will destroy the coins in question, just like it would with bitcoin. A simple send (or any other transaction) referencing a non-existent currency is invalid.
-
 
 ## Distributed Exchange
 
