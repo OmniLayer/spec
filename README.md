@@ -485,7 +485,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens.
 
-Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself is *in addition* to the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
+Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition* to the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
@@ -509,16 +509,20 @@ A MSC address may have only one crowdsale active per ecosystem at any given time
 
 ### Participating in a Crowdsale
 
-Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and each Simple Send message must be confirmed by the "Deadline" value in the crowdsale.
+Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and each Simple Send message must be confirmed by the "Deadline" value in the crowdsale or before the crowdsale is [manually closed](#close-a-crowdsale-manually).
 
-For divisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, to eight decimal places. For indivisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, rounded down to an integer number of tokens (with no fractional portion). The UI should accurately display the number of tokens that will be received.
+For divisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus the number of tokens calculated based on the "Early bird bonus %/week", to eight decimal places.
+
+For indivisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus the number of tokens calculated based on the "Early bird bonus %/week", rounded down to an integer number of tokens (with no fractional portion). 
+
+The UI should accurately display the number of tokens that will be credited to the sending address.
 
 A few details are important to have here:
 
-+ If the transaction is not in the correct currency, no purchase will be made and no tokens will be received, but the Simple Send itself will complete if it is valid.
++ If the transaction is not in the correct currency, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete if it is valid.
 + Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches the crowdsale's "Currency identifier desired".
-+ If the transaction is confirmed after the crowdsale deadline or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be received, but the Simple Send itself will complete.
-+ Tokens received are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
++ If the transaction is confirmed after the crowdsale deadline or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete.
++ Tokens credited are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
 
 ### Promote a property
 
@@ -546,7 +550,7 @@ Since crowdsales are generally open-ended, it leaves the potential that raising 
 1. [Transaction type](#field-transaction-type) = 53
 1. [Property ID](#field-property-id) = 9
 
-Note that attempts to participate in a closed crowsale will result in no investment in that crowdsale and no tokens from that crowdsale will be received. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
+Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
 
 # Future Transactions
 
