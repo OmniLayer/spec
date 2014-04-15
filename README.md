@@ -546,9 +546,11 @@ UIs will probably also choose to offer other sort orderings, such as by transact
 
 In the Test Mastercoin ecosystem, test MSC are destroyed instead of real MSC.
 
-### Close a crowdsale Manually
+### Close a Crowdsale Manually
 
-Since crowdsales are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the crowdsale to an unacceptable level.  To prevent this, the address that created the crowdsale can issue a command to close the crowdsale manually.  It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
+Since crowdsales are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the crowdsale to an unacceptable level.  To prevent this, the address that created the crowdsale can issue a command to close the crowdsale manually.  This action does not cause the early bird bonus percentage to be recalculated for existing purchases.
+
+It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 53
