@@ -56,7 +56,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.2 released 31 Mar 2014 (clarified details of smart property creation)
 1. Version 0.4.5.3 released 3 Apr 2014 (corrected details of smart property administration)
 1. Version 0.4.5.4 released 10 Apr 2014 (corrected/clarified invalid Simple Sends)
-1. Version 0.4.5.5 released 14 Apr 2014 (clarified Number of coins field description)
+1. Version 0.4.5.5 released 15 Apr 2014 (clarified Number of coins field description)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -485,7 +485,15 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens.
 
-Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition* to the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
+Funds raised are locked and cannot be spent or otherwise used until after the crowdsale deadline or the crowdsale is manually closed (to prevent using the same funds to purchase tokens multiple times).
+
+A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below.
+
+The early bird bonus percentage for crowdsale purchasers of new smart properties is calculated the same way as was used in the original distribution of Mastercoins by the Exodus Address (see [Initial Token Distribution via the “Exodus Address”](#initial-token-distribution-via-the-exodus-address)):
+
+percentage = (("Deadline" value in seconds - transaction timestamp in seconds) / 604800) * "Early bird bonus %/week" value
+
+Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
@@ -503,17 +511,13 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
 1. [Percentage for issuer](#field-integer-one-byte) = 12
 
-Funds raised are locked and cannot be spent or otherwise used until after the crowdsale deadline or the crowdsale is manually closed (to prevent using the same funds to purchase tokens multiple times).
-
-A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase.
-
 ### Participating in a Crowdsale
 
 Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and each Simple Send message must be confirmed by the "Deadline" value in the crowdsale or before the crowdsale is [manually closed](#close-a-crowdsale-manually).
 
-For divisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus the number of tokens calculated based on the "Early bird bonus %/week", to eight decimal places.
+For divisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus that number of tokens multiplied by the percentage based on the "Early bird bonus %/week" value, to eight decimal places.
 
-For indivisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus the number of tokens calculated based on the "Early bird bonus %/week", rounded down to an integer number of tokens (with no fractional portion). 
+For indivisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus that number of tokens multiplied by the percentage based on the "Early bird bonus %/week" value, rounded down to an integer number of tokens (with no fractional portion). 
 
 The UI should accurately display the number of tokens that will be credited to the sending address.
 
