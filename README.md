@@ -1,7 +1,7 @@
 The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.4 Smart Property Crowdsale Edition
+Version 0.4.5.5 Smart Property Crowdsale Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -56,6 +56,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.2 released 31 Mar 2014 (clarified details of smart property creation)
 1. Version 0.4.5.3 released 3 Apr 2014 (corrected details of smart property administration)
 1. Version 0.4.5.4 released 10 Apr 2014 (corrected/clarified invalid Simple Sends)
+1. Version 0.4.5.5 released 15 Apr 2014 (clarified Number of coins field description)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -198,13 +199,19 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values: 0 to 4,294,967,295
 
 ### Field: Number of coins
-+ Description: Specifies the number of coins affected by the transaction this field appears in. Note: the number of coins is to be multiplied by 100,000,000 in this field (e.g. 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins to be specified with the same precision as bitcoins (eight decimal places).
++ Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
+    * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
+    * for indivisible coins or tokens, the value in this field is the integer number of Master Protocol coins or tokens (e.g. 1 represents 1 indivisible token)
 + Size: 64-bit unsigned integer, 8 bytes
-+ Valid values: 1 to 9,223,372,036,854,775,807
++ Inter-dependencies: [Property type](#field-property-type)
++ Valid values: 1 to 9,223,372,036,854,775,807 which represents
+    * 0.00000001 to 92,233,720,368.54775807 divisible coins or tokens
+    * 1 to 9,223,372,036,854,775,807 indivisible coins or tokens
 
 ### Field: Property type
-+ Description: indivisible or not
++ Description: Specifies if the Master Protocol coin or token to be created will be divisible or indivisible, and if that coin or token will replace or append an existing [Smart Property](#smart-property)
 + Size: 16-bit unsigned integer, 2 bytes
++ Inter-dependencies: [Number of coins](#field-number-of-coins)
 + Valid values:
     * 1: New Indivisible tokens
     * 2: New Divisible currency
@@ -435,7 +442,7 @@ The Master Protocol supports the creation of property tokens to be used for titl
 
 Properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2. Additional properties and currencies therefore start at ID #3. Properties issued and traded using real MSC are kept completely distinct from those issued and traded using Test MSC, so the ID numbering systems for the two [ecosystems](#field-ecosystem) are independent. Test Mastercoin properties have the most significant bit set to distinguish them from real properties, and they cannot be traded against real Mastercoins nor otherwise interact with non-test properties. Test MSC property IDs  also start numbering from 3, but with the most significant bit set. In sandbox environments using only Test MSC, these IDs can be displayed without the MSB set, for easier reading.
 
-Every property has a property type, which defines whether it is divisible or not and whether the property replaces or appends a previous property. If creating 1,000,000 units of a divisible currency, choose property type 2 and specify 100,000,000,000,000 for the number of properties (1 million divisible to 8 decimal places). For 1,000,000 indivisible tokens for a company, choose property type 1 and specify 1,000,000 for the number of properties. The only difference between divisible and indivisible property types is how they are displayed (i.e. where the decimal point goes).
+Every property has a [Property type](#field-property-type), which defines whether it is divisible or not and whether the property replaces or appends a previous property. To create 1,000,000 units of a divisible currency, choose property type 2 and specify 100,000,000,000,000 for the number of properties (1 million divisible to 8 decimal places). For 1,000,000 indivisible tokens for a company, choose property type 1 and specify 1,000,000 for the number of properties. The difference between divisible and indivisible property types is how they are displayed (i.e. where the decimal point goes) and the range of valid values that can be specified in a transaction message field (see [Number of coins](#field-number-of-coins)). 
 
 The attributes of an existing property cannot be changed. However, a new property can be created to replace or append an existing property. Only the address that issued a property can replace or append that property. Attempts by other addresses are invalid. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it.  To indicate that the issuer is abandoning a property entirely:
 * set Previous Property ID to that property's id,
@@ -472,13 +479,21 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
 1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
 1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
-1. [Number Properties](#field-integer-eight-byte) = 1,000,000 indivisible tokens
+1. [Number Properties](#field-number-of-coins) = 1,000,000 indivisible tokens
 
 ### New Property Creation via Crowdsale with Variable number of Tokens
 
 Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens.
 
-Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself is *in addition* to the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
+Funds raised are locked and cannot be spent or otherwise used until after the crowdsale deadline or the crowdsale is manually closed (to prevent using the same funds to purchase tokens multiple times).
+
+A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below.
+
+The early bird bonus percentage for crowdsale purchasers of new smart properties is calculated the same way as was used in the original distribution of Mastercoins by the Exodus Address (see [Initial Token Distribution via the “Exodus Address”](#initial-token-distribution-via-the-exodus-address)):
+
+percentage = (("Deadline" value in seconds - transaction timestamp in seconds) / 604800) * "Early bird bonus %/week" value
+
+Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
@@ -491,27 +506,27 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
 1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
 1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
-1. [Number Properties per unit invested](#field-integer-eight-byte) = 100 indivisible tokens
+1. [Number Properties per unit invested](#field-number-of-coins) = 100 indivisible tokens
 1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
 1. [Early bird bonus %/week](#field-integer-one-byte) = 10
 1. [Percentage for issuer](#field-integer-one-byte) = 12
 
-Funds raised are locked and cannot be spent or otherwise used until after the crowdsale deadline or the crowdsale is manually closed (to prevent using the same funds to purchase tokens multiple times).
-
-A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase.
-
 ### Participating in a Crowdsale
 
-Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and each Simple Send message must be confirmed by the "Deadline" value in the crowdsale.
+Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and each Simple Send message must be confirmed by the "Deadline" value in the crowdsale or before the crowdsale is [manually closed](#close-a-crowdsale-manually).
 
-For divisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, to eight decimal places. For indivisible properties, the sending address will receive the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, rounded down to an integer number of tokens (with no fractional portion). The UI should accurately display the number of tokens that will be received.
+For divisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus that number of tokens multiplied by the percentage based on the "Early bird bonus %/week" value, to eight decimal places.
+
+For indivisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus that number of tokens multiplied by the percentage based on the "Early bird bonus %/week" value, rounded down to an integer number of tokens (with no fractional portion). 
+
+The UI should accurately display the number of tokens that will be credited to the sending address.
 
 A few details are important to have here:
 
-+ If the transaction is not in the correct currency, no purchase will be made and no tokens will be received, but the Simple Send itself will complete if it is valid.
++ If the transaction is not in the correct currency, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete if it is valid.
 + Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches the crowdsale's "Currency identifier desired".
-+ If the transaction is confirmed after the crowdsale deadline or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be received, but the Simple Send itself will complete.
-+ Tokens received are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
++ If the transaction is confirmed after the crowdsale deadline or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete.
++ Tokens credited are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
 
 ### Promote a property
 
@@ -531,15 +546,17 @@ UIs will probably also choose to offer other sort orderings, such as by transact
 
 In the Test Mastercoin ecosystem, test MSC are destroyed instead of real MSC.
 
-### Close a crowdsale Manually
+### Close a Crowdsale Manually
 
-Since crowdsales are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the crowdsale to an unacceptable level.  To prevent this, the address that created the crowdsale can issue a command to close the crowdsale manually.  It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
+Since crowdsales are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the crowdsale to an unacceptable level.  To prevent this, the address that created the crowdsale can issue a command to close the crowdsale manually.  This action does not cause the early bird bonus percentage to be recalculated for existing purchases.
+
+It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 53
 1. [Property ID](#field-property-id) = 9
 
-Note that attempts to participate in a closed crowsale will result in no investment in that crowdsale and no tokens from that crowdsale will be received. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
+Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
 
 # Future Transactions
 
