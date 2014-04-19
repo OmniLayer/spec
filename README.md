@@ -57,7 +57,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.3 released 3 Apr 2014 (corrected details of smart property administration)
 1. Version 0.4.5.4 released 10 Apr 2014 (corrected/clarified invalid Simple Sends)
 1. Version 0.4.5.5 released 15 Apr 2014 (clarified Number of coins field description)
-1. Version 0.4.5.6 released 18 Apr 2014 (SP crowdsale funds not locked)
+1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -232,7 +232,7 @@ This section defines the fields that are used to construct transaction messages.
 ### Field: String 255 byte null-terminated
 + Description: a variable length string terminated with a \0 byte
 + Size: variable, up to 255 bytes, plus the null terminator
-+ Valid values: UTF-8
++ Valid values: Unicode encoded with UTF-8
 
 ### Field: Time period in blocks
 + Description: number of blocks during which an action can be performed
@@ -470,7 +470,7 @@ Once this property has been created, the tokens are owned by the address which b
 
 In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
 * "Previous Property ID" must be 0 when "Property Type" indicates a new property
-* "Previous Property ID" must be an existing Smart Property currency ID (> 2) when "Property Type" indicates a property is being replaced or appended
+* When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
 * "Property Name" must not be blank or null
 
 Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
@@ -489,7 +489,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 ### New Property Creation via Crowdsale with Variable number of Tokens
 
-Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens.
+Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale. The crowdsale is active until the purchasing deadline passes or the crowdsale is manually closed. 
 
 A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below.
 
@@ -503,7 +503,7 @@ percentage = (("Deadline" value in seconds - transaction timestamp in seconds) /
 
 In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
 * "Previous Property ID" must be 0 when "Property Type" indicates a new property
-* "Previous Property ID" must be an existing Smart Property currency ID (> 2) when "Property Type" indicates a property is being replaced or appended
+* When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
 * "Property Name" must not be blank or null
 * "Currency Identifier Desired" must be 1 or 2 or an existing Smart Property currency ID
 * "Deadline" must be greater than block time
