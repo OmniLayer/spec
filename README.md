@@ -1,7 +1,7 @@
 The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.5 Smart Property Crowdsale Edition
+Version 0.4.5.6 Smart Property Crowdsale Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -57,6 +57,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.3 released 3 Apr 2014 (corrected details of smart property administration)
 1. Version 0.4.5.4 released 10 Apr 2014 (corrected/clarified invalid Simple Sends)
 1. Version 0.4.5.5 released 15 Apr 2014 (clarified Number of coins field description)
+1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -231,7 +232,7 @@ This section defines the fields that are used to construct transaction messages.
 ### Field: String 255 byte null-terminated
 + Description: a variable length string terminated with a \0 byte
 + Size: variable, up to 255 bytes, plus the null terminator
-+ Valid values: UTF-8
++ Valid values: Unicode encoded with UTF-8
 
 ### Field: Time period in blocks
 + Description: number of blocks during which an action can be performed
@@ -241,7 +242,7 @@ This section defines the fields that are used to construct transaction messages.
 ### Field: UTC Datetime
 + Description: Datetime, assuming UTC timezone (the same timezone used by the bitcoin blockchain)
 + Size: 64-bits standard unix timestamp, 8 bytes
-+ Valid values: http://en.wikipedia.org/wiki/Unix_time 
++ Valid values: http://en.wikipedia.org/wiki/Unix_time, with precision to the second for computation and display, same as used by the Bitcoin protocol
 
 ### Field: Time period in seconds (future)
 + Description: number of seconds during which an action can be performed
@@ -393,7 +394,7 @@ The reference address must point to the seller's address, to identify whose offe
 
 If you send an offer for more coins than are available by the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address that does not have a matching active Sell Offer, e.g. the Sell offer has been canceled or is all sold out, the Purchase Offer must be invalidated. 
 
-Note: Your total expenditures on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
+Note: Your total expenditure on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
 
 You must send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards once the time limit expires. The remaining coins will be added back to those available in the Sell Offer if it’s still active. If you send more than the correct amount of bitcoins, your bitcoins will be lost (unless the seller chooses to return them to you). If you do not send complete payment before the time limit expires, the unpurchased coins will be added back to those available in the Sell Offer if it’s still active.
 
@@ -467,6 +468,11 @@ If creating a title to a house or deed to land, the number of properties should 
 
 Once this property has been created, the tokens are owned by the address which broadcast the message creating the property. 
 
+In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
+* "Previous Property ID" must be 0 when "Property Type" indicates a new property
+* When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
+* "Property Name" must not be blank or null
+
 Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
@@ -483,15 +489,24 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 ### New Property Creation via Crowdsale with Variable number of Tokens
 
-Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens.
-
-Funds raised are locked and cannot be spent or otherwise used until after the crowdsale deadline or the crowdsale is manually closed (to prevent using the same funds to purchase tokens multiple times).
+Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale. The crowdsale is active until the purchasing deadline passes or the crowdsale is manually closed. 
 
 A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below.
+
+Tokens credited to each crowdsale participant are immediately added to the available balance belonging to the participant's address and can be spent or otherwise used by that address. Funds raised are added to the available balance belonging to the crowdsale owner's address as soon as they are received and can be spent or otherwise used by that address.
+
+**Note: It is strongly recommended that the UI provide a clear indication when the funds received by a crowdsale are being transferred to another address or reserved while the crowdsale is still active.**
 
 The early bird bonus percentage for crowdsale purchasers of new smart properties is calculated the same way as was used in the original distribution of Mastercoins by the Exodus Address (see [Initial Token Distribution via the “Exodus Address”](#initial-token-distribution-via-the-exodus-address)):
 
 percentage = (("Deadline" value in seconds - transaction timestamp in seconds) / 604800) * "Early bird bonus %/week" value
+
+In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
+* "Previous Property ID" must be 0 when "Property Type" indicates a new property
+* When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
+* "Property Name" must not be blank or null
+* "Currency Identifier Desired" must be 1 or 2 or an existing Smart Property currency ID
+* "Deadline" must be greater than block time
 
 Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
@@ -505,10 +520,10 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
 1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
 1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
-1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
-1. [Number Properties per unit invested](#field-number-of-coins) = 100 indivisible tokens
+1. [Currency Identifier Desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
+1. [Number Properties per Unit Invested](#field-number-of-coins) = 100 indivisible tokens
 1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
-1. [Early bird bonus %/week](#field-integer-one-byte) = 10
+1. [Early Bird Bonus %/Week](#field-integer-one-byte) = 10
 1. [Percentage for issuer](#field-integer-one-byte) = 12
 
 ### Participating in a Crowdsale
@@ -527,6 +542,7 @@ A few details are important to have here:
 + Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches the crowdsale's "Currency identifier desired".
 + If the transaction is confirmed after the crowdsale deadline or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete.
 + Tokens credited are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
++ The funds received are immediately added to the available balance belonging to the crowdsale owner's address and can be spent or otherwise used by that address.
 
 ### Promote a property
 
