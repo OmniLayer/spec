@@ -490,7 +490,7 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 ### New Property Creation via Crowdsale with Variable number of Tokens
 
-Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale. The crowdsale is active until the purchasing deadline passes or the crowdsale is manually closed. 
+Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale. The crowdsale is active until the purchasing deadline or the crowdsale is manually closed, which cause the crowdsale to be closed permanently. 
 
 A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below.
 
@@ -529,7 +529,9 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 
 ### Participating in a Crowdsale
 
-Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and each Simple Send message must be confirmed by the "Deadline" value in the crowdsale or before the crowdsale is [manually closed](#close-a-crowdsale-manually).
+Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and the Simple Send message must be confirmed before there is a block with a blocktime greater than or equal to the crowdsale's "Deadline" value or before the crowdsale is [manually closed](#close-a-crowdsale-manually). The blocktime of the Simple Send must be strictly less than the "Deadline" value in order to participate in the crowdsale.
+
+Note: It is possible for a bitcoin block to have a blocktime earlier than a previous block. Once a crowdsale is closed for any reason, a subsequent Simple Send must not be treated as participating in that crowdsale regardless of the blocktime associated with the Simple Send.
 
 For divisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus that number of tokens multiplied by the percentage based on the "Early bird bonus %/week" value, to eight decimal places.
 
@@ -541,8 +543,8 @@ A few details are important to have here:
 
 + If the transaction is not in the correct currency, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete if it is valid.
 + Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches the crowdsale's "Currency identifier desired".
-+ If the transaction is confirmed after the crowdsale deadline or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete.
-+ Tokens credited are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
++ If the transaction is confirmed after the crowdsale is closed or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete.
++ Tokens credited to the sending address and the issuer address are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
 + The funds received are immediately added to the available balance belonging to the crowdsale owner's address and can be spent or otherwise used by that address.
 
 ### Promote a property
