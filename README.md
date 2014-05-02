@@ -1021,7 +1021,7 @@ Further:
 * Any input not meeting the requirement for type (pay-to-pubkeyhash) will be ignored
 * Only pay-to-pubkey-hash outputs will be considered for the reference address
 * Only multisig outputs will be considered for the data packets
-* If there are multiple outputs to the sending address, only the first will be ignored for change purposes
+*  If there are multiple outputs remaining, the first output to the sending address (if such an output exists) will be ignored as change
 * The reference address will be determined by the remaining output with the highest vout index  
 
 
