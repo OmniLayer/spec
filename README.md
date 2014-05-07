@@ -1,4 +1,4 @@
-The Master Protocol / Mastercoin Complete Specification
+﻿The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
 Version 0.4.5.1 Smart Property Fundraisers Edition
@@ -480,28 +480,64 @@ Say that instead of creating shares and selling them, you'd rather do a kickstar
 
 A MSC address may only have one fundraiser active at any given time, preventing the need for investors to specify which fundraiser they are investing in when they invest
 
-### Open Ended Fundraiser with Creation/Redemption
 
-Description: Transaction type 53 is used to offer a fund similar in structure to an ETF, where the supply of shares is variable over time, shares are created when a delivery of MSC is made to a designated feeder address, and shares are destroyed when sent to the same feeder address, which initiates a redemption process. The funds in the feeder address are not locked-up, further updates will allow the creation of rules around how and where funds are allocated.
 
-Consider a hedge fund that wants to allow new customers to invest and redeem shares in a liquid manner, they offer their fund in an open-ended fashion, anyone who wants to invest can send MSC to the feeder address and receive a number of shares proportiona to NAV. The NAV will later be automatically audited and published to the block-chain, but in the initial version the fund publishes NAV once per day. Investors can then trade shares between each other for easy liquidity, with the hedge fund buying and selling it's own shares to arbitrage them agaist their redemption value. In this manner the shares can reflect the net value of the fund's investment performance, with the fund growing it's assets-under-management by issueing new shares.
 
-To generate the fund, the issuers first send MSC to the feeder address to create the first shares and post them for sale, creating a reference point for the fund's Net-Asset-Value, a transaction type 2, and then further creation events follow as:
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 53
-1. [Ecosystem](#field-ecosystem) = 1 for tradeable within Mastercoin ecosystem (as opposed to Test Mastercoin)
-1. [Property Type](#field-property-type) = 130 for new indivisible shares
-1. [Previous Property ID](#field-property-id) = 0 (to replace or append properties from the same issuing address)
-1. [Property Category](#field-string-null-terminated) = “ETFs\0” (10 bytes)
-1. [Property Subcategory](#field-string-null-terminated) = “Actively Managed Funds\0” (15 bytes)
-1. [Property Name](#field-string-null-terminated) = “CryptoCapital\0” (14 bytes)
-1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
-1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
-1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
-1. [Number Properties per unit invested](#field-integer-eight-byte) = totalShares/last.NAV
-1. [Deadline](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT
 
+
+
+
+
+
++
+
+
+
+
++### Open Ended Fundraiser with Creation/Redemption
+
++Description: Transaction type 54 is used to offer a fund similar in structure to an ETF, where the supply of shares is variable over time, shares are created when a delivery of MSC is made to a designated feeder address, and shares are destroyed when sent to the same feeder address, which initiates a redemption process. The funds in the feeder address are not locked-up, further updates will allow the creation of rules around how and where funds are allocated.
+
++Consider a hedge fund that wants to allow new customers to invest and redeem shares in a liquid manner, they offer their fund in an open-ended fashion, anyone who wants to invest can send MSC to the feeder address and receive a number of shares proportiona to NAV. The NAV will later be automatically audited and published to the block-chain, but in the initial version the fund publishes NAV once per day. Investors can then trade shares between each other for easy liquidity, with the hedge fund buying and selling it's own shares to arbitrage them agaist their redemption value. In this manner the shares can reflect the net value of the fund's investment performance, with the fund growing it's assets-under-management by issueing new shares.
+
++
+
++To generate the fund, the issuers first send MSC to the feeder address to create the first shares and post them for sale, creating a reference point for the fund's Net-Asset-Value, a transaction type 2, and then further creation events follow as:
+
++
+
++1. [Transaction version](#field-transaction-version) = 0
+
++1. [Transaction type](#field-transaction-type) = 54
+
++1. [Ecosystem](#field-ecosystem) = 1 for tradeable within Mastercoin ecosystem (as opposed to Test Mastercoin)
+
++1. [Property Type](#field-property-type) = 130 for new indivisible shares
+
++1. [Previous Property ID](#field-property-id) = 0 (to replace or append properties from the same issuing address)
+
++1. [Property Category](#field-string-null-terminated) = “ETFs\0” (10 bytes)
+
++1. [Property Subcategory](#field-string-null-terminated) = “Actively Managed Funds\0” (15 bytes)
+
++1. [Property Name](#field-string-null-terminated) = “CryptoCapital\0” (14 bytes)
+
++1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
+
++1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
+
++1. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
+
++1. [Number Properties per unit invested](#field-integer-eight-byte) = totalShares/last.NAV
+
+
++1. [Deadline](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT
+
+
++
+
+![Mastercoin Protocol Layers](images/ETF Multisig Circuit.jpg) 
 
 ### Investment Send
 
@@ -748,26 +784,6 @@ Note that this bet will be matched against only half of the previous example, be
 
 Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner gets 99.5% of the money at stake. The other 0.5% goes to the creator of the data stream. 
 
-### Standardized CFD Contracts
-
-In order to get liquid order books for ecrow-backed leveraged trading on different data streams, BTC/USD being an essential one, but also to allow tracking of /GC, /ES, USD/JPY and other financial markets we need a smart property token that is transferable and linked to an escrow account that periodically settles payment in BTC or MSC based on the consensus data feed at that settlement time. The key features of the standardization are to allow near 1:1 tracking of the underlying by providing a homogenous order-book that a market maker can systematically populate with bids based on the ability to hedge in more liquid markets (such as CME futures contracts markets) and even more importantly, to allow anyone exposed to risk in this market to get an off-setting position and close a losing position at any time.
-
-When a contract is traded and there is no secondary market offer available to pass on an existing contract, a new contract is issued against the escrow deposits of the market-taker and the market-maker, each having their own address corresponding to the margin balance on the long and short side of the contract. After 6 hours pass, the escrow addresses, which are also marked as dividend dispensary addresses (see below) will pay a differential to the other address by referencing a meta-data time-stamp made at the time the contract is issued (the trade price) against the consensus data-feed, and then both addresses will pay out the resulting balance of each to the long and short contract holders. 
-
-The notional size of the contracts are standardized, the pay-out time is standardized, and the margin requirement of the escrow addresses is standardized. Given that short-selling BTC/USD on margin with no counterparty risk is an essential addition to the ecosystem, and given that BTC/USD sometimes can move 10-20% in a day (or even in a 6-hour period), a margin ratio of 4:1 is recommended. Future iterations of these contracts could offer greater leverage/lower margin requirements as BTC/USD volatility goes down, the issuance of these altered margin contracts would depend on the control mechanism in place for these standardized contracts. Contracts relating to less volatile markets may venture lower margin requirements from the outside. Margin would be recapitalized as contracts trade and contract Open Interest turns over its supply, margin would also be recapitalized every settlement period, and thus there remains a limited risk that a market participant would have their winning position closed out at a 100% return-on-margin involuntarily, in a highly volatile market (>25% move in greater than 6 hours) where market-makers are opting to offer wider bids and as a result churn less volume. This is the edge case where the individual contracts with their individual price references and escrow address backings become less than 100% fungible, and it can be manage-able. The biggest disaster that would result here is that market-makers who are net-short option gamma, assuming a future options market in BTC/USD, and depending on being leveraged-long BTC in this p2p market, would end up being under-hedged and facing significant capital losses, but that would be very much their problem relative to their margining of those short option contracts, and not a systemic risk.
-
-For example, User A buys a Gold contract that has a 6 hour pay-out cycle and a 10:1 margin requirement. The gold contract has a par value of 10 Troy Oz. of gold per the comex spot price, roughly 600 MSC in notional value (if current BTC/USD ~$450, XAU/USD ~$1350, BTC/MSC ~ .05). User B is long a contract that has already been issued, they have posted a limit-sell and this is the order User A has hit. The clearing of the order involves splitting the payment into a partial re-capitalization of the escrow address tied to that given contract, and a partial payment to the address containing the contract, essentially providing User B their profit or returning them a partial loss. Since in this case the contract is profitable, User A pays the entire margin plus the profit to User B directly, if the contract were facing a 1% nominal loss and thus a 10% loss of margin, the payment would be split as 6 MSC going to re-capitalized the escrow, and the other 54 returning to User B. Since User B was winning, say gold is up 1%, they now have 66 MSC returned. 
-
-Now User B is feeling cocky, and decides to get short gold. There are no other secondary holders in the order book with limit orders to buy a contract, except a market maker who will algorithmicaly turn around and short /GC on the Globex (gold futures, like many futures contracts, trade 24 hours a day, except on weekends). In the process, a new contract is issued, User B's wallet now shows a -1 balance of contracts, and his MSC goes to a freshly generated escrow address, as does the market maker's. 
-
-Users can opt to signal automatical roll-over in their Mastercoin wallet of choice, so that an escrow key is sent to the addresses in question sometime prior to the settlement time, this key makes the escrow address pay any differential in excess to the nearest round-number of contracts back to the owner's wallet, but keeps the margin requirement and pays a dividend in the form of a new contract for the next 6-hour interval. Users can also do this manually, but the automatic roll-over checkbox is something useful for a wallet to provide when traders are interested in holding longer-term positions. 
-
-Each contract generates its own escrow, so that the contracts remain fungible. 
-
-Additionally, the indivisibility of contracts is essential to maintaining fungibility. Escrow-backed ETF-like funds or coins can be divisible, because arbitraging them around a harder NAV that tracks the underlying through ownership adjustments can be more easily done with this leveraged CDF market, and the result is a more liquid instrument. It will be challenging enough for Market Makers to hedge out exposure when the Mastercoin contract's denomination is significantly smaller than the more liquid futures that are available, but again, very much their problem. 
-
-Also worth noting that while contracts may settle based on a data-feed published to the blockchain, or a consensus averaging of several such feeds, the real-time liquidity will be mostly based on Market Makers offering bids that on-average provide a profitable arbitrage against futures markets. 
-
 ##Transferring coins (Future)
 
 We are not sure the "pay dividends" message will be feasible, given that it potentially affects a huge number of balances. Consequently, it is currently in the "future transactions" bucket. It might become feasible if some kind of anti-spam fee is added to make sure this message is used sparingly.
@@ -785,20 +801,6 @@ Say your company has made a huge profit and wishes to pay 1000 MSC evenly distri
 Note that this transaction is very similar to "simple send", with just one extra field. The protocol will split up the 1000 MSC among the shareholders, according to how many shares they have. 
 
 Another use-case for this transaction type would be a giveaway, where someone wants to raise interest in their new coin or property by giving some away to everyone who owns (for instance) Mastercoins.
-
-### Mark Address as Automatic Dividend Dispensary
-
-Although manual administration of dividends could work periodically, many applications of dividend payments will depend on automated logic of other financial instruments. Introducing a timer interval to an address that automatically looks up addresses containing its target smart property and paying proportionally to the number of units at those addresses provides an important building block for financial instruments. In order to reduce spam, we can install a minimum time interval at the protocol level, in the below example a 6-hour interval is used:
-
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 15
-2. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin (must push)
-3. [Time Interval](#field-time-period-in-seconds) = 21600
-4. [Currency identifier] (#field-currency-identifier) = N for user-created fundraise share or currency that attracts payout.
-
-This function can be used to distribute profits by having a separate fund address push a certain amount of currency to the dividend dispenser address, based on a mathematical formula. This function could also tie in with escrow funds to facilitate standardized CFD contracts. 
-
-The payments are, by default, sent without fee because the confirmation time is less relevant in a passive income vehicle - however, it could be possible to add a field specifying a minimum threshold of BTC or MSC needed to trigger a payout at an address when a given timer resets to 0, such that average payout is above some reasonable threshold (such as .1 MSC or .001 BTC) and a .0001 BTC fee is attached to each pay-out. 
 
 
 ## Distributed E-Commerce
