@@ -960,7 +960,7 @@ The transaction data is encoded into said fake Bitcoin address which is then use
 Further:
 
 * Exodus outputs are ignored in decoding
-* Any input not meeting the requirement for type (pay-to-pubkeyhash) will be ignored
+* Any input not meeting the requirement for type (pay-to-pubkeyhash) will trigger the invalidation of the transaction
 * Only pay-to-pubkey-hash outputs will be considered for the reference address
 
 NOTE: The sequence number for a given address is defined as a 1 -byte integer stored as the first byte of each 'packet'.   Sequence numbers are continuous with 0 following 255 (256=0, 255+1=0). 
@@ -1020,10 +1020,10 @@ These compressed public key 'packets' can then be included in one or multiple OP
 Further:
 
 * Exodus outputs are ignored in decoding
-* Any input not meeting the requirement for type (pay-to-pubkeyhash) will be ignored
+* Any input not meeting the requirement for type (pay-to-pubkeyhash) will trigger the invalidation of the transaction
 * Only pay-to-pubkey-hash outputs will be considered for the reference address
 * Only multisig outputs will be considered for the data packets
-*  If there are multiple outputs remaining, the first output to the sending address (if such an output exists) will be ignored as change
+* If there are multiple outputs remaining, the first output to the sending address (if such an output exists) will be ignored as change
 * The reference address will be determined by the remaining output with the highest vout index  
 
 
