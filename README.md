@@ -704,6 +704,48 @@ A "Contract for Difference" (CFD) allows a bettor to temporarily gain bullish or
 
 CFD bets store "leverage" in place of the data used by "bet threshold" in other bet types. If a bettor prefers that a 10% price movement means a 20% gain or loss, they may select 2x leverage (65536\*2=131072). Similarly, a 10% price movement could mean a 5% gain or loss using 0.5x leverage (65536\*0.5 = 32768). Just as with normal bets, a CFD bettor can "sweeten the deal" by offering better odds (a lower counter-wager amount). High-leverage bets or big price movements could result in a winnings calculation higher than the amount at stake, in which case the winner simply gets the entire pot. 
 
+
++### Standardized CFD Contracts
+
+
+We need to standardize cost-for-difference betting in order to get liquid order books for trading on different data streams, BTC/USD being an essential one, but also to allow tracking of /GC, /ES, USD/JPY and other financial markets. To accomplish this we will designate a type of address that holds MSC or smart property in escrow and issues a smart property token known as a Smart Future or Smart Leverage contract. The escrow addresses are paired with a sibling who holds the margin capital of the opposing bet, and both parties receive a contract, one positive, one negative, with each contract being birth-marked by its price of execution. After a settlement period elapses, a data-feed or consensus packet thereof is used to pay part of the escrow balance of one contract side as a profit to the other, and then the remainder is paid back to the holders of the contracts. For every unit of open interest (total contracts existing) in given series, there is a -1 address corresponding to the margin of the short position, and a +1 address corresponding to the long position. 
+
+ The key features of the standardization are to allow near 1:1 tracking of the underlying by providing a homogenous order-book that a market maker can systematically populate with bids based on the ability to hedge in more liquid markets (such as CME futures contracts markets) and even more importantly, to allow anyone exposed to risk in this market to get an off-setting position and close a losing position at any time. This dynamic is independent of the protocol-level functions.
+
+When contracts are traded on the secondary-market, that is at least one side of the trade is trading with available supply of contracts, the birth-mark price of each contract is referenced against the trade price for the secondary transaction, and the payment is split: part of the payment to assume each *1 or -1 contract position goes to the escrow address to return its capitalization to the original ratio, the other part goes to wallet closing out its contract position. The difference will effect the position closer’s profit or loss. Alternative implementation: a new contract is created with the birth-mark of the secondary transaction price, and the original contract (the one being closed out) goes into the new escrow address, and with it the remainder deposit is made - this approach uses nesting of singular contracts instead of referencing earlier contract birth-prices to make a split payment. 
+
+Contracts have the following parameters:
+
+- Data Feed symbol (BTC/USD, /GC, /ES, BTC/MSC, USD/JPY ect.)
+
+- Leverage Ratio (Integer, e.g. 4)
+
+- Notional Value (eg. 1 BTC, 1000 USD, 1 oz. of gold)
+
+- Settlement time (e.g. 6 hours)
+
+
+The notional size of the contracts are standardized, the pay-out time is standardized, and the margin requirement of the escrow addresses is standardized. Given that short-selling BTC/USD on margin with no counterparty risk is an essential addition to the ecosystem, and given that BTC/USD sometimes can move 10-20% in a day (or even in a 6-hour period), a margin ratio of 4:1 is recommended. Future iterations of these contracts could offer greater leverage/lower margin requirements as BTC/USD volatility goes down, the issuance of these altered margin contracts would depend on the control mechanism in place for these standardized contracts. Contracts relating to less volatile markets may venture lower margin requirements from the outside. 
+
+Margin would be recapitalized as contracts trade and contract Open Interest turns over its supply, margin would also be recapitalized every settlement period, and thus there remains a limited risk that a market participant would have their winning position closed out at a 100% return-on-margin involuntarily, in a highly volatile market (>25% move in greater than 6 hours) where market-makers are opting to offer wider bids and as a result churn less volume. This is the edge case where the individual contracts with their individual price references and escrow address backings become less than 100% fungible, and it can be manage-able. The biggest disaster that would result here is that market-makers who are net-short option gamma, assuming a future options market in BTC/USD, and depending on being leveraged-long BTC in this p2p market, would end up being under-hedged and facing significant capital losses, but that would be very much their problem relative to their margining of those short option contracts, and not a systemic risk.
+
+For example, User A buys a Gold contract that has a 6 hour pay-out cycle and a 10:1 margin requirement. The gold contract has a par value of 10 Troy Oz. of gold per the comex spot price, roughly 600 MSC in notional value (if current BTC/USD ~$450, XAU/USD ~$1350, BTC/MSC ~ .05). User B is long a contract that has already been issued, they have posted a limit-sell and this is the order User A has hit. The clearing of the order involves splitting the payment into a partial re-capitalization of the escrow address tied to that given contract, and a partial payment to the address containing the contract, essentially providing User B their profit or returning them a partial loss. Since in this case the contract is profitable, User A pays the entire margin plus the profit to User B directly, if the contract were facing a 1% nominal loss and thus a 10% loss of margin, the payment would be split as 6 MSC going to re-capitalized the escrow, and the other 54 returning to User B. Since User B was winning, say gold is up 1%, they now have 66 MSC returned.
+
+Now User B is feeling cocky, and decides to get short gold. There are no other secondary holders in the order book with limit orders to buy a contract, except a market maker who will algorithmicaly turn around and short /GC on the Globex (gold futures, like many futures contracts, trade 24 hours a day, except on weekends). In the process, a new contract is issued, User B's wallet now shows a -1 balance of contracts, and his MSC goes to a freshly generated escrow address, as does the market maker's.
+
+Users can opt to signal automatical roll-over in their Mastercoin wallet of choice, so that an escrow key is sent to the addresses in question sometime prior to the settlement time, this key makes the escrow address pay any differential in excess to the nearest round-number of contracts back to the owner's wallet, but keeps the margin requirement and pays a dividend in the form of a new contract for the next 6-hour interval. Users can also do this manually, but the automatic roll-over checkbox is something useful for a wallet to provide when traders are interested in holding longer-term positions.
+
+Each contract generates its own escrow, so that the contracts remain fungible.
+
+Additionally, the indivisibility of contracts is essential to maintaining fungibility. Escrow-backed deposit-peg coins (see below) can be divisible.
+
+Also worth noting that while contracts may settle based on a data-feed published to the blockchain, or a consensus averaging of several such feeds, the real-time liquidity will be mostly based on Market Makers offering bids that on-average provide a profitable arbitrage against futures markets.
+
+![Mastercoin Protocol Layers](images/StandardizedCFD.jpg) 
+
+
+
+
 ### Accepting a Bet
 
 Say you see a bet which you would like to accept. Simply publish the inverse bet with matching odds and the same end date, and the Master Protocol will match them automatically (that is, everyone parsing Mastercoin data will mark both bets as accepted). Here is what a bet matching our last example would look like:
@@ -738,21 +780,6 @@ Note that this transaction is very similar to "simple send", with just one extra
 
 Another use-case for this transaction type would be a giveaway, where someone wants to raise interest in their new coin or property by giving some away to everyone who owns (for instance) Mastercoins.
 
-### Mark Address as Automatic Dividend Dispensary
-
-Although manual administration of dividends could work periodically, many applications of dividend payments will depend on automated logic of other financial instruments. Introducing a timer interval to an address that automatically looks up addresses containing its target smart property and paying proportionally to the number of units at those addresses provides an important building block for financial instruments. In order to reduce spam, we can install a minimum time interval at the protocol level, in the below example a 6-hour interval is used:
-
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 15
-2. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin (must push)
-3. [Time Interval](#field-time-period-in-seconds) = 21600
-4. [Currency identifier] (#field-currency-identifier) = N for user-created fundraise share or currency that attracts payout.
-
-This function can be used to distribute profits by having a separate fund address push a certain amount of currency to the dividend dispenser address, based on a mathematical formula. This function could also tie in with escrow funds to facilitate standardized CFD contracts. 
-
-The payments are, by default, sent without fee because the confirmation time is less relevant in a passive income vehicle - however, it could be possible to add a field specifying a minimum threshold of BTC or MSC needed to trigger a payout at an address when a given timer resets to 0, such that average payout is above some reasonable threshold (such as .1 MSC or .001 BTC) and a .0001 BTC fee is attached to each pay-out. 
-
-![Mastercoin Protocol Layers](images/Payment Dispensary Address.jpg) 
 
 
 ## Distributed E-Commerce
