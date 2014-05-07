@@ -1,7 +1,7 @@
 ﻿The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.1 Smart Property Fundraisers Edition
+Version 0.4.5.7 Smart Property Crowdsale Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -46,6 +46,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 # Document History
 
 1. Version 0.1 (previously 0.5) released 6 Jan 2012 (No packet definitions, overly-complicated currency stabilization)
+<<<<<<< HEAD
 2. Version 0.1.9 (previously 0.7) released 29 Jul 2013 (Preview of 0.2, but without revealing the Exodus Address)
 3. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the fund-raiser)
 4. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
@@ -54,12 +55,27 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 6. Version 0.4.5 released 20 Feb 2014 (added smart property fundraisers, other improvements to future features)
 7. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
 8. Version 0.4.6 released April 1 (adds advanced smart property 1st draft)
+=======
+1. Version 0.1.9 (previously 0.7) released 29 Jul 2013 (Preview of 0.2, but without revealing the Exodus Address)
+1. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the fund-raiser)
+1. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
+1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Pay Dividend" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
+1. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
+1. Version 0.4.5 released 20 Feb 2014 (added smart property crowdsale, other improvements to future features)
+1. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
+1. Version 0.4.5.2 released 31 Mar 2014 (clarified details of smart property creation)
+1. Version 0.4.5.3 released 3 Apr 2014 (corrected details of smart property administration)
+1. Version 0.4.5.4 released 10 Apr 2014 (corrected/clarified invalid Simple Sends)
+1. Version 0.4.5.5 released 15 Apr 2014 (clarified Number of coins field description)
+1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
+1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
+>>>>>>> b7c6411be75c33cc1500ccdfbdc1115e389147cd
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
 # Master Protocol / Mastercoin Terminology
 
-* The term M.A.S.T.E.R. is an acronym for "Metadata Archival of Standard Transaction Embedding Records" 
+* The term M.A.S.T.E.R. is an acronym for "Metadata Archive of Standard Transaction Embedding Records" 
 * The term "Master Protocol" applies to the specification and the clients that implement its features.
 * The term "MSC Protocol" is used as the abbreviation for "Master Protocol". 
 * The term "Mastercoins" applies to the digital tokens that access the features of the "Master Protocol" clients.
@@ -134,7 +150,7 @@ Also, in many cases a user may wish to do something with Mastercoins recently se
 
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
-+ Mastercoin/bitcoin distributed exchange features are unlocked as of block # (TBD)
++ Mastercoin/bitcoin distributed exchange features are unlocked as of block #290630
 + Smart property features are unlocked as of block # (TBD)
 + Savings wallets and rate-limited wallets are unlocked as of block # (TBD)
 + Data feeds and simple betting are unlocked as of block # (TBD)
@@ -157,11 +173,17 @@ This section defines the fields that are used to construct transaction messages.
 ### Field: Currency identifier
 + Description: the currency used in the transaction
 + Size: 32-bit unsigned integer, 4 bytes
-+ Valid values: 1 to 4,294,967,295  (1 = Mastercoin, 2 = Test Mastercoin, Test MSC currencies and properties have the most significant bit set)
++ Inter-dependencies: [Ecosystem](#field-ecosystem)
++ Valid values: 
+    * 1 and 3 to 2,147,483,647 in the real MSC ecosystem (2,147,483,646 unique values)
+        * 1 = Mastercoin
+    * 2 and 2,147,483,651 to 4,294,967,295 in the Test MSC ecosystem (Test MSC currencies and properties have the most significant bit set, values start with 0x80000003, yielding 2,147,483,646 unique values)
+        * 2 = Test Mastercoin 
 
 ### Field: Ecosystem
 + Description: Specifies whether a smart property is traded against test MSC or real MSC
 + Size: 8-bit unsigned integer, 1 byte
++ Inter-dependencies: [Currency Identifier](#field-currency-identifier)
 + Valid values: 1 for MSC, 2 for Test MSC
 
 ### Field: Integer-eight byte
@@ -190,19 +212,25 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values: 0 to 4,294,967,295
 
 ### Field: Number of coins
-+ Description: Specifies the number of coins affected by the transaction this field appears in. Note: the number of coins is to be multiplied by 100,000,000 in this field (e.g. 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins to be specified with the same precision as bitcoins (eight decimal places).
++ Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
+    * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
+    * for indivisible coins or tokens, the value in this field is the integer number of Master Protocol coins or tokens (e.g. 1 represents 1 indivisible token)
 + Size: 64-bit unsigned integer, 8 bytes
-+ Valid values: 1 to 9,223,372,036,854,775,807
++ Inter-dependencies: [Property type](#field-property-type)
++ Valid values: 1 to 9,223,372,036,854,775,807 which represents
+    * 0.00000001 to 92,233,720,368.54775807 divisible coins or tokens
+    * 1 to 9,223,372,036,854,775,807 indivisible coins or tokens
 
 ### Field: Property type
-+ Description: indivisible or not
++ Description: Specifies if the Master Protocol coin or token to be created will be divisible or indivisible, and if that coin or token will replace or append an existing [Smart Property](#smart-property)
 + Size: 16-bit unsigned integer, 2 bytes
++ Inter-dependencies: [Number of coins](#field-number-of-coins)
 + Valid values:
-    * 1: New Indivisible shares
+    * 1: New Indivisible tokens
     * 2: New Divisible currency
-    * 65: Indivisible shares when replacing a previous property
+    * 65: Indivisible tokens when replacing a previous property
     * 66: Divisible currency when replacing a previous property
-    * 129: Indivisible shares when appending a previous property
+    * 129: Indivisible tokens when appending a previous property
     * 130: Divisible currency when appending a previous property
 
 ### Field: Response sub-action (future)
@@ -213,20 +241,20 @@ This section defines the fields that are used to construct transaction messages.
     * 2: Reject
     * 3: Contact
 
-### Field: String null-terminated
+### Field: String 255 byte null-terminated
 + Description: a variable length string terminated with a \0 byte
-+ Size: variable
-+ Valid values: UTF-8
++ Size: variable, up to 255 bytes, plus the null terminator
++ Valid values: Unicode encoded with UTF-8
 
 ### Field: Time period in blocks
 + Description: number of blocks during which an action can be performed
 + Size: 8-bit unsigned integer, 1 byte
 + Valid values: 1 to 255 
 
-### Field: GMT Datetime
-+ Description: Datetime, assuming GMT timezone (the same timezone used by the bitcoin blockchain)
+### Field: UTC Datetime
++ Description: Datetime, assuming UTC timezone (the same timezone used by the bitcoin blockchain)
 + Size: 64-bits standard unix timestamp, 8 bytes
-+ Valid values: http://en.wikipedia.org/wiki/Unix_time 
++ Valid values: http://en.wikipedia.org/wiki/Unix_time, with precision to the second for computation and display, same as used by the Bitcoin protocol
 
 ### Field: Time period in seconds (future)
 + Description: number of seconds during which an action can be performed
@@ -247,13 +275,13 @@ This section defines the fields that are used to construct transaction messages.
 + Inter-dependencies: [Transaction version](#field-transaction-version)
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
-    *    1: [Investment Send](#investment-send)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-mastercoins-for-bitcoins)
     *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
     *   50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
-    *   51: [Create a Property via Fundraiser with Variable number of Tokens](#new-property-creation-via-fundraiser-with-variable-number-of-tokens)
+    *   51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
     *   52: [Promote a Property](#promote-a-property)
+    *   53: [Close a Crowdsale Manually](#close-a-crowdsale-manually)
 
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
@@ -287,15 +315,22 @@ Master Protocol transactions are not reversible except as explicitly indicated b
 
 Any Mastercoin transaction from any address that attempts to transfer, reserve, commit coins, or put coins in escrow while that address's available balance for that currency identifier is 0 will be invalidated. 
 
-##Transferring coins
+## Transferring coins
 
-Transfers are unconditional payments from one Mastercoin address to another address, set of addresses, or to the owners of a specific property (i.e. dividends)
+Transfers are unconditional payments from one Mastercoin address to another address, set of addresses, or to the owners of a specific property (i.e. dividends).
 
-###Transfer Coins (Simple Send)
+### Transfer Coins (Simple Send)
 
 Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
 
-If the amount to transfer exceeds the number owned by the sending address, this indicates the user is transferring all of them.
+The transaction is invalid if any of the following conditions is true:
+* the amount to transfer is zero
+* the sending address has zero coins in its available balance for the specified currency identifier
+* the amount to transfer exceeds the number owned and available by the sending address
+* the specified currency identifier is non-existent
+* the specified currency identifier is 0 (bitcoin)
+
+A simple send to a non-existent address will destroy the coins in question, just like it would with bitcoin.
 
 [Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
 
@@ -305,10 +340,6 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 1. [Transaction type](#field-transaction-type) = 0
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
-
-
-A simple send to a non-existent address will destroy the coins in question, just like it would with bitcoin. A simple send (or any other transaction) referencing a non-existent currency is invalid.
-
 
 ## Distributed Exchange
 
@@ -375,11 +406,11 @@ The reference address must point to the seller's address, to identify whose offe
 
 If you send an offer for more coins than are available by the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address that does not have a matching active Sell Offer, e.g. the Sell offer has been canceled or is all sold out, the Purchase Offer must be invalidated. 
 
-Note: Your total expenditures on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
+Note: Your total expenditure on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
 
 You must send the appropriate amount of bitcoins before the time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards once the time limit expires. The remaining coins will be added back to those available in the Sell Offer if it’s still active. If you send more than the correct amount of bitcoins, your bitcoins will be lost (unless the seller chooses to return them to you). If you do not send complete payment before the time limit expires, the unpurchased coins will be added back to those available in the Sell Offer if it’s still active.
 
-Please note that the buyer is allowed to send multiple bitcoin payments between the Purchase Offer and expiration block which are accumulated and used to adjust the Purchase Offer accordingly.
+Please note that the buyer is allowed to send multiple bitcoin payments between the Purchase Offer and expiration block which are accumulated and used to adjust the Purchase Offer accordingly. The buyer's Mastercoin available balance is credited with the purchased coins when each bitcoin payment is processed.
 
 In order to make parsing Master Protocol transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but must be above the dust threshold.
 
@@ -414,25 +445,32 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 1. [Amount of GoldCoins desired](#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins)
 1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
 
-Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or test Mastercoins), since those currencies are the the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if someday more stable Master Protocol currencies become dominant and users no longer need to exit the Mastercoin ecosystem.
+Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if someday more stable Master Protocol currencies become dominant and users no longer need to exit the Mastercoin ecosystem.
 
 To change or cancel these order, use the action byte as described earlier for the message selling mastercoins for bitcoins. The only difference is that there are no coins "in limbo" (accepted but not purchased) complicating these messages.
 
 ## Smart Property
 
-The Master Protocol supports creating property tokens to be used for titles, deeds, user-backed currencies, and even shares in a company. Whenever property is created, it gets assigned the next available currency ID, so any property can be bought, sold, transferred, and used for betting, just as other Master Protocol currencies are.
+The Master Protocol supports the creation of property tokens to be used for titles, deeds, user-backed currencies, and even investments in a company. Property tokens can be bought, sold, transferred, and used for betting, just as Master Protocol currencies are.
 
-Properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2. Additional properties and currencies therefore start at ID #3. Properties issued and traded using test MSC are kept completely distinct from those issued and traded using real MSC, so the ID numbering systems for the two ecosystems are independent. Test Mastercoin properties have the most significant bit set to distinguish them from real properties, and they cannot be traded against real Mastercoins nor otherwise interact with non-test properties. Test MSC property IDs  also start numbering from 3, but with the most significant bit set. In sandbox environments using only Test MSC, these IDs can be displayed without the MSB set, for easier reading.
+Properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2. Additional properties and currencies therefore start at ID #3. Properties issued and traded using real MSC are kept completely distinct from those issued and traded using Test MSC, so the ID numbering systems for the two [ecosystems](#field-ecosystem) are independent. Test Mastercoin properties have the most significant bit set to distinguish them from real properties, and they cannot be traded against real Mastercoins nor otherwise interact with non-test properties. Test MSC property IDs  also start numbering from 3, but with the most significant bit set. In sandbox environments using only Test MSC, these IDs can be displayed without the MSB set, for easier reading.
 
-Every property has a property type, which defines whether it is divisible or not and whether the property replaces or appends a previous property. If creating 1,000,000 units of a divisible currency, choose property type 2 and specify 100,000,000,000,000 for the number of properties (1 million divisible to 8 decimal places). For 1,000,000 indivisible shares in a company, choose property type 1 and specify 1,000,000 for the number of properties. The only difference between divisible and indivisible property types is how they are displayed (i.e. where the decimal point goes).
+Every property has a [Property type](#field-property-type), which defines whether it is divisible or not and whether the property replaces or appends a previous property. To create 1,000,000 units of a divisible currency, choose property type 2 and specify 100,000,000,000,000 for the number of properties (1 million divisible to 8 decimal places). For 1,000,000 indivisible tokens for a company, choose property type 1 and specify 1,000,000 for the number of properties. The difference between divisible and indivisible property types is how they are displayed (i.e. where the decimal point goes) and the range of valid values that can be specified in a transaction message field (see [Number of coins](#field-number-of-coins)). 
 
-Only the address that issued a property can replace or append that property. Attempts by other addresses are invalid. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it. Set the number of properties to zero when replacing a property (Property Type 65 or 66) to indicate that the issuer is abandoning that property entirely. Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values), but the UI should indicate that more property has been appended by the issuer and link to the other properties.
+The attributes of an existing property cannot be changed. However, a new property can be created to replace or append an existing property. Only the address that issued a property can replace or append that property. Attempts by other addresses are invalid. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it.  To indicate that the issuer is abandoning a property entirely:
+* set Previous Property ID to that property's id,
+* set Number Properties to zero, and
+* use one of the "replace" values for [Property Type](#field-property-type) (see transaction types [50](#new-property-creation-with-fixed-number-of-tokens) and [51](#new-property-creation-via-crowdsale-with-variable-number-of-tokens), below). 
+
+A property can be replaced and appended multiple times, even abandoning and un-abandoning it more than once. Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values). When displaying a property, the UI should provide links to any related properties. Related properties are the property which was replaced or appended by this property (if there is one) as well as any properties from the same issuer which replace or append this property.
+ 
+The Ecosystem for the property must be the same as the ecosystem for the "Currency identifier desired", i.e. both must be in the Mastercoin ecosystem or both must be in the Test Mastercoin ecosystem.
 
 Any time the name of a property is displayed, the ID number of the property must also be displayed with it in the format "NAME (ID)", to avoid name collisions. For instance, "Quantum Miner (8)". This is very important to prevent a malicious user from creating a property to impersonate another property.
 
-In order to distinguish legitimate companies and ventures from scams, spam, and experiments, the Master Protocol allows users to spend Mastercoins for the purpose of promoting a smart property. When UI clients display smart properties, the default ordering should be based on how many Mastercoins have been spent for promoting the property, adjusted for how long ago the Mastercoins were spent. Details on promoting a smart property by spending Mastercoins and how that affects sort ordering can be found below.  
+To help distinguish legitimate companies and ventures from scams, spam, and experiments, the Master Protocol allows users to spend Mastercoins for the purpose of promoting a smart property. When UI clients display smart properties, the default ordering should be based on how many Mastercoins have been spent for promoting the property, adjusted for how long ago the Mastercoins were spent. Details on promoting a smart property by spending Mastercoins and how that affects sort ordering can be found below.  
 
-The "Property Data" field is general-purpose text, but can be used for things like storing the hash of a contract to ensure it is in the block-chain at property creation (i.e. "Proof of Existence")
+The "Property Data" field is general-purpose text, but can be used for things like storing the hash of a contract to ensure it is in the block-chain at property creation (i.e. "Proof of Existence").
 
 ### New Property Creation with Fixed number of Tokens
 
@@ -442,28 +480,51 @@ If creating a title to a house or deed to land, the number of properties should 
 
 Once this property has been created, the tokens are owned by the address which broadcast the message creating the property. 
 
-Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 81 bytes:
+In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
+* "Previous Property ID" must be 0 when "Property Type" indicates a new property
+* When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
+* "Property Name" must not be blank or null
+
+Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 50
-1. [Ecosystem](#field-ecosystem) = 1 for tradeable within Mastercoin ecosystem (as opposed to Test Mastercoin)
-1. [Property Type](#field-property-type) = 1 for new indivisible shares
-1. [Previous Property ID](#field-property-id) = 0 (to replace or append properties from the same issuing address)
-1. [Property Category](#field-string-null-terminated) = “Companies\0” (10 bytes)
-1. [Property Subcategory](#field-string-null-terminated) = “Bitcoin Mining\0” (15 bytes)
-1. [Property Name](#field-string-null-terminated) = “Quantum Miner\0” (14 bytes)
-1. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
-1. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
-1. [Number Properties](#field-integer-eight-byte) = 1,000,000 indivisible shares
+1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
+1. [Property Type](#field-property-type) = 1 for new indivisible tokens
+1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
+1. [Property Category](#field-string-255-byte-null-terminated) = “Companies\0” (10 bytes)
+1. [Property Subcategory](#field-string-255-byte-null-terminated) = “Bitcoin Mining\0” (15 bytes)
+1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
+1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
+1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
+1. [Number Properties](#field-number-of-coins) = 1,000,000 indivisible tokens
 
-### New Property Creation via Fundraiser with Variable number of Tokens
+### New Property Creation via Crowdsale with Variable number of Tokens
 
-Description: Transaction type 51 is used to initiate a fundraiser which creates a new Smart Property with a variable number of tokens.
+Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale. The crowdsale is active until the purchasing deadline or the crowdsale is manually closed, which cause the crowdsale to be closed permanently. 
 
-Say that instead of creating shares and selling them, you'd rather do a kickstarter-style fundraiser to raise money for your "Quantum Miner" venture, with investors getting shares of Quantum Miner in proportion to their investment, and the total number of shares being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 shares of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself 1000 shares upfront as compensation for all your R&D work so far. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 102 bytes:
+A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below.
+
+Tokens credited to each crowdsale participant are immediately added to the available balance belonging to the participant's address and can be spent or otherwise used by that address. Funds raised are added to the available balance belonging to the crowdsale owner's address as soon as they are received and can be spent or otherwise used by that address.
+
+**Note: It is strongly recommended that the UI provide a clear indication when the funds received by a crowdsale are being transferred to another address or reserved while the crowdsale is still active.**
+
+The early bird bonus percentage for crowdsale purchasers of new smart properties is calculated the same way as was used in the original distribution of Mastercoins by the Exodus Address (see [Initial Token Distribution via the “Exodus Address”](#initial-token-distribution-via-the-exodus-address)):
+
+percentage = (("Deadline" value in seconds - transaction timestamp in seconds) / 604800) * "Early bird bonus %/week" value
+
+In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
+* "Previous Property ID" must be 0 when "Property Type" indicates a new property
+* When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
+* "Property Name" must not be blank or null
+* "Currency Identifier Desired" must be 1 or 2 or an existing Smart Property currency ID
+* "Deadline" must be greater than block time
+
+Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 51
+<<<<<<< HEAD
 1. [Ecosystem](#field-ecosystem) = 1 for tradeable within Mastercoin ecosystem (as opposed to Test Mastercoin)
 1. [Property Type](#field-property-type) = 1 for new indivisible shares
 1. [Previous Property ID](#field-property-id) = 0 (to replace or append properties from the same issuing address)
@@ -482,18 +543,41 @@ A MSC address may only have one fundraiser active at any given time, preventing 
 ### Investment Send
 
 Say you see a fundraiser you wish to invest in. Doing so requires using a transaction identical to version 0 of "simple-send", but with the transaction type of 1:
+=======
+1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
+1. [Property Type](#field-property-type) = 1 for new indivisible tokens
+1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
+1. [Property Category](#field-string-255-byte-null-terminated) = “Companies\0” (10 bytes)
+1. [Property Subcategory](#field-string-255-byte-null-terminated) = “Bitcoin Mining\0” (15 bytes)
+1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
+1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
+1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
+1. [Currency Identifier Desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
+1. [Number Properties per Unit Invested](#field-number-of-coins) = 100 indivisible tokens
+1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
+1. [Early Bird Bonus %/Week](#field-integer-one-byte) = 10
+1. [Percentage for issuer](#field-integer-one-byte) = 12
+>>>>>>> b7c6411be75c33cc1500ccdfbdc1115e389147cd
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 1
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+### Participating in a Crowdsale
 
-A few implementation details are important to have here:
+Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and the Simple Send message must be confirmed before there is a block with a blocktime greater than or equal to the crowdsale's "Deadline" value or before the crowdsale is [manually closed](#close-a-crowdsale-manually). The blocktime of the Simple Send must be strictly less than the "Deadline" value in order to participate in the crowdsale.
 
-+ Funds are raised via these "investment send" transactions sent to the issuer's bitcoin/mastercoin address in the desired currency. No other transaction types are treated as an investment. If the transaction is in the wrong currency, it is invalid. If the transaction is recorded after the deadline, it is invalid
-+ Funds raised are locked and cannot be spent or otherwise used until after the fundraiser is over (to prevent using the same funds to purchase shares multiple times)
-+ Shares issued are locked and cannot be spent or otherwise used until after the fundraiser is over (to prevent undercutting the issuer)
+Note: It is possible for a bitcoin block to have a blocktime earlier than a previous block. Once a crowdsale is closed for any reason, a subsequent Simple Send must not be treated as participating in that crowdsale regardless of the blocktime associated with the Simple Send.
 
+For divisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus that number of tokens multiplied by the percentage based on the "Early bird bonus %/week" value, to eight decimal places.
+
+For indivisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus that number of tokens multiplied by the percentage based on the "Early bird bonus %/week" value, rounded down to an integer number of tokens (with no fractional portion). 
+
+The UI should accurately display the number of tokens that will be credited to the sending address.
+
+A few details are important to have here:
+
++ If the transaction is not in the correct currency, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete if it is valid.
++ Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches the crowdsale's "Currency identifier desired".
++ If the transaction is confirmed after the crowdsale is closed or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete.
++ Tokens credited to the sending address and the issuer address are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
++ The funds received are immediately added to the available balance belonging to the crowdsale owner's address and can be spent or otherwise used by that address.
 
 ### Promote a property
 
@@ -512,6 +596,18 @@ To accomplish this time-weighting, a promotion is worth (# Mastercoins spent) * 
 UIs will probably also choose to offer other sort orderings, such as by transaction volume, removing the need to continually promote a property once it is well-established. Categories and subcategories should be similarly sorted, using the sum of the promotions they contain by default with other sorting available such as the sum of the transaction volumes. UI designers should expect the number of spammy properties, categories, and sub-categories to be quite large, so intelligent sorting will be important.
 
 In the Test Mastercoin ecosystem, test MSC are destroyed instead of real MSC.
+
+### Close a Crowdsale Manually
+
+Since crowdsales are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the crowdsale to an unacceptable level.  To prevent this, the address that created the crowdsale can issue a command to close the crowdsale manually.  This action does not cause the early bird bonus percentage to be recalculated for existing purchases.
+
+It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = 53
+1. [Property ID](#field-property-id) = 9
+
+Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
 
 # Future Transactions
 
@@ -597,16 +693,16 @@ The Master Protocol allows users to publish data onto the bitcoin block-chain, w
 ### Registering a Data Stream
 (AKA Data Feed)
 
-Say you decide you would like to start publishing the price of Gold in the block chain. Registering your data stream takes a varying number of bytes due to the use of null-terminated strings. This example uses 58 bytes:
+Say you decide you would like to start publishing the price of Gold in the block chain. Registering your data stream takes a varying number of bytes due to the use of null-terminated strings. This example uses 57 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 30
 1. [Ecosystem](#field-ecosystem) = 1 for useable within Mastercoin ecosystem (as opposed to Test Mastercoin)
 1. [Parent currency identifier](#field-currency-identifier) = 1 for Mastercoin (the price of Gold will be published in units of Mastercoin)
-1. [Category](#field-string-null-terminated) = “Commodities\0” (12 bytes)
-1. [Sub-Category](#field-string-null-terminated) = “Metals\0” (7 bytes)
-1. [Label](#field-string-null-terminated) = “Gold\0” (5 bytes) (if a second “Gold” is registered in this sub-category, it will be shown as “Gold-2”)
-1. [Description/Notes](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
+1. [Category](#field-string-255-byte-null-terminated) = “Commodities\0” (12 bytes)
+1. [Sub-Category](#field-string-255-byte-null-terminated) = “Metals\0” (7 bytes)
+1. [Label](#field-string-255-byte-null-terminated) = “Gold\0” (5 bytes) (if a second “Gold” is registered in this sub-category, it will be shown as “Gold-2”)
+1. [Description/Notes](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your description!)
 
 The reference payment must be to the bitcoin address which will be publishing the data. 
 
@@ -637,7 +733,7 @@ Say you want to use USDCoins (another hypothetical currency derived from Masterc
 3. Data Stream identifier = 3 for the Gold ticker, per our data stream example (32-bit unsigned integer, 4 bytes)
 4. Bet Type = 35 for “Will not exceed on or before” (See table below) (16-bit unsigned integer, 2 bytes)
 5. Bet threshold (Non-CFDs only) = 200,000 (0.00200000 BTC, which equates to a ticker value of 20 per our data stream example) **OR** Leverage (CFDs only) = 65536 (1x leverage) (32-bit unsigned integer, 4 bytes)
-1. [Settlement Date](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT (8 bytes)
+1. [Settlement Date](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (8 bytes)
 7. Amount of wager = 20,000,000,000 (200.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
 8. Amount of counter-wager = 10,000,000,000 (100.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
 
@@ -756,7 +852,9 @@ Say you see a bet which you would like to accept. Simply publish the inverse bet
 3. Data Stream identifier = 3 for the Gold ticker, per our data stream example (32-bit unsigned integer, 4 bytes)
 4. Bet Type = 34 for “Will exceed on or before” (See table above) (16-bit unsigned integer, 2 bytes)
 5. Bet threshold (Non-CFDs only) = 200,000 (0.00200000 BTC, which equates to a ticker value of 20 per our data stream example) **OR** Leverage (CFDs only) = 65536 (1x leverage) (32-bit unsigned integer, 4 bytes)
+
 6. [Settlement Date](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT (8 bytes)
+
 7. Amount of wager = 5,000,000,000 (50.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
 8. Amount of counter-wager = 10,000,000,000 (100.00000000 USDCoins) (64-bit unsigned integer, 8 bytes)
 
@@ -774,9 +872,9 @@ Say your company has made a huge profit and wishes to pay 1000 MSC evenly distri
 1. Transaction type = 3 for "send all" (32-bit unsigned integer, 4 bytes)
 2. Currency identifier = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
 3. Amount to transfer = 100,000,000,000 (1000.00000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed number owned, but if it does, assume user is transferring all of them)
-4. Currency ID of Payees = 6 for Quantum Miner Shares (32-bit unsigned integer, 4 bytes)
+4. Currency ID of Payees = 6 for Quantum Miner Tokens (32-bit unsigned integer, 4 bytes)
 
-Note that this transaction is very similar to "simple send", with just one extra field. The protocol will split up the 1000 MSC among the shareholders, according to how many shares they have. 
+Note that this transaction is very similar to "simple send", with just one extra field. The protocol will split up the 1000 MSC among the investors, according to how many tokens they have. 
 
 Another use-case for this transaction type would be a giveaway, where someone wants to raise interest in their new coin or property by giving some away to everyone who owns (for instance) Mastercoins.
 
@@ -797,7 +895,7 @@ Say you want to sell a Bible for 0.001 Mastercoins. Creating a sell offer will u
 4. Item category = "Contraband\0" (11 bytes)
 5. Item subcategory = "Forbidden Books\0" (16 bytes)
 6. Item title = "Bible, NASB\0" (12 bytes)
-7. Description/Notes = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your description!)
+7. Description/Notes = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your description!)
 
 Every sale offer published by a given address gets a 32-bit "Listing ID" number assigned, which increments for each item offered for sale from that address. We'll assume this is the first item offered for sale from this address (Listing ID=0).
 
@@ -810,7 +908,7 @@ Say you see the Bible listed above and wish to purchase it. However, you have no
 1. [Transaction version](#field-transaction-version) = 0 (2 bytes)
 1. Transaction type = 61 for Initiate purchase from listing  (2 bytes)
 1. Listing ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
-1. [Expiration Date](#field-gmt-datetime) = January 1st, 2215 00:00:00 GMT (8 bytes)
+1. [Expiration Date](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (8 bytes)
 1. Offered price = 110,000 (0.00110000 Mastercoins) (64-bit unsigned integer, 8 bytes)
 
 The reference address points to the address which listed the Bible for sale. The seller now has 3 days to accept this buyer before the offer expires. The buyer's money is now locked in escrow until their offer expires or the purchase is complete.
@@ -837,7 +935,7 @@ Once a buyer has been accepted, they may release funds held in escrow (or destro
 1. Transaction type = 63 for Release Funds and Leave Feedback (32-bit unsigned integer, 4 bytes)
 2. Listind ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
 3. Percentage of funds to release = 105% (65536*1.05 68813) (32-bit unsigned integer, 4 bytes)
-4. Text feedback = “tinyurl.com/kwejgoig\0” (22 bytes) (Please save space in the block chain by linking to your feedback!)
+4. Text feedback = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your feedback!)
 
 The reference address points to the address which listed the Bible for sale. Funds which are not released are permanently destroyed. Specifying more than 100% signifies an additional tip beyond the funds held in escrow. Funds are released automatically after 60 days if the buyer never leaves feedback. In addition to the text feedback, each transaction gets "1 star" to "5 stars" based on the following criteria:
 
@@ -847,7 +945,7 @@ The reference address points to the address which listed the Bible for sale. Fun
 * 4 Stars: Tip < 10%
 * 5 Stars: Tip >= 10%
 
-In order to avoid people gaming the reputation system, some coins must be destroyed with every purchase. The percentage of coins destroyed goes down with each new purchase. The percentage is calculated as 2\*(value of this purchase) / (value of all purchases, including this one). Note that this formula causes 50% of the coins from the first purchase to be destroyed.
+In order to avoid people gaming the reputation system, some coins must be destroyed with every purchase. The percentage of coins destroyed goes down with each new purchase. The percentage is calculated as (value of this purchase) / (2 \* value of all purchases, including this one). Note that this formula causes 50% of the coins from the first purchase to be destroyed.
 
 ## Escrow-Backed User Currencies (experimental proposed feature)
 
@@ -923,13 +1021,19 @@ Class A transactions were the first class of Mastercoin transaction and store da
 
 The transaction data is encoded into said fake Bitcoin address which is then used as an output in a single Bitcoin transaction satisfying the following requirements: 
 
-* Has a single or the largest input signed by the sending address
+* Has a single or the largest pay-to-pubkey-hash input signed by the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
 * Has an output for the encoded fake address (the 'data' address)
 * Has all output values above the 'dust' threshold (currently 0.00005460 BTC) and preferable be equal. 
 * Has exactly two non-Exodus outputs (one of which must be the data address) with a value equal to the Exodus output and/or has exactly one output with a sequence number +1 of the data address for reference output identification
 * Additional outputs are permitted for the remainder of the input (the 'change' address) 
+
+Further:
+
+* Exodus outputs are ignored in decoding
+* Any input not meeting the requirement for type (pay-to-pubkeyhash) will be ignored
+* Only pay-to-pubkey-hash outputs will be considered for the reference address
 
 NOTE: The sequence number for a given address is defined as a 1 -byte integer stored as the first byte of each 'packet'.   Sequence numbers are continuous with 0 following 255 (256=0, 255+1=0). 
 
@@ -945,13 +1049,13 @@ NOTE: Class A transactions are restricted to the ‘simple send’ transaction t
 
 ## Class B transactions (also known as the ‘multisig’ method) 
 
-Class B transactions attempt to address the UTXO ‘bloat’ issue by storing data in the blockchain by utilizing ‘1-of-n’ multisignature outputs where one of the signatories is always the sender.   
+Class B transactions attempt to address the UTXO ‘bloat’ issue by storing data in the blockchain by utilizing ‘1-of-n’ multisignature outputs where one of the signatories should be the sender.   
 
 By adopting a ‘1-of-n’ approach (credit Tachikoma @ bitcointalk) we can increase n to the number of packets (public keys) needed to store the transaction data while maintaining the ability of the sender to redeem the output.  
 
-NOTE: The reference client currently supports a maximum value of 3 for n.  As one signatory must be the sender for redemption purposes, there is a current limit of 2 data packets per output.  A number of multisig outputs can be combined to increase the space available for transaction data as required.  On decoding all Mastercoin packets from all multisig outputs are ordered via their sequence number and evaluated as a continuous data stream. 
+NOTE: The reference client currently supports a maximum value of 3 for n.  As one signatory should be the sender for redemption purposes, there is a current limit of 2 data packets per output.  A number of multisig outputs can be combined to increase the space available for transaction data as required.  On decoding all Mastercoin packets from all multisig outputs are ordered via their sequence number and evaluated as a continuous data stream. 
 
-Transaction data is encoded into one or a number of compressed public keys which are obfuscated and then have their last byte manipulated to form a valid ECDSA point.  These compressed public keys then can be included as signatories in a multisig output. 
+Transaction data is encoded into one or a number of compressed public keys which are obfuscated and then should have their last byte manipulated to form a valid ECDSA point.  These compressed public keys then can be included as signatories in a multisig output ordered by their sequence number. 
 
 The size of a Mastercoin packet in a compressed public key is thus 31 bytes (33 bytes minus the first and last bytes for the key identifier (02) and ECDSA manipulation byte).   The Mastercoin packet reserves the first byte for the sequence number, providing a total of 30 bytes per packet for Mastercoin transaction data.  The range of sequence numbers in a Class B transaction is 1 to 255, providing for a total 7,650 bytes maximum actual transaction data storage per Mastercoin Class B transaction. 
 
@@ -977,12 +1081,22 @@ Once the obfuscated Mastercoin packet is prepared, the key identifier (02) is pr
 ![Mastercoin Protocol Layers](images/classb_obfuscated.png) 
 
 These compressed public key 'packets' can then be included in one or multiple OP_CHECKMULTISIG output along with the senders public key.  A single transaction must be constructed satisfying the following requirements: 
-* Has a single or the largest input signed by the sending address
+* Has a single or the largest pay-to-pubkey-hash input by sum signed by the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
-* Has one or more 1-of-n OP_CHECKMULTISIG outputs each containing at least two compressed public keys, one of which must be the senders address
+* Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be the sender's public key, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
+* Mastercoin 'data packages' appear in order by their sequence number 
 * Has all output values above the 'dust' threshold (the threshold is higher for multisig outputs)  
-* An additional output is permitted for the remainder of the input (the 'change' address) however this output must be addressed to the sending address   
+* Additional outputs are permitted 
+
+Further:
+
+* Exodus outputs are ignored in decoding
+* Any input not meeting the requirement for type (pay-to-pubkeyhash) will be ignored
+* Only pay-to-pubkey-hash outputs will be considered for the reference address
+* Only multisig outputs will be considered for the data packets
+*  If there are multiple outputs remaining, the first output to the sending address (if such an output exists) will be ignored as change
+* The reference address will be determined by the remaining output with the highest vout index  
 
 
 
@@ -1046,27 +1160,27 @@ The Master Protocol is at its core a layer of functionality on top of Bitcoin, u
 
 In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Master Protocol message.  
 
-Each output must carry a value higher than the dust threshold (0.00005430 as of 6/2/14) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
+Each output must carry a value higher than the dust threshold (0.00005460 as of 6 Feb 2014) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
 
-The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of $800 USD/BTC:
+The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of 650 USD per BTC:
 
 **Class A**  
-0.00006 ($0.05) - Exodus Address Output  
-0.00006 ($0.05) - Reference Address Output  
-0.00006 ($0.05) - Data Address Output  
-0.0001 ($0.08) - Bitcoin Transaction Fee  
+0.00006 ($0.04) - Exodus Address Output  
+0.00006 ($0.04) - Reference Address Output  
+0.00006 ($0.04) - Data Address Output  
+0.0001 ($0.07) - Bitcoin Transaction Fee  
   
-Total perceived cost ~$0.23 per transaction.  
+Total perceived cost ~$0.18 per transaction.  
   
 **Class B**  
-0.00006 ($0.05) - Exodus Address Output  
-0.00006 ($0.05) - Reference Address Output  
-0.00012 ($0.10) - Per Multisig Output  
-0.0001 ($0.08) - Bitcoin Transaction Fee  
+0.00006 ($0.04) - Exodus Address Output  
+0.00006 ($0.04) - Reference Address Output  
+0.00012 ($0.7) - Per Multisig Output  
+0.0001 ($0.07) - Bitcoin Transaction Fee  
   
-Total perceived cost ~$0.28 per transaction.  
+Total perceived cost ~$0.22 per transaction.  
 
-Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at $800 USB/BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.10.
+Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
   
 The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
