@@ -14,7 +14,7 @@ This is a proposal under consideration for a standard format for representing as
 
 ### Overview and example
 
-Assets definitions use [JSON](http://www.json.org) format with UTF-8 encoding and must be no larger than 1 MB in size. Below is an example - note that all fields are optional:
+Assets definitions use [JSON](http://www.json.org) format with UTF-8 encoding. Wallets must support JSONs up to 1 MB in size (they may also accept larger JSONs if they wish). Below is an example - note that all fields are optional:
 
 ```
 {
@@ -59,16 +59,18 @@ All fields are optional in this specification, though some may be required by ce
 * `interest_rate` = annual interest rate percentage, negative for demurrage.
 * `issue_date` = date/time when the asset was issued, formatted as [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601).
 * `expiry_date` = date/time when the asset will no longer be valid, formatted as ISO 8601.
-* `icon_url` = absolute URL for square icon to show for the asset (PNG only), minimum 32x32 pjxels, maximum 1 MB.
-* `image_url` = absolute URL for larger image to show for the asset (PNG or JPEG), minimum 128x128 pjxels, maximum 1 MB.
-* `contract_url` = absolute URL of the contract underlying the asset, maximum size 16 MB.
+* `icon_url` = absolute URL for square icon to show for the asset (PNG only), minimum 32x32 pjxels. [1 MB]
+* `image_url` = absolute URL for larger image to show for the asset (PNG or JPEG), minimum 128x128 pjxels. [1 MB]
+* `contract_url` = absolute URL of the contract underlying the asset. [16 MB]
 * `redemption_url` = absolute URL of the web page where the asset can be redeemed.
 * `work_url` = absolute URL of the content to which the asset grants a license.
-* `feed_url` = absolute URL of an RSS 2.0 feed for the asset, maximum size 1 MB.
+* `feed_url` = absolute URL of an RSS 2.0 feed for the asset. [1 MB]
 * `color` = HTML-style hexadecimal color for displaying the asset, with preceding `#`.
 * `multiple` = number by which to multiply the asset quantity for display.
 * `format` = how to display asset quantities (`*` is substituted for the display value), up to 20 characters.
 * `format_1` = how to display the asset quantity if the display value is exactly 1, up to 20 characters.
+
+For `*_url` fields, sizes in [square brackets] indicate the size of the referenced asset that wallets must support. Wallets may support larger sizes if they wish.
 
 Additional user-defined fields are permitted. Fields which are specific to a protocol should be prefixed with that protocol's name, such as `mastercoin_id`, `coinprism_sources` and `coincolors_id` in the example above.
 
@@ -78,9 +80,9 @@ Additional user-defined fields are permitted. Fields which are specific to a pro
 
 * Two relatively simple asset types can be defined in terms of (a) redemption (e.g. a bank promises one cent per asset unit), or (b) license (a website grants access to its content for asset holders). For these cases, there is a field linking to the redemption process (`redemption_url`) or the licensed work (`work_url`) respectively.
 
-* Linked contracts (`contract_url`) must be in a self-contained format such as PDF, UTF-8 encoded plain text, JPEG or PNG. The file type will be determined based on the URL suffix `.pdf`, `.txt`, `.jpg`/`.jpeg` or `.png` so that wallets don't need to interpret the MIME type returned by the web server. Contracts should be no more than 16 MB in size. Wallets must explicitly block contracts in HTML format, since HTML web pages can reference external assets such as images whose substitution can completely change their meaning.
+* Linked contracts (`contract_url`) must be in a self-contained format such as PDF (without external references), UTF-8 encoded plain text, JPEG or PNG. The file type will be determined based on the MIME type returned by the web server in the HTTP headers. If the MIME type was incorrect, wallets may optionally use file inspection to determine the file's contents. Wallets must explicitly block contracts in HTML format, since HTML web pages can reference external assets such as images whose substitution can completely change their meaning.
 
-* The `format`, `format_1`, `color`, `icon_url` and `image_url` fields enable visual control over how asset quantities are displayed in wallets. Icons should be square PNGs (with transparency permitted) at least 32x32 pixels in size, which the wallet can scale as necessary. Images can be PNGs or JPEGs and should be at least 128x128 pixels in size, not necessarily square. Both have a maximum size of 1 MB.
+* The `format`, `format_1`, `color`, `icon_url` and `image_url` fields enable visual control over how asset quantities are displayed in wallets. Icons should be square PNGs (with transparency permitted) at least 32x32 pixels in size, which the wallet can scale as necessary. Images can be PNGs or JPEGs and should be at least 128x128 pixels in size, not necessarily square.
 
 * If present, the `multiple` and `interest_rate` fields modify the raw integer quantity of units, before it is displayed in a wallet. (The raw number of units held can only be changed by transactions on the blockchain.) The `interest_rate` field is treated as a percentage per annum, beginning from the `issue_date`, and may be negative to indicate demurrage. In quasi-code, the display amount would be calculated as:
 
@@ -112,7 +114,7 @@ else if (is_not_empty(format) && string_contains(format, '*'))
 
 * The `expiry_date` field indicates when the asset will no longer be redeemable, or no longer grant access to the licensed content. Wallets should display an appropriate warning as this expiry date approaches, in order to remind users to redeem their asset or renew their subscription.
 
-* The `feed_url` field enables notifications to be issued to asset holders via RSS 2.0, for inclusion in a wallet news feed. The maximum size of the feed is 1 MB.
+* The `feed_url` field enables notifications to be issued to asset holders via RSS 2.0, for inclusion in a wallet news feed.
 
 * An asset definition JSON can be embedded inside a web page by `\uXXXX`-escaping the characters `(` `)` `<` `>` inside the JSON, and inserting it into the code below. Using this encoding, the JSON can be easily extracted from the raw HTML using a regular expression (no DOM parsing) and will also be accessible to Javascript on the page.
 
