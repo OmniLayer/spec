@@ -800,48 +800,6 @@ A "Contract for Difference" (CFD) allows a bettor to temporarily gain bullish or
 
 CFD bets store "leverage" in place of the data used by "bet threshold" in other bet types. If a bettor prefers that a 10% price movement means a 20% gain or loss, they may select 2x leverage (65536\*2=131072). Similarly, a 10% price movement could mean a 5% gain or loss using 0.5x leverage (65536\*0.5 = 32768). Just as with normal bets, a CFD bettor can "sweeten the deal" by offering better odds (a lower counter-wager amount). High-leverage bets or big price movements could result in a winnings calculation higher than the amount at stake, in which case the winner simply gets the entire pot. 
 
-
-+### Standardized CFD Contracts
-
-
-We need to standardize cost-for-difference betting in order to get liquid order books for trading on different data streams, BTC/USD being an essential one, but also to allow tracking of /GC, /ES, USD/JPY and other financial markets. To accomplish this we will designate a type of address that holds MSC or smart property in escrow and issues a smart property token known as a Smart Future or Smart Leverage contract. The escrow addresses are paired with a sibling who holds the margin capital of the opposing bet, and both parties receive a contract, one positive, one negative, with each contract being birth-marked by its price of execution. After a settlement period elapses, a data-feed or consensus packet thereof is used to pay part of the escrow balance of one contract side as a profit to the other, and then the remainder is paid back to the holders of the contracts. For every unit of open interest (total contracts existing) in given series, there is a -1 address corresponding to the margin of the short position, and a +1 address corresponding to the long position. 
-
- The key features of the standardization are to allow near 1:1 tracking of the underlying by providing a homogenous order-book that a market maker can systematically populate with bids based on the ability to hedge in more liquid markets (such as CME futures contracts markets) and even more importantly, to allow anyone exposed to risk in this market to get an off-setting position and close a losing position at any time. This dynamic is independent of the protocol-level functions.
-
-When contracts are traded on the secondary-market, that is at least one side of the trade is trading with available supply of contracts, the birth-mark price of each contract is referenced against the trade price for the secondary transaction, and the payment is split: part of the payment to assume each *1 or -1 contract position goes to the escrow address to return its capitalization to the original ratio, the other part goes to wallet closing out its contract position. The difference will effect the position closer’s profit or loss. Alternative implementation: a new contract is created with the birth-mark of the secondary transaction price, and the original contract (the one being closed out) goes into the new escrow address, and with it the remainder deposit is made - this approach uses nesting of singular contracts instead of referencing earlier contract birth-prices to make a split payment. 
-
-Contracts have the following parameters:
-
-- Data Feed symbol (BTC/USD, /GC, /ES, BTC/MSC, USD/JPY ect.)
-
-- Leverage Ratio (Integer, e.g. 4)
-
-- Notional Value (eg. 1 BTC, 1000 USD, 1 oz. of gold)
-
-- Settlement time (e.g. 6 hours)
-
-
-The notional size of the contracts are standardized, the pay-out time is standardized, and the margin requirement of the escrow addresses is standardized. Given that short-selling BTC/USD on margin with no counterparty risk is an essential addition to the ecosystem, and given that BTC/USD sometimes can move 10-20% in a day (or even in a 6-hour period), a margin ratio of 4:1 is recommended. Future iterations of these contracts could offer greater leverage/lower margin requirements as BTC/USD volatility goes down, the issuance of these altered margin contracts would depend on the control mechanism in place for these standardized contracts. Contracts relating to less volatile markets may venture lower margin requirements from the outside. 
-
-Margin would be recapitalized as contracts trade and contract Open Interest turns over its supply, margin would also be recapitalized every settlement period, and thus there remains a limited risk that a market participant would have their winning position closed out at a 100% return-on-margin involuntarily, in a highly volatile market (>25% move in greater than 6 hours) where market-makers are opting to offer wider bids and as a result churn less volume. This is the edge case where the individual contracts with their individual price references and escrow address backings become less than 100% fungible, and it can be manage-able. The biggest disaster that would result here is that market-makers who are net-short option gamma, assuming a future options market in BTC/USD, and depending on being leveraged-long BTC in this p2p market, would end up being under-hedged and facing significant capital losses, but that would be very much their problem relative to their margining of those short option contracts, and not a systemic risk.
-
-For example, User A buys a Gold contract that has a 6 hour pay-out cycle and a 10:1 margin requirement. The gold contract has a par value of 10 Troy Oz. of gold per the comex spot price, roughly 600 MSC in notional value (if current BTC/USD ~$450, XAU/USD ~$1350, BTC/MSC ~ .05). User B is long a contract that has already been issued, they have posted a limit-sell and this is the order User A has hit. The clearing of the order involves splitting the payment into a partial re-capitalization of the escrow address tied to that given contract, and a partial payment to the address containing the contract, essentially providing User B their profit or returning them a partial loss. Since in this case the contract is profitable, User A pays the entire margin plus the profit to User B directly, if the contract were facing a 1% nominal loss and thus a 10% loss of margin, the payment would be split as 6 MSC going to re-capitalized the escrow, and the other 54 returning to User B. Since User B was winning, say gold is up 1%, they now have 66 MSC returned.
-
-Now User B is feeling cocky, and decides to get short gold. There are no other secondary holders in the order book with limit orders to buy a contract, except a market maker who will algorithmicaly turn around and short /GC on the Globex (gold futures, like many futures contracts, trade 24 hours a day, except on weekends). In the process, a new contract is issued, User B's wallet now shows a -1 balance of contracts, and his MSC goes to a freshly generated escrow address, as does the market maker's.
-
-Users can opt to signal automatical roll-over in their Mastercoin wallet of choice, so that an escrow key is sent to the addresses in question sometime prior to the settlement time, this key makes the escrow address pay any differential in excess to the nearest round-number of contracts back to the owner's wallet, but keeps the margin requirement and pays a dividend in the form of a new contract for the next 6-hour interval. Users can also do this manually, but the automatic roll-over checkbox is something useful for a wallet to provide when traders are interested in holding longer-term positions.
-
-Each contract generates its own escrow, so that the contracts remain fungible.
-
-Additionally, the indivisibility of contracts is essential to maintaining fungibility. Escrow-backed deposit-peg coins (see below) can be divisible.
-
-Also worth noting that while contracts may settle based on a data-feed published to the blockchain, or a consensus averaging of several such feeds, the real-time liquidity will be mostly based on Market Makers offering bids that on-average provide a profitable arbitrage against futures markets.
-
-![Mastercoin Protocol Layers](images/StandardizedCFD.jpg) 
-
-
-
-
 ### Accepting a Bet
 
 Say you see a bet which you would like to accept. Simply publish the inverse bet with matching odds and the same end date, and the Master Protocol will match them automatically (that is, everyone parsing Mastercoin data will mark both bets as accepted). Here is what a bet matching our last example would look like:
@@ -947,67 +905,50 @@ The reference address points to the address which listed the Bible for sale. Fun
 
 In order to avoid people gaming the reputation system, some coins must be destroyed with every purchase. The percentage of coins destroyed goes down with each new purchase. The percentage is calculated as (value of this purchase) / (2 \* value of all purchases, including this one). Note that this formula causes 50% of the coins from the first purchase to be destroyed.
 
-## Escrow-Backed User Currencies (experimental proposed feature)
 
-The most important and also the most controversial feature (at least the escrow backed part) of the Master Protocol is the built-in support for users to create their own currencies out of existing Mastercoins. For the purposes of demonstrating how user currencies will work, we will use an example currency called “GoldCoins”, which are intended to track the value of one ounce of gold, and which may be stored, transferred, bought, and sold similarly to Mastercoins.
 
-### Stability Concept
 
-So how do we drive the value of these GoldCoins to their target value, when demand for them may surge and decline? The price of GoldCoins is decided by the balance of supply and demand. Since we can’t control the demand for GoldCoins, we must control the supply. The key to accomplishing this is to use an escrow fund which holds Mastercoins, as shown below:
+Deposit Address
 
-![Mastercoin Protocol Layers](images/stability.png) 
++Description: Transaction type 56 is used to decentralize the ETF-style coin by tying its generation and redemption to a standardized address type rather than one specific address. Here, to generate a coin, you take a certain amount of BTC and put it on deposit in an escrow address, and that address also holds a proportional number of margin-escrow backed Smart Contracts. Together, the bitcoin and the contracts represent a certain value of the underlying asset referred to in the Smart Contracts. For example, a short contract on BTC/USD backed by .25 BTC and another .75 BTC in the same deposit address can issue a number of USD-pegged coins equal to the value of 1 BTC at the execution price of the contract. If you buy 1 BTC at $500, transfer .75 into a deposit address and short 1 BTC with a smart contract, you can automatically issue $500 in BTC-redeemable, blockchain-portable USD deposits. Likewise, a short contract on BTC/JPY would allow the issuance of 1 BTC of Yencoins, a short contract on BTC/EUR would allow issuance of Eurocoins, a short contract on BTC/XAU would allow the issuance of coins representing grams of gold, and so forth.  
 
-The escrow fund operates like a battery on the power grid, charging when there is excess energy then discharging where there isn't enough. When there are too few GoldCoins (GoldCoin price is too high), the escrow fund releases new GoldCoins, and the escrow-battery “charges” by holding Mastercoins in escrow. When there are too many GoldCoins (GoldCoin price is too low), the escrow fund purchases some of the excess GoldCoins, thereby “discharging” the escrow-battery as it releases the stored Mastercoins.
+If a certain number of deposit-generated coins are sent to an address containing deposit BTC, it will act as a signature to release a proportional among of BTC to the holder of the USD. If the deposit runs out, the short-contract will be triggered to seek a market bid for a long contract and net-out the remaining exposure, allowing the net remaining BTC to return to the deposit address after the next 6-hour contract settlement. Smart Leverage contracts auto-roll themselves using available deposits.
 
-### New Currency Creation
+The party that deposits the BTC to issue the deposit-tokens will be able to spend that token into issuance, for example, by buying other smart property. The eventual goal is to allow people trading cryptocurrency for cash will be able to take $10 in their hand and give $10 in tokens, minus a fee. We can also have MSC deposits with a short BTC/MSC contract issue synthetic BTC.
 
-Say you want to create the GoldCoin currency described above, using the Gold data stream we defined. Doing so will use a varying number of bytes, due to the use of a null-terminated string. This example uses 38 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
-1. Transaction type = 100 for creating a new child currency (32-bit unsigned integer, 4 bytes)
-1. Data Stream identifier = 3 for the Gold ticker, per our data stream example (32-bit unsigned integer, 4 bytes)
-1. Escrow fund delay = 4 for 4 days (see below) (8-bit unsigned integer, 1 byte)
-1. Escrow fund aggression factor = 1,000,000 for 1% (See below) (32-bit unsigned integer, 4 bytes)
-1. Currency Name = “GoldCoin\0” (9 bytes)
-1. Escrow Fund Initial Size = 100,000,000,000 for 1,000 Mastercoins (64-bit unsigned integer, 8 bytes, causes 1,000 Mastercoins to be debited from the currency creator and credited to the escrow fund. This number should not exceed the amount owned by the creator, but if it does, assume they are crediting all their Mastercoins to the escrow fund)
-1. Escrow Fund Minimum Size = 99,000,000 for 99% (32-bit unsigned integer, 4 bytes, if the escrow fund value is ever less than 99% of all GoldCoins, the currency is dissolved and the escrow fund is distributed to GoldCoin holders who would take a 1% loss)
-1. Sale/Transfer Penalty = 100,000 for 0.1% (32-bit unsigned integer, 4 bytes, any time GoldCoins are sold or transferred, 0.1% are destroyed, which improves the health of the escrow fund)
+
+2. [Transaction type](#field-transaction-type) = 56
+
+3. [Ecosystem](#field-ecosystem) = 1 for tradeable within Mastercoin ecosystem (as opposed to Test Mastercoin)
+
+4. [Property Type](#field-property-type) = new divisible tokens
+
+5. [Previous Property ID](#field-property-id) = peg-token (to replace or append properties from the same issuing address)
+
+6. [Property Category](#field-string-null-terminated) = “Deposits\0” (10 bytes)
+
+7. [Property Subcategory](#field-string-null-terminated) =”Fiat Currency\0” (15 bytes)
+
+8. [Property Name](#field-string-null-terminated) = “USDcoin\0” (14 bytes)
+
+9. [Property URL](#field-string-null-terminated)  = “tinyurl.com/kwejgoig\0” (22 bytes)
+
+10. [Property Data](#field-string-null-terminated)  = “\0” (1 byte)
+
+11. [Currency identifier desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
+
+12. [Number Properties per unit invested](#field-integer-eight-byte) = Smart Contract Price
 
 
-As with properties, currencies are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2, so if GoldCoin is the first Master Protocol currency, it will get a currency identifier of 3. 
-
-The currency held in escrow is the parent currency of the data stream. In this example it is Mastercoins, but it could also be any currency derived from Mastercoins. For instance, GoldCoins could later be held in escrow to support a currency whose data stream uses GoldCoins as a parent currency.
-
-The escrow fund delay of 4 days means that the price of GoldCoins must be too high (or too low) for 4 days in a row before the escrow fund will take any action.
-
-The escrow fund aggression factor determines how aggressively the escrow fund corrects the price of GoldCoins when their price diverges from their target. An escrow fund with aggression factor of 0 will never take any action. If the aggression factor is 100%, the escrow fund will take the maximum possible action (buying every GoldCoin for sale above the target price, or selling new GoldCoins to every buyer below the target price).
-
-In the case of a 1% aggression factor, the escrow fund's first action will be to fix 1% of the error. If the error the next day is still in the same direction, the escrow fund will fix 2% of the error, then 3% the next day, and so on until it reaches 100% or the error changes direction. Once the error changes its direction, the escrow fund has done its job and it starts counting again from zero.
-
-The fields Escrow Fund Initial Size, Escrow Fund Minimum Size, and  Sale/Transfer Penalty were added in response to the “bytemaster/d’aniel attack”, which becomes possible once malicious actors are able to short these currencies. The attack only works on currencies with underfunded escrows, and consists of a malicious actor creating a competing GoldCoin with a healthy escrow fund, which the market would presumably prefer over the GoldCoin with the unhealthy escrow fund. The malicious actor could then profit by shorting the unhealthy GoldCoin until people panicked and fled for the healthy version. More information about unhealthy escrow funds can be found in the next section.
-
-### Unhealthy Escrow Funds
-
-What if the price of Mastercoins falls 95%, and the value of the escrow fund is now only 5% of the target value of all GoldCoins? Using the battery analogy, this escrow fund now has less “charge” and is therefore less capable of intervening to correct prices.
-
-If the currency creator had set the minimum escrow size to 100% the escrow fund would never get into this situation because it would simply dissolve and pay out to currency stakeholders as soon as the escrow fund value dropped to parity, with zero or minimal losses. For currencies which are set up to allow continued operation once unhealthy, the protocol responds by adjusting the aggression factor accordingly. In the example of GoldCoins backed by only 5% given above, the 1% aggression factor would be multiplied by 5% to get 0.05%, meaning that the adjustments will be of much smaller magnitude, and it will take a lot longer to get to 100% aggression.
-
-Note that escrow funds holding funds worth more than their currency do not get more aggressive. That is, if the GoldCoins escrow fund is worth twice the value of all GoldCoins in existence, the aggression factor is still 1%.
-
-### Maintaining Escrow Fund Health
-
-Given a reasonably stable Mastercoin, escrow funds should generally grow healthier over time. Our GoldCoin escrow fund, when it does act, is buying GoldCoins when they are cheap, and selling them when they are expensive. Thus it will generally tend to make a profit, and the Mastercoins held by the escrow fund will grow. The larger the escrow fund, the lower the chance of the currency failing to maintain its value. Additionally, the currency creator can optionally supply initial escrow funds if desired, and the currency can be tuned to destroy some GoldCoins with every sale or transfer, further increasing escrow fund health.
-
-When an escrow fund is unhealthy, lowering the aggression factor makes the escrow fund take more profitable trades, which increases the likelihood of recovery. For instance, if it is buying excess GoldCoins, the cheapest 0.05% can be purchased at a better average price than the cheapest 1% on the market.
-
-Escrow funds should generally be tuned to act slowly. This will allow arbitrage traders to do the heavy lifting, as the knowledge that the escrow fund will eventually get the price back to the target makes for a self-fulfilling prophecy when traders act on that knowledge. If the escrow fund acts too quickly, it loses money when the bitcoin version of a security leads the real-world version, as would happen if someone was engaging in insider trading anonymously using the bitcoin version.
-
+![Mastercoin Protocol Layers](images/Deposit Address.jpg) 
 
 
 # Appendix A – Storing Mastercoin data in the blockchain 
 By Zathras, Copyright © 2013 The Mastercoin Foundation 
 
-The following appendix serves to detail the different approaches to storing Mastercoin transaction data in the Bitcoin blockchain along with their validity requirements and use cases. 
+The following appendix serves to detail the different approaches to storing Mastercoin transaction data in the Bitcoin blockchain along with their validity requirements and use cases.
 
 This appendix will not discuss the varying types of Mastercoin transaction or what the transaction data contains (these are defined in the main body of the Mastercoin specification) and will focus solely on transaction data storage.
  
