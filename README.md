@@ -59,6 +59,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.5 released 15 Apr 2014 (clarified Number of coins field description)
 1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
+1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -401,7 +402,7 @@ You must send the appropriate amount of bitcoins before the time limit expires t
 
 Please note that the buyer is allowed to send multiple bitcoin payments between the Purchase Offer and expiration block which are accumulated and used to adjust the Purchase Offer accordingly. The buyer's Mastercoin available balance is credited with the purchased coins when each bitcoin payment is processed.
 
-In order to make parsing Master Protocol transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but must be above the dust threshold.
+In order to make parsing Master Protocol transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but should be at least as high as the amount which is considered as dust threshold by a majority of Bitcoin nodes so that propagation of the transaction within the network and confirmation by a miner is not delayed.
 
 Other Master Protocol messages (for instance if the buyer wants to change his offer) are not counted towards the actual purchase, even though bitcoins are sent to the selling address as part of encoding the messages. 
 
@@ -953,7 +954,7 @@ The transaction data is encoded into said fake Bitcoin address which is then use
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
 * Has an output for the encoded fake address (the 'data' address)
-* Has all output values above the 'dust' threshold (currently 0.00005460 BTC) and preferable be equal. 
+* Should have all output values above the 'dust' threshold (0.00005460 BTC as of Q2 2014) and preferable be equal. 
 * Has exactly two non-Exodus outputs (one of which must be the data address) with a value equal to the Exodus output and/or has exactly one output with a sequence number +1 of the data address for reference output identification
 * Additional outputs are permitted for the remainder of the input (the 'change' address) 
 
@@ -1014,7 +1015,6 @@ These compressed public key 'packets' can then be included in one or multiple OP
 * Has an output for the exodus address
 * Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be the sender's public key, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
 * Mastercoin 'data packages' appear in order by their sequence number 
-* Has all output values above the 'dust' threshold (the threshold is higher for multisig outputs)  
 * Additional outputs are permitted 
 
 Further:
@@ -1088,7 +1088,7 @@ The Master Protocol is at its core a layer of functionality on top of Bitcoin, u
 
 In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Master Protocol message.  
 
-Each output must carry a value higher than the dust threshold (0.00005460 as of 6 Feb 2014) in order for the transaction to be considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
+Each output should carry a value higher than the dust threshold (0.00005460 as of Q2 2014) in order for the transaction to be relayed by the majority of nodes and considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
 
 The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of 650 USD per BTC:
 
