@@ -1,7 +1,7 @@
 ﻿Role Based Bounties
 ===================
 
-**Document Version: 0.5**
+**Document Version: 0.6**
 
 **Please update the version number whenever you update this document.**
 
@@ -26,24 +26,34 @@ The following standard conditions apply to all RBBs:
 * We do set a mutual 30 days notice period. Both the Foundation and the RBB are obligated not to terminate this RBB position without giving a 30 days notice.
 * We generally intend to keep RBBs on for a long time, typically a year or more. However note that just like most jobs, this is not a contractual obligation given the items above.
 * RBBs qualify to receive other outstanding bounties, however the amount awarded to them via the RBB position in a given month will be deducted from the total value of other bounties received that month.  i.e. if a core developer contributes above and beyond and wins 10000 USD worth of bounties in a month, the 6000 USD from their RBB would subtracted from the award giving them 4000 USD in bounties and 6000 USD for the RBB for a total of 10000 USD.
-* RBBs may manage teams, and the team may qualify for outstanding bounties. Each team's budget should be managed independently of the team lead's personal funds. 
+* RBBs may manage teams, and the team may qualify for outstanding bounties. Each team's budget should be managed independently of the team lead's personal funds.
 
 # Signup bonus for C-Level positions
 Any C-level hire (e.g. CEO/CTO/CMO) is entitled to a signup bonus. The purpose of the bonus is to properly reward such key members of the organization, and make sure they have an extra incentive to promote The Master Protocol. The bonus works as follows:
 
-1. In addition to the Role Based Bounties above, a C-Level position is entitled to $60,000 worth of MSC.
-2. These extra MSCs will be vested over a period of 12 months, via a quarterly vesting schedule, and a 6 month cliff.
-3. After the first 6 months, $30,000 will be calculated in MSC and allocated to the RBB.
-4. At the 9 month mark, $15,000 will be added to this pool.
-5. Finally, at the 12 months mark, an additional $15,000 will be allocated, and the entire bonus MSC pool will be transferred to the RBB.
-6. We want to encourage key members of the Foundation to keep these MSC long term. For this purpose, The Mastercoin Foundation will keep these bonus MSC, and will send them to the RBB after the sooner of these two events:
+1. In addition to the Role Based Bounties above, a C-Level position is entitled to $60,000 ($30,000 worth of BTC and $30,000 worth of MSC).
+2. These amounts will be vested over a period of 12 months, via a quarterly vesting / pricing schedule, and a 6 month cliff.
+3. At the 3 month mark,
+        a. $7,500 will be calculated in BTC and allocated to the RBB.
+        b. $7,500 will be calculated in MSC and allocated to the RBB.
+4. At the 6 month mark,
+        a. $7,500 will be calculated in BTC and allocated to the RBB.
+        b. $7,500 will be calculated in MSC and allocated to the RBB.
+        c. All allocated BTC will be paid to RBB.
+5. At the 9 month mark,
+        a. $7,500 will be calculated in BTC and allocated to the RBB.
+        b. $7,500 will be calculated in MSC and allocated to the RBB.
+        c. All allocated BTC will be paid to RBB.
+6. Finally, at the 12 months mark,
+        a. an additional $15,000 will be allocated, and the entire bonus MSC pool and BTC pool will be transferred to the RBB.
+7. We want to encourage key members of the Foundation to keep these MSC long term. For this purpose, The Mastercoin Foundation will keep these bonus MSC, and will send them to the RBB after the sooner of these two events:
     1. A year passes from their signup date, or
     2. The RBB quits or is let go. In this case, only the vested portion of their bonus will be sent, and the rest will be returned to the Mastercoin Foundation's budget.
 
 # Converting USD to MSC
 For the purpose of this contract, sometime a dollar amount is payable via MSC (e.g. the Bonus for C-Level positions).
 
-Such calculations are made by taking the 3-day daily average of MSC/USD price over the last 3 days (e.g. if a bonus is awarded on Feb 6, we take the average of the closing rate on Feb 5, 4, 3). The best price source is used - either a centralized exchange, the price on a decentralized exchange, or a combination of these, by our consideration.
+Such calculations are made by using the spot price (best available data) on the day of allocation (The best price source is used - either a centralized exchange, the price on a decentralized exchange, or a combination of these, by our consideration.)
 
 # Hourly Bounties
 
