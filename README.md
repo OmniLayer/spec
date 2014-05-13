@@ -65,7 +65,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 # Master Protocol / Mastercoin Terminology
 
-* The term M.A.S.T.E.R. is an acronym for "Metadata Archive of Standard Transaction Embedding Records" 
+* The term M.A.S.T.E.R. is an acronym for "Metadata Archival by Standard Transaction Embedding Records" 
 * The term "Master Protocol" applies to the specification and the clients that implement its features.
 * The term "MSC Protocol" is used as the abbreviation for "Master Protocol". 
 * The term "Mastercoins" applies to the digital tokens that access the features of the "Master Protocol" clients.
@@ -118,7 +118,7 @@ The technical details for both Class A and Class B transactions can be found in 
 
 ## Special Considerations to Avoid Invalid Transactions
 
-Not every bitcoin wallet lets you choose which address bitcoins come from when you make a payment, and Mastercoin transactions must all come from the address which holds the Mastercoins. If a bitcoin wallet contains bitcoins stored in multiple addresses, the wallet must first consolidate the bitcoins by sending ALL of them to the address which is going to initiate a Mastercoin transaction. Then, any Mastercoin-related bitcoin transactions will be sent from that address. Of course, mastercoin wallets hide this complexity from the user.
+Not every bitcoin wallet lets you choose which address bitcoins come from when you make a payment, and Mastercoin transactions must all come from the address which holds the Mastercoins being used. If a bitcoin wallet contains bitcoins stored in multiple addresses, the user (or Master Protocol software) must first ensure that the address which is going to send the Mastercoin transaction has sufficient balance in bitcoins to create the transaction. Then, the Mastercoin-related transaction can be sent successfully from that address. 
 
 Wallets which do not allow you to consolidate to one address and send from that address (such as online web wallet providers) will not work for Mastercoin unless they are modified to do so. For this reason, **attempting to purchase Mastercoins from an online web wallet will likely result in the permanent loss of those Mastercoins.**
 
