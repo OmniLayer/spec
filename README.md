@@ -417,11 +417,25 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 
 Description: Transaction type 21 is used to both publish and accept an offer to sell coins in a Master Protocol Currency for coins in another Master Protocol Currency.
 
-If the amount offered exceeds the number available to be sold by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like anfy other exchange platform.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, will be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell order to include these newly acquired coins, see [FIX this: Change a Coin Sell Offer](#change-a-coin-sell-offer) below. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell offer amount not yet accepted at the time of the update.
 
-An address cannot create a new offer while that address has an active sell offer with the same currencies in the same roles. An active sell offer is one that has not been canceled or fully accepted.
+An address cannot create a new sell order while that address has an active sell order with the same currencies in the same roles. An active sell order is one that has not been canceled or fully accepted.
 
-To accept a sell offer, simply publish the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a price which matches or beats the seller's price. The protocol then finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers. The purchaser’s address must be different than the seller’s address.
+To accept a sell order, simply publish the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which matches or beats the seller's unit price. The protocol then finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers. The purchaser’s address must be different than the seller’s address.
+
+The order matching logic is:
+
+1. an existing order wants to sell the currency that the new order wants to buy
+1. the existing order wants to buy the currency that the new order wants to sell
+1. the existing order's sell unit price is less than or equal to the new order's buy unit price
+1. the existing order's address is not the new order's address
+1. the existing order is still open (not completely fulfilled or canceled)
+
+Qualifying matches are processed in this order:
+1. price priority - buy at lowest price first (ascending price)
+1. then oldest (ascending chronological order)
+1. then smallest offers with the same tx_time, if any (ascending Owned_amount_remaining_for_sale)
+
 
 Note that when only some coins are purchased, the rest are still for sale with the same terms.
 
