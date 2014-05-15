@@ -415,38 +415,37 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 
 ### Sell Master Protocol Coins for Another Master Protocol Currency
 
-Description: Transaction type 21 is used to both publish and accept an offer to sell coins in a Master Protocol Currency for coins in another Master Protocol Currency.
+Description: Transaction type 21 is used to both publish and accept an offer to sell coins in one Master Protocol Currency for coins in another Master Protocol Currency.
 
-If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, will be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell order to include these newly acquired coins, see [FIX this: Change a Coin Sell Offer](#change-a-coin-sell-offer) below. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell offer amount not yet accepted at the time of the update.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell order is published. The amount offered for sale, up to the amount available, will be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell order. The seller could update the sell order to include these newly acquired coins, see [FIX this: Change a Coin Sell Offer](#change-a-coin-sell-offer) below. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell order amount not yet accepted at the time of the update.
 
-An address cannot create a new sell order while that address has an active sell order with the same currencies in the same roles. An active sell order is one that has not been canceled or fully accepted.
+An address cannot create a new sell order while that address has an active sell order with the same currencies in the same roles (for sale, desired). An active sell order is one that has not been canceled or fully accepted.
 
-To accept a sell order, simply publish the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which matches or beats the seller's unit price. The protocol then finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers. The purchaser’s address must be different than the seller’s address.
+To accept a sell order, another address simply publishes the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which is greater than or equal to the seller's unit price. The protocol then finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two orders. The purchaser’s address must be different than the seller’s address.
 
-The order matching logic is:
+An existing order matches the new order when all of the following conditions are met. Note: a sell order's unit price is the Amount for sale divided by the Amount desired. Indivisible coins are exchanged in whole units only. See [Smart Property](#smart-property) below.
 
-1. an existing order wants to sell the currency that the new order wants to buy
-1. the existing order wants to buy the currency that the new order wants to sell
-1. the existing order's sell unit price is less than or equal to the new order's buy unit price
+1. the existing order's Currency id for sale is the new order's Currency id desired
+1. the existing order's Currency id desired is the new order's Currency id for sale
+1. the existing order's unit price is less than or equal to the new order's unit price
 1. the existing order's address is not the new order's address
 1. the existing order is still open (not completely fulfilled or canceled)
 
-Qualifying matches are processed in this order:
-1. price priority - buy at lowest price first (ascending price)
-1. then oldest (ascending chronological order)
-1. then smallest offers with the same tx_time, if any (ascending Owned_amount_remaining_for_sale)
+Existing orders that match are sorted as follows to be applied to the new order:
+1. by unit price, ascending
+1. then by transaction timestamp, ascending chronological order
+1. then by amount for sale, ascending
 
-
-Note that when only some coins are purchased, the rest are still for sale with the same terms.
+If there are no matches for the new sell order or the aggregate amount for sale in the matches is less than the amount desired in the new sell order, the new sell order is added to the list of existing sell orders, with the unfulfilled amount for sale. Note that when only some coins from an existing order are purchased, the remaining coins from that order are still for sale with the same terms.
 
 Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
 
 1. [Transaction version](#field-transaction-version) = 1
-1. [Transaction type](#field-transaction-type) = 21 (currency trade offer for another Master Protocol currency)
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
+1. [Transaction type](#field-transaction-type) = 21 (sell Master Protocol coins for another Master Protocol currency)
+1. [Currency identifier for sale](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount for sale](#field-number-of-coins) = 250,000,000 (2.50000000 Mastercoins) 
 1. [Currency identifier desired](#field-currency-identifier) = 3 for GoldCoin 
-1. [Amount of GoldCoins desired](#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins)
+1. [Amount desired](#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins)
 1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
 
 Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if someday more stable Master Protocol currencies become dominant and users no longer need to exit the Mastercoin ecosystem.
