@@ -1,7 +1,7 @@
 ﻿The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.7 Smart Property Crowdsale Edition
+Version 0.4.5.8 Smart Property Transaction 21 Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -60,6 +60,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
+1. Version 0.4.5.9 released 16 May 2014 (completed tx21 description)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -437,9 +438,9 @@ An existing order matches the new order when all of the following conditions are
 
 Existing orders that match are sorted as follows to be applied to the new order:
 
-1. by unit price, ascending
-1. then by transaction timestamp, ascending chronological order
-1. then by amount for sale, ascending
+1. by unit price, ascending (lowest price first)
+1. then by transaction timestamp, ascending chronological order (oldest first)
+1. then by amount for sale, ascending (smallest amount for sale first)
 
 If there are no matches for the new sell order or the aggregate amount for sale in the matching orders is less than the amount desired in the new sell order, the new sell order is added to the list of existing sell orders, with the unfulfilled amount for sale. Note that when only some coins from an existing order are purchased, the remaining coins from that order are still for sale with the same terms.
 
