@@ -60,7 +60,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
-1. Version 0.4.5.9 released 16 May 2014 (completed tx21 description)
+1. Version 0.4.5.9 released 19 May 2014 (completed tx21 description)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -142,7 +142,7 @@ Also, in many cases a user may wish to do something with Mastercoins recently se
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
 + Mastercoin/bitcoin distributed exchange features are unlocked as of block #290630
-+ Smart property features are unlocked as of block # (TBD)
++ Smart property features are unlocked as of block #297110
 + Savings wallets and rate-limited wallets are unlocked as of block # (TBD)
 + Data feeds and simple betting are unlocked as of block # (TBD)
 + Contract-for-difference bets are unlocked as of block # (TBD)
@@ -439,6 +439,7 @@ An existing order matches the new order when all of the following conditions are
 Existing orders that match are sorted as follows to be applied to the new order:
 
 1. by unit price, ascending (lowest price first)
+1. then by transaction block number, ascending chronological order (oldest first)
 1. then by transaction timestamp, ascending chronological order (oldest first)
 1. then by amount for sale, ascending (smallest amount for sale first)
 
