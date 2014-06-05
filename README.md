@@ -60,7 +60,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
-1. Version 0.4.5.9 released 5 Jun 2014 (tx51 version 1 - accept bitcoins in crowdsales)
+1. Version 0.4.5.9 released 6 Jun 2014 (tx51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -492,16 +492,16 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 ### New Property Creation via Crowdsale with Variable number of Tokens
 
-Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale. 
+Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale.
+
+Effective with version 1 of transaction type 51 and block #(TBD), a single crowdsale is able to accept multiple currencies, including bitcoins (currency id 0), for purchases of a Smart Property in a single crowdsale. See [Accepting Multiple Currencies in a Crowdsale](#accepting-multiple-currencies-in-a-crowdsale) below.
 
 The crowdsale is active until any of the following conditions occurs, which causes the crowdsale to be closed permanently:
 * there is a block with a blocktime greater than or equal to the crowdsale's "Deadline" value 
 * the crowdsale is [manually closed](#close-a-crowdsale-manually)
 * the maximum number of tokens that can be issued by a crowdsale has been credited (92,233,720,368.54775807 divisible tokens or 9,223,372,036,854,775,807 indivisible tokens, see field [Number of Coins](#field-number-of-coins)).
 
-**Note: effective with version 1 of transaction type 51 and block #(TBD), a crowdsale can accept bitcoins (currency id 0) for purchases.**
-
-A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below.
+An address may have only one crowdsale active at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below. A transaction type 51 message with a Deadline value different from the Deadline value for that address's active crowdsale must be invalidated.
 
 Tokens credited to each crowdsale participant and the crowdsale owner are immediately added to the available balance belonging to the respective address and can be spent or otherwise used by that address. Funds raised are added to the available balance belonging to the crowdsale owner's address as soon as they are received and can be spent or otherwise used by that address.
 
@@ -548,6 +548,19 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
 1. [Early Bird Bonus %/Week](#field-integer-one-byte) = 10
 1. [Percentage for issuer](#field-integer-one-byte) = 12
+
+### Accepting Multiple Currencies in a Crowdsale
+
+A single crowdsale can accept multiple currencies for participation in the crowdsale. This is accomplished, while the crowdsale is active, by the crowdsale owner's address issuing additional transaction type 51 messages with:
+* exactly the same Deadline value as for the active crowdsale,
+* an additional Currency Identifier Desired value,
+* the Number Properties per Unit Invested value for the specified Currency Identifier Desired value, 
+* Early Bird Bonus %/Week for the specified Currency Identifier Desired value, and
+* Percentage for issuer for the specified Currency Identifier Desired value
+
+The same validity requirements must apply to these fields as applied to the originating transaction type 51 message. The values in the other data fields for this message must not be validated. 
+
+While the crowdsale is active, the crowdsale owner's address must be able to change any of these values, except the Deadline, by sending a new tx51 message with new values for any or all of these fields. The changes must apply to crowdsale participation following the changes. A crowdsale must be able to stop accepting coins in a Currency Identifier by specifying zero (0) for the Number Properties per Unit Invested value. There must be no limit to the number of tx51 messages that can be applied to an active crowdsale. These messages must be able to set, update or stop acceptance of any valid currency id.
 
 ### Participating in a Crowdsale
 
