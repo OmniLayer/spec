@@ -60,7 +60,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
-1. Version 0.4.5.9 released 3 Jun 2014 (tx51 version 1 - accept bitcoins in crowdsales)
+1. Version 0.4.5.9 released 5 Jun 2014 (tx51 version 1 - accept bitcoins in crowdsales)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -142,7 +142,7 @@ Also, in many cases a user may wish to do something with Mastercoins recently se
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
 + Mastercoin/bitcoin distributed exchange features are unlocked as of block #290630
-+ Smart property features are unlocked as of block # (TBD)
++ Smart property features are unlocked as of block #297110
 + Savings wallets and rate-limited wallets are unlocked as of block # (TBD)
 + Data feeds and simple betting are unlocked as of block # (TBD)
 + Contract-for-difference bets are unlocked as of block # (TBD)
@@ -507,13 +507,17 @@ Tokens credited to each crowdsale participant and the crowdsale owner are immedi
 
 **Note: It is strongly recommended that the UI provide a clear indication when the funds received by a crowdsale are being transferred to another address or reserved while the crowdsale is still active.**
 
-To provide an incentive for prospective crowdsale participants to purchase sooner rather than later, the issuer can set an initial early bird bonus percentage for crowdsale purchasers of new smart properties. The early bird bonus percentage decreases linearly over time from the crowdsale start blocktime to zero at the crowdsale deadline. The  early bird bonus percentage is calculated for each purchase as follows:
+To provide an incentive for prospective crowdsale participants to purchase sooner rather than later, the issuer can specify an initial early bird bonus percentage for crowdsale purchasers of new smart properties. The early bird bonus percentage decreases linearly each second from the crowdsale start blocktime to zero at the crowdsale deadline.
 
-percentage = (("Deadline" value in seconds - purchase transaction blocktime in seconds) / ("Deadline" value in seconds - crowdsale start blocktime) * "Initial Early Bird Bonus %" value
+The early bird bonus percentage for crowdsale purchasers of new smart properties is calculated the same way as was used in the original distribution of Mastercoins by the Exodus Address (see [Initial Token Distribution via the “Exodus Address”](#initial-token-distribution-via-the-exodus-address)):
+
+percentage = (("Deadline" value in seconds - transaction timestamp in seconds) / 604800) * "Early bird bonus %/week" value
 
 The number of tokens credited to the purchaser is:
 
 (1 + (percentage / 100.)) * "Number Properties per Unit Invested" value * the number of coins sent by the purchaser
+
+Note: To make it easier for issuers, a client UI could let the user enter an initial early bird bonus percentage and then convert that to the weekly percentage value required by the tx51 message. For example, an initial early bird bonus percentage of 30% would convert to "Early bird bonus %/week" value = 7  for a 30 day crowdsale. This would be particularly helpful for crowdsale lengths that are not a multiple of 7 days. Similarly, a client UI could do a complementary conversion in order to present the current early bird bonus percentage to prospective crowdsale participants. 
 
 The issuer may choose to receive a number of tokens in proportion to the number of tokens credited to each purchaser. The "Percentage for issuer" value is used to calculate the number of *additional* tokens generated and credited to the issuer's address as follows:
 
@@ -526,7 +530,7 @@ In addition to the validity constraints for each message field type, the followi
 * "Currency Identifier Desired" must be 0, 1, or 2 or an existing Smart Property currency ID
 * "Deadline" must be greater than the crowdsale start blocktime
 
-Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
+Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending, for example, at midnight UTC January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
 1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 51
@@ -542,7 +546,7 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
     * Note: starting with version 1 of transaction type 51, the value 0 (bitcoin) is added to the valid values for the [Currency Identifier Desired](#field-currency-identifier) field
 1. [Number Properties per Unit Invested](#field-number-of-coins) = 100 indivisible tokens
 1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
-1. [Initial Early Bird Bonus %](#field-integer-one-byte) = 10
+1. [Early Bird Bonus %/Week](#field-integer-one-byte) = 10
 1. [Percentage for issuer](#field-integer-one-byte) = 12
 
 ### Participating in a Crowdsale
@@ -550,7 +554,7 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 Participating in a crowdsale is accomplished by sending coins of the desired currency to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction or a bitcoin Send transaction if the crowdsale accepts bitcoins (currency id 0) for purchases. Use multiple Sends to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and the Send message must be confirmed before any of the following conditions occurs:
 * there is a block with a blocktime greater than or equal to the crowdsale's "Deadline" value 
 * the crowdsale is [manually closed](#close-a-crowdsale-manually)
-* the maximum number of tokens that can be issued by a crowdsale has been credited (92,233,720,368.54775807 divisible tokens or 9,223,372,036,854,775,807 indivisible tokens, see field [Number of Coins](#field-number-of-coins)).
+* the maximum number of tokens that can be issued by a crowdsale has been generated (92,233,720,368.54775807 divisible tokens or 9,223,372,036,854,775,807 indivisible tokens, see field [Number of Coins](#field-number-of-coins)).
 
 The blocktime of the Send must be strictly less than the "Deadline" value in order to participate in the crowdsale.
 
