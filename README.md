@@ -562,26 +562,26 @@ While the crowdsale is active, the crowdsale owner's address must be able to cha
 
 ### Participating in a Crowdsale
 
-Participating in a crowdsale is accomplished by sending coins of the desired currency to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction or a bitcoin Send transaction if the crowdsale accepts bitcoins (currency id 0) for purchases. Use multiple Sends to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and the Send message must be confirmed before any of the following conditions occurs:
+Participating in a crowdsale is accomplished by sending coins of one of the desired currencies to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction or a bitcoin Send transaction if the crowdsale accepts bitcoins (currency id 0) for purchases. Use multiple Sends to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match one of the "Currency identifier desired" values being accepted in the crowdsale and the Send message must be confirmed before any of the following conditions occurs:
 * there is a block with a blocktime greater than or equal to the crowdsale's "Deadline" value 
 * the crowdsale is [manually closed](#close-a-crowdsale-manually)
 * the maximum number of tokens that can be issued by a crowdsale has been generated (92,233,720,368.54775807 divisible tokens or 9,223,372,036,854,775,807 indivisible tokens, see field [Number of Coins](#field-number-of-coins)).
 
-The blocktime of the Send must be strictly less than the "Deadline" value in order to participate in the crowdsale.
+The blocktime of the Send message must be strictly less than the "Deadline" value in order to participate in the crowdsale.
 
 Note: It is possible for a bitcoin block to have a blocktime earlier than a previous block. Once a crowdsale is closed for any reason, a subsequent Send must not be treated as participating in that crowdsale regardless of the blocktime associated with the Send.
 
-For divisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the then current percentage based on the "Initial Early Bird Bonus %" value, to eight decimal places.
+For divisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the then current percentage based on the "Early Bird Bonus %/Week" value, to eight decimal places.
 
-For indivisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the then current percentage based on the "Initial Early Bird Bonus %" value, rounded down to an integer number of tokens (with no fractional portion). 
+For indivisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the then current percentage based on the "Early Bird Bonus %/Week" value, rounded down to an integer number of tokens (with no fractional portion). 
 
 The UI should accurately display the number of tokens that will be credited to the sending address.
 
 Note these important details:
 
-+ If the transaction is not in the correct currency, no purchase will be made and no tokens will be credited to the sending address, but the Send itself will complete if it is valid.
-+ Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches the crowdsale's "Currency identifier desired".
-+ If the transaction is confirmed after the crowdsale is closed or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Send itself will complete.
++ If the Send transaction is not in one of the currencies being accepted, no purchase will be made and no tokens will be credited to the sending address, but the Send itself will complete if it is valid.
++ Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches one of the crowdsale's "Currency identifier desired".
++ If the Send transaction is confirmed after the crowdsale is closed or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Send itself will complete.
 + Tokens credited to the sending address and the issuer address are immediately added to the available balance belonging to the respective addresses and can be spent or otherwise used by that address.
 + The funds received are immediately added to the available balance belonging to the crowdsale owner's address and can be spent or otherwise used by that address.
 
