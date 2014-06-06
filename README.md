@@ -551,16 +551,14 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 
 ### Accepting Multiple Currencies in a Crowdsale
 
-A single crowdsale can accept multiple currencies for participation in the crowdsale. This is accomplished, while the crowdsale is active, by the crowdsale owner's address issuing additional transaction type 51 messages with:
+A single crowdsale can accept multiple currencies for participation in the crowdsale. This is accomplished, while the crowdsale is active, by the crowdsale owner's address sending additional transaction type 51 messages with:
 * exactly the same Deadline value as for the active crowdsale,
-* an additional Currency Identifier Desired value,
-* the Number Properties per Unit Invested value for the specified Currency Identifier Desired value, 
-* Early Bird Bonus %/Week for the specified Currency Identifier Desired value, and
-* Percentage for issuer for the specified Currency Identifier Desired value
+* a Currency Identifier Desired value, and
+* the Number Properties per Unit Invested value for the specified Currency Identifier Desired
 
-The same validity requirements must apply to these fields as applied to the originating transaction type 51 message. The values in the other data fields for this message must not be validated. 
+The same validity requirements must apply to these fields as applied to the crowdsale's original transaction type 51 message. The values in the other data fields of the new message are ignored and must not be validated. The values from those fields in the crowdsale's original transaction type 51 message, including Early Bird Bonus %/Week and Percentage for issuer, apply to all accepted currencies for the crowdsale.
 
-While the crowdsale is active, the crowdsale owner's address must be able to change any of these values, except the Deadline, by sending a new tx51 message with new values for any or all of these fields. The changes must apply to crowdsale participation following the changes. A crowdsale must be able to stop accepting coins in a Currency Identifier by specifying zero (0) for the Number Properties per Unit Invested value. There must be no limit to the number of tx51 messages that can be applied to an active crowdsale. These messages must be able to set, update or stop acceptance of any valid currency id.
+While the crowdsale is active, the crowdsale owner's address must be able to change the Number Properties per Unit Invested value by sending a new tx51 message with the new value. The new value must apply to participation in this crowdsale following the change. A crowdsale must be able to stop accepting coins in a Currency Identifier, temporarily or permanently, by specifying zero (0) for the Number Properties per Unit Invested. There must be no limit to the number of tx51 messages that can be applied to an active crowdsale. These messages must be able to enable, change or stop acceptance of any valid currency id.
 
 ### Participating in a Crowdsale
 
