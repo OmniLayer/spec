@@ -1100,22 +1100,22 @@ Class B multisig outputs are significantly larger and thus command a higher mini
 The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of 650 USD per BTC and pre-v0.9 Bitcoin Core default values as used by the majority of the network:
 
 **Class A**  
-0.0000546 ($0.04) - Exodus address output  
-0.0000546 ($0.04) - Data address output  
-0.0000546 ($0.04) - Reference address output  
-0.0001 ($0.07) - Bitcoin transaction fee  
+0.0000546 ($0.0354) - Exodus address output  
+0.0000546 ($0.0354) - Data address output  
+0.0000546 ($0.0354) - Reference address output  
+0.0001 ($0.065) - Bitcoin transaction fee  
   
 Total perceived cost: ~$0.17 per transaction  
   
 **Class B**  
-0.0000546 ($0.04) - Exodus address output  
-0.0000882 ($0.06) - Per multisig data output  
-0.0000546 ($0.04) - Reference address output  
-0.0001 ($0.07) - Bitcoin transaction fee  
+0.0000546 ($0.0354) - Exodus address output  
+0.0000882 ($0.0573) - Per multisig data output  
+0.0000546 ($0.0354) - Reference address output  
+0.0001 ($0.065) - Bitcoin transaction fee  
   
 Total perceived cost: ~$0.19 per transaction  
 
-Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes data, we increase perceived transaction cost by ~$0.06.
+Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes data, we increase perceived transaction cost by less than $0.06.
   
 The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
