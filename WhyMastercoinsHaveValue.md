@@ -48,4 +48,5 @@ I'd take this out; I can't see any reason why OpenBazaar won't do this better th
 It's worth pointing out that because the Mastercoin decentralized	exchange is public the exchange itself can be an honest and accurate source of pricing information.(4) Unlike Colored Coins this exchange can be automatically acted upon by Mastercoin transactions. (though equally hybrid systems can do this in an auditable way, see below)
 
 
-
+== See also ==
+1. [Why Appcoins Have Value](https://github.com/DavidJohnstonCEO/TheValueofAppCoins)
