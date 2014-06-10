@@ -1,31 +1,31 @@
 Why Mastercoins Have Value
+============
 
 It’s worth addressing the specific use case which is the poster-child for App Coins, Mastercoin. It’s the first major project to use this model, and arguably the most well-known.
 
-From the very beginning, the Mastercoin model has always been “build useful features on top of Bitcoin, and make each feature use mastercoins in some way”. For mastercoins to have value, the following two conditions must be true:
+From the very beginning, the Mastercoin model hasou always been “build useful features on top of Bitcoin, and make each feature use mastercoins in some way”. For mastercoins to have value, the following two conditions must be true:
 
-The Master Protocol must be used.
-The features that make Master Protocol useful are enabled by Mastercoin.
+1. The Master Protocol must be used.
+2. The features that make Master Protocol useful are enabled by Mastercoin.
 
 If people need mastercoins, they will have value. The value of mastercoins is therefore expected to have a direct correlation to how useful the Master Protocol is, and also to how well each feature fulfills the promise of using mastercoins.
 
-Following is a high level overview of each Master Protocol feature in our spec, and how each feature uses mastercoins (some features described below are not implemented yet):
+Following is a high level overview of each Master Protocol feature in [our spec](https://github.com/mastercoin-MSC/spec/blob/master/README.md), and how each feature uses mastercoins (some features described below are not implemented yet):
 
-User-created coins/tokens and distributed exchange
-Can optionally use mastercoins for fundraising
-Every user coin trades against Mastercoin on the distributed exchange*
-Mastercoin is the only exit to bitcoin using the distributed exchange
-This means if you have a user coin and want Bitcoin, you must either get a centralized exchange to list your coin, or use Mastercoin
-Properties may be promoted (get preferential placement) in Mastercoin client default listings by burning Mastercoins
-Betting and data-feeds (uncensorable betting on anything imaginable)
-Mastercoin, as the “currency of the realm” is the currency for placing bets*
-Distributed e-commerce (decentralized eBay)
-Mastercoin, as the “currency of the realm” is the currency for buying and selling physical goods*
-Certain amounts of Mastercoin are burned by the reputation/feedback system
-Security features (savings addresses, rate limited addresses)
-Apply to all Mastercoin-derived currency and not just Mastercoin, but contribute to the overall utility of the ecosystem
-Pegged currencies (coins which maintain stable values due to a protocol-managed escrow fund)
-Holding mastercoins in escrow to back pegged currencies will have the effect of removing certain amounts of MSC from circulation, thus increasing the competition for the remaining MSC which is in active circulation for other features.
+1. User-created coins/tokens and distributed exchange
+..1. Can optionally use mastercoins for fundraising
+..2. Every user coin trades against Mastercoin on the distributed exchange*
+..3. Mastercoin is the only exit to bitcoin using the distributed exchange. This means if you have a user coin and want Bitcoin, you must either get a centralized exchange to list your coin, or use Mastercoin
+..4. Properties may be promoted (get preferential placement) in Mastercoin client default listings by burning Mastercoins
+2. Betting and data-feeds (uncensorable betting on anything imaginable)
+..1. Mastercoin, as the “currency of the realm” is the currency for placing bets*
+3. Distributed e-commerce (decentralized eBay)
+..1. Mastercoin, as the “currency of the realm” is the currency for buying and selling physical goods*
+..2. Certain amounts of Mastercoin are burned by the reputation/feedback system
+4. Security features (savings addresses, rate limited addresses)
+..1. Apply to all Mastercoin-derived currency and not just Mastercoin, but contribute to the overall utility of the ecosystem
+5. Pegged currencies (coins which maintain stable values due to a protocol-managed escrow fund)
+..1. Holding mastercoins in escrow to back pegged currencies will have the effect of removing certain amounts of MSC from circulation, thus increasing the competition for the remaining MSC which is in active circulation for other features.
 
 *To the extent other currencies are allowed in these roles, there may be a small fee, burning a small amount of Mastercoin.
 
