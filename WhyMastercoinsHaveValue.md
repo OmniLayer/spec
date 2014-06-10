@@ -1,3 +1,5 @@
+This document is collaboratively edited. Pull requests welcome.
+
 Why Mastercoins Have Value
 ============
 
