@@ -31,8 +31,6 @@ Following is a high level overview of each Master Protocol feature in [our spec]
 
 *To the extent other currencies are allowed in these roles, there may be a small fee, burning a small amount of Mastercoin.
 
-Peter Todd’s take on why Mastercoins Will Have Value
-
 Why Mastercoin Will Have Value
 
 Let’s focus mainly on how mastercoins are needed because Mastercoin is implementing features that Bitcoin just doesn't have, and to implement those features you *must* have a unit of account available.
