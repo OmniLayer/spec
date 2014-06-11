@@ -50,3 +50,4 @@ See also
 ========
 
 1. [Why Appcoins Have Value](https://github.com/DavidJohnstonCEO/TheValueofAppCoins)
+2. [Mastercoin is for Burning](http://blog.mastercoin.org/2014/06/11/mastercoin-is-for-burning/)
