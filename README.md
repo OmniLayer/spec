@@ -60,7 +60,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
-1. Version 0.4.5.9 released 10 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
+1. Version 0.4.5.9 released 12 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -515,13 +515,13 @@ percentage = (("Deadline" value in seconds - transaction timestamp in seconds) /
 
 The number of tokens credited to the purchaser is:
 
-(1 + (percentage / 100.)) * "Number Properties per Unit Invested" value * the number of coins sent by the purchaser
+(1 + (percentage / 100.0)) * "Number Properties per Unit Invested" value * the number of coins sent by the purchaser
 
 Note: To make it easier for issuers, a client UI could let the user enter an initial early bird bonus percentage and then convert that to the weekly percentage value required by the Transaction type 51 message. For example, an initial early bird bonus percentage of 30% would convert to "Early bird bonus %/week" value = 7  for a 30 day crowdsale. This would be particularly helpful for crowdsale lengths that are not a multiple of 7 days. Similarly, a client UI could do a complementary conversion in order to present the current early bird bonus percentage to prospective crowdsale participants. 
 
 The issuer may choose to receive a number of tokens in proportion to the number of tokens credited to each purchaser. The "Percentage for issuer" value is used to calculate the number of *additional* tokens generated and credited to the issuer's address as follows:
 
-number of tokens credited to the purchaser * ("Percentage for issuer" value / 100.)
+number of tokens credited to the purchaser * ("Percentage for issuer" value / 100.0)
 
 In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
 * "Previous Property ID" must be 0 when "Property Type" indicates a new property
@@ -552,11 +552,11 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 ### Accepting Multiple Currencies in a Crowdsale
 
 A single crowdsale can accept multiple currencies for participation in the crowdsale. This is accomplished, while the crowdsale is active, by the crowdsale owner's address sending additional Transaction type 51 messages with:
-* exactly the same Deadline value as for the active crowdsale,
-* a Currency Identifier Desired value, and
-* the Number Properties per Unit Invested value for the specified Currency Identifier Desired
+* a Currency Identifier Desired value,
+* the Number Properties per Unit Invested value for the specified Currency Identifier Desired, and
+* all other fields null (\0) or zero (0)
 
-The same validity requirements must apply to these fields as applied to the crowdsale's original Transaction type 51 message. The values in the other data fields of the new message are ignored and must not be validated. The values from those fields in the crowdsale's original Transaction type 51 message, including Early Bird Bonus %/Week and Percentage for issuer, apply to all accepted currencies for the crowdsale.
+The same validity requirements must apply to these fields as applied to the crowdsale's original Transaction type 51 message. The values in the other data fields of the new message must be null (\0) or zero (0). The values from those fields in the crowdsale's original Transaction type 51 message, including Early Bird Bonus %/Week and Percentage for issuer, apply to all accepted currencies for the crowdsale.
 
 While the crowdsale is active, the crowdsale owner's address must be able to change the Number Properties per Unit Invested value by sending a new Transaction type 51 message with the new value. The new value must apply to participation in this crowdsale following the change. A crowdsale must be able to stop accepting coins in a Currency Identifier, temporarily or permanently, by specifying zero (0) for the Number Properties per Unit Invested. There must be no limit to the number of Transaction type 51 messages that can be applied to an active crowdsale. These messages must be able to enable, change or stop acceptance of any valid currency id.
 
@@ -571,9 +571,9 @@ The blocktime of the Send message must be strictly less than the "Deadline" valu
 
 Note: It is possible for a bitcoin block to have a blocktime earlier than a previous block. Once a crowdsale is closed for any reason, a subsequent Send must not be treated as participating in that crowdsale regardless of the blocktime associated with the Send.
 
-For divisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the then current percentage based on the "Early Bird Bonus %/Week" value, to eight decimal places.
+For divisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the percentage based on the "Early Bird Bonus %/Week" value, to eight decimal places.
 
-For indivisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the then current percentage based on the "Early Bird Bonus %/Week" value, rounded down to an integer number of tokens (with no fractional portion). 
+For indivisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the percentage based on the "Early Bird Bonus %/Week" value, rounded down to an integer number of tokens (with no fractional portion). 
 
 The UI should accurately display the number of tokens that will be credited to the sending address.
 
