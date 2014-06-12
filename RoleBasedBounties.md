@@ -27,6 +27,7 @@ The following standard conditions apply to all RBBs:
 * We generally intend to keep RBBs on for a long time, typically a year or more. However note that just like most jobs, this is not a contractual obligation given the items above.
 * RBBs qualify to receive other outstanding bounties, however the amount awarded to them via the RBB position in a given month will be deducted from the total value of other bounties received that month.  i.e. if a core developer contributes above and beyond and wins 10000 USD worth of bounties in a month, the 6000 USD from their RBB would subtracted from the award giving them 4000 USD in bounties and 6000 USD for the RBB for a total of 10000 USD.
 * RBBs may manage teams, and the team may qualify for outstanding bounties. Each team's budget should be managed independently of the team lead's personal funds.
+* RBBs also receive dev MSC on a vesting schedule, currently described here: https://docs.google.com/document/d/1q6vuIPC7JSCiFKFTsXx24BvGhaXPKpNy2574XeqmAos/edit (should probably be moved to github)
 
 # Signup bonus for C-Level positions
 Any C-level hire (e.g. CEO/CTO/CMO) is entitled to a signup bonus. The purpose of the bonus is to properly reward such key members of the organization, and make sure they have an extra incentive to promote The Master Protocol. The bonus works as follows:
