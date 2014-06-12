@@ -1,7 +1,7 @@
 ﻿The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.7 Smart Property Crowdsale Edition
+Version 0.4.5.9 Smart Property Crowdsale Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -60,6 +60,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
+1. Version 0.4.5.9 released 12 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -141,7 +142,7 @@ Also, in many cases a user may wish to do something with Mastercoins recently se
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
 + Mastercoin/bitcoin distributed exchange features are unlocked as of block #290630
-+ Smart property features are unlocked as of block # (TBD)
++ Smart property features are unlocked as of block #297110
 + Savings wallets and rate-limited wallets are unlocked as of block # (TBD)
 + Data feeds and simple betting are unlocked as of block # (TBD)
 + Contract-for-difference bets are unlocked as of block # (TBD)
@@ -205,7 +206,7 @@ This section defines the fields that are used to construct transaction messages.
 + Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
     * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
     * for indivisible coins or tokens, the value in this field is the integer number of Master Protocol coins or tokens (e.g. 1 represents 1 indivisible token)
-+ Size: 64-bit unsigned integer, 8 bytes
++ Size: 64-bit signed integer, 8 bytes (same as Bitcoin Core)
 + Inter-dependencies: [Property type](#field-property-type)
 + Valid values: 1 to 9,223,372,036,854,775,807 which represents
     * 0.00000001 to 92,233,720,368.54775807 divisible coins or tokens
@@ -299,7 +300,7 @@ This section defines the fields that are used to construct transaction messages.
 # Transaction Definitions
 The Master Protocol Distributed Exchange transactions are listed below. Transactions 0, 20, 21, 22 and 50 are to be implemented in the first deployment, per this spec. They are listed first. The other transactions will be fully defined and implemented in future releases.
 
-Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all spec versions starting with 0.4, the first field in each transaction message is the 2 byte version number, with an initial value of 0 and the transaction type field is a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format associated with that version number.
+Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the Transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all spec versions starting with 0.4, the first field in each transaction message is the 2 byte version number, with an initial value of 0 and the Transaction type field is a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format associated with that version number.
 
 Master Protocol transactions are not reversible except as explicitly indicated by this spec.
 
@@ -366,7 +367,7 @@ For version 0 of this message and Amount for sale is non-zero, it is treated as 
 
 #### Change a Coin Sell Offer
 
-An offer to sell coins can be changed by using Action = 2 (Update) until either: there are valid corresponding purchase offers (transaction type 22) for the whole amount offered, or the sell offer is canceled.
+An offer to sell coins can be changed by using Action = 2 (Update) until either: there are valid corresponding purchase offers (Transaction type 22) for the whole amount offered, or the sell offer is canceled.
 
 The change will apply to the balance that has not yet been accepted with a purchase offer. The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
 
@@ -450,7 +451,7 @@ Every property has a [Property type](#field-property-type), which defines whethe
 The attributes of an existing property cannot be changed. However, a new property can be created to replace or append an existing property. Only the address that issued a property can replace or append that property. Attempts by other addresses are invalid. A replaced property can still be used and traded as normal, but the UI should indicate to the user that a newer version of the property exists and link to it.  To indicate that the issuer is abandoning a property entirely:
 * set Previous Property ID to that property's id,
 * set Number Properties to zero, and
-* use one of the "replace" values for [Property Type](#field-property-type) (see transaction types [50](#new-property-creation-with-fixed-number-of-tokens) and [51](#new-property-creation-via-crowdsale-with-variable-number-of-tokens), below). 
+* use one of the "replace" values for [Property Type](#field-property-type) (see Transaction types [50](#new-property-creation-with-fixed-number-of-tokens) and [51](#new-property-creation-via-crowdsale-with-variable-number-of-tokens), below). 
 
 A property can be replaced and appended multiple times, even abandoning and un-abandoning it more than once. Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values). When displaying a property, the UI should provide links to any related properties. Related properties are the property which was replaced or appended by this property (if there is one) as well as any properties from the same issuer which replace or append this property.
  
@@ -491,28 +492,47 @@ Say you want to do an initial distribution of 1,000,000 digital tokens for your 
 
 ### New Property Creation via Crowdsale with Variable number of Tokens
 
-Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale. The crowdsale is active until the purchasing deadline or the crowdsale is manually closed, which cause the crowdsale to be closed permanently. 
+Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale.
 
-A MSC address may have only one crowdsale active per ecosystem at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below.
+Effective with version 1 of Transaction type 51 and block #(TBD), a single crowdsale is able to accept multiple currencies, including bitcoins (currency id 0), for purchases of a Smart Property in a single crowdsale. See [Accepting Multiple Currencies in a Crowdsale](#accepting-multiple-currencies-in-a-crowdsale) below.
 
-Tokens credited to each crowdsale participant are immediately added to the available balance belonging to the participant's address and can be spent or otherwise used by that address. Funds raised are added to the available balance belonging to the crowdsale owner's address as soon as they are received and can be spent or otherwise used by that address.
+The crowdsale is active until any of the following conditions occurs, which causes the crowdsale to be closed permanently:
+* there is a block with a blocktime greater than or equal to the crowdsale's "Deadline" value 
+* the crowdsale is [manually closed](#close-a-crowdsale-manually)
+* the maximum number of tokens that can be issued by a crowdsale has been credited (92,233,720,368.54775807 divisible tokens or 9,223,372,036,854,775,807 indivisible tokens, see field [Number of Coins](#field-number-of-coins)).
+
+An address may have only one crowdsale active at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below. A Transaction type 51 message with a Deadline value different from the Deadline value for that address's active crowdsale must be invalidated.
+
+Tokens credited to each crowdsale participant and the crowdsale owner are immediately added to the available balance belonging to the respective address and can be spent or otherwise used by that address. Funds raised are added to the available balance belonging to the crowdsale owner's address as soon as they are received and can be spent or otherwise used by that address.
 
 **Note: It is strongly recommended that the UI provide a clear indication when the funds received by a crowdsale are being transferred to another address or reserved while the crowdsale is still active.**
+
+To provide an incentive for prospective crowdsale participants to purchase sooner rather than later, the issuer can specify an initial early bird bonus percentage for crowdsale purchasers of new smart properties. The early bird bonus percentage decreases linearly each second from the crowdsale start blocktime to zero at the crowdsale deadline.
 
 The early bird bonus percentage for crowdsale purchasers of new smart properties is calculated the same way as was used in the original distribution of Mastercoins by the Exodus Address (see [Initial Token Distribution via the “Exodus Address”](#initial-token-distribution-via-the-exodus-address)):
 
 percentage = (("Deadline" value in seconds - transaction timestamp in seconds) / 604800) * "Early bird bonus %/week" value
 
+The number of tokens credited to the purchaser is:
+
+(1 + (percentage / 100.0)) * "Number Properties per Unit Invested" value * the number of coins sent by the purchaser
+
+Note: To make it easier for issuers, a client UI could let the user enter an initial early bird bonus percentage and then convert that to the weekly percentage value required by the Transaction type 51 message. For example, an initial early bird bonus percentage of 30% would convert to "Early bird bonus %/week" value = 7  for a 30 day crowdsale. This would be particularly helpful for crowdsale lengths that are not a multiple of 7 days. Similarly, a client UI could do a complementary conversion in order to present the current early bird bonus percentage to prospective crowdsale participants. 
+
+The issuer may choose to receive a number of tokens in proportion to the number of tokens credited to each purchaser. The "Percentage for issuer" value is used to calculate the number of *additional* tokens generated and credited to the issuer's address as follows:
+
+number of tokens credited to the purchaser * ("Percentage for issuer" value / 100.0)
+
 In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
 * "Previous Property ID" must be 0 when "Property Type" indicates a new property
 * When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
 * "Property Name" must not be blank or null
-* "Currency Identifier Desired" must be 1 or 2 or an existing Smart Property currency ID
-* "Deadline" must be greater than block time
+* "Currency Identifier Desired" must be 0, 1, or 2 or an existing Smart Property currency ID
+* "Deadline" must be greater than the crowdsale start blocktime
 
-Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
+Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending, for example, at midnight UTC January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
-1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction version](#field-transaction-version) = 1
 1. [Transaction type](#field-transaction-type) = 51
 1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
 1. [Property Type](#field-property-type) = 1 for new indivisible tokens
@@ -522,30 +542,47 @@ Say that instead of creating tokens and selling them, you'd rather do a kickstar
 1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
 1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
 1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
-1. [Currency Identifier Desired](#field-currency-identifier) = 1 for Mastercoin (cannot be bitcoin)
+1. [Currency Identifier Desired](#field-currency-identifier\*) = 1 for Mastercoin  
+    * Note: starting with version 1 of Transaction type 51, the value 0 (bitcoin) is added to the valid values for the [Currency Identifier Desired](#field-currency-identifier) field
 1. [Number Properties per Unit Invested](#field-number-of-coins) = 100 indivisible tokens
 1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
 1. [Early Bird Bonus %/Week](#field-integer-one-byte) = 10
 1. [Percentage for issuer](#field-integer-one-byte) = 12
 
+### Accepting Multiple Currencies in a Crowdsale
+
+A single crowdsale can accept multiple currencies for participation in the crowdsale. This is accomplished, while the crowdsale is active, by the crowdsale owner's address sending additional Transaction type 51 messages with:
+* a Currency Identifier Desired value,
+* the Number Properties per Unit Invested value for the specified Currency Identifier Desired, and
+* all other fields null (\0) or zero (0)
+
+The same validity requirements must apply to these fields as applied to the crowdsale's original Transaction type 51 message. The values in the other data fields of the new message must be null (\0) or zero (0). The values from those fields in the crowdsale's original Transaction type 51 message, including Early Bird Bonus %/Week and Percentage for issuer, apply to all accepted currencies for the crowdsale.
+
+While the crowdsale is active, the crowdsale owner's address must be able to change the Number Properties per Unit Invested value by sending a new Transaction type 51 message with the new value. The new value must apply to participation in this crowdsale following the change. A crowdsale must be able to stop accepting coins in a Currency Identifier, temporarily or permanently, by specifying zero (0) for the Number Properties per Unit Invested. There must be no limit to the number of Transaction type 51 messages that can be applied to an active crowdsale. These messages must be able to enable, change or stop acceptance of any valid currency id.
+
 ### Participating in a Crowdsale
 
-Participating in a crowdsale is accomplished by sending coins to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction. Use multiple Simple Send messages to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match the "Currency identifier desired" value in the crowdsale and the Simple Send message must be confirmed before there is a block with a blocktime greater than or equal to the crowdsale's "Deadline" value or before the crowdsale is [manually closed](#close-a-crowdsale-manually). The blocktime of the Simple Send must be strictly less than the "Deadline" value in order to participate in the crowdsale.
+Participating in a crowdsale is accomplished by sending coins of one of the desired currencies to the crowdsale owner's address with the [Simple Send](#transfer-coins-simple-send) transaction or a bitcoin Send transaction if the crowdsale accepts bitcoins (currency id 0) for purchases. Use multiple Sends to make multiple purchases in the crowdsale. In order to participate in the crowdsale, the currency id must match one of the "Currency identifier desired" values being accepted in the crowdsale and the Send message must be confirmed before any of the following conditions occurs:
+* there is a block with a blocktime greater than or equal to the crowdsale's "Deadline" value 
+* the crowdsale is [manually closed](#close-a-crowdsale-manually)
+* the maximum number of tokens that can be issued by a crowdsale has been generated (92,233,720,368.54775807 divisible tokens or 9,223,372,036,854,775,807 indivisible tokens, see field [Number of Coins](#field-number-of-coins)).
 
-Note: It is possible for a bitcoin block to have a blocktime earlier than a previous block. Once a crowdsale is closed for any reason, a subsequent Simple Send must not be treated as participating in that crowdsale regardless of the blocktime associated with the Simple Send.
+The blocktime of the Send message must be strictly less than the "Deadline" value in order to participate in the crowdsale.
 
-For divisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus that number of tokens multiplied by the percentage based on the "Early bird bonus %/week" value, to eight decimal places.
+Note: It is possible for a bitcoin block to have a blocktime earlier than a previous block. Once a crowdsale is closed for any reason, a subsequent Send must not be treated as participating in that crowdsale regardless of the blocktime associated with the Send.
 
-For indivisible properties, the sending address will be credited with the number of tokens calculated as the "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Simple Send message, plus that number of tokens multiplied by the percentage based on the "Early bird bonus %/week" value, rounded down to an integer number of tokens (with no fractional portion). 
+For divisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the percentage based on the "Early Bird Bonus %/Week" value, to eight decimal places.
+
+For indivisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the percentage based on the "Early Bird Bonus %/Week" value, rounded down to an integer number of tokens (with no fractional portion). 
 
 The UI should accurately display the number of tokens that will be credited to the sending address.
 
-A few details are important to have here:
+Note these important details:
 
-+ If the transaction is not in the correct currency, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete if it is valid.
-+ Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches the crowdsale's "Currency identifier desired".
-+ If the transaction is confirmed after the crowdsale is closed or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Simple Send itself will complete.
-+ Tokens credited to the sending address and the issuer address are immediately added to the available balance belonging to the sending address and can be spent or otherwise used by that address.
++ If the Send transaction is not in one of the currencies being accepted, no purchase will be made and no tokens will be credited to the sending address, but the Send itself will complete if it is valid.
++ Payments will be applied to whatever crowdsale is active at the time of confirmation if the currency specified matches one of the crowdsale's "Currency identifier desired".
++ If the Send transaction is confirmed after the crowdsale is closed or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Send itself will complete.
++ Tokens credited to the sending address and the issuer address are immediately added to the available balance belonging to the respective addresses and can be spent or otherwise used by that address.
 + The funds received are immediately added to the available balance belonging to the crowdsale owner's address and can be spent or otherwise used by that address.
 
 ### Promote a property
