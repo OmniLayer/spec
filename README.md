@@ -513,9 +513,17 @@ The early bird bonus percentage for crowdsale purchasers of new smart properties
 
 percentage = (("Deadline" value in seconds - transaction timestamp in seconds) / 604800) * "Early bird bonus %/week" value
 
-The number of tokens credited to the purchaser is:
+The number of tokens credited to the purchaser is the lesser of:
 
 (1 + (percentage / 100.0)) * "Number Properties per Unit Invested" value * the number of coins sent by the purchaser
+
+and
+
+(Max - Issued) / (1 + ( (percentage + Percentage for issuer) / 100.0) )
+
+where:
+* Max is the maximum number of tokens that can be issued
+* Issued is the number of tokens issued prior to this purchase
 
 Note: To make it easier for issuers, a client UI could let the user enter an initial early bird bonus percentage and then convert that to the weekly percentage value required by the Transaction type 51 message. For example, an initial early bird bonus percentage of 30% would convert to "Early bird bonus %/week" value = 7  for a 30 day crowdsale. This would be particularly helpful for crowdsale lengths that are not a multiple of 7 days. Similarly, a client UI could do a complementary conversion in order to present the current early bird bonus percentage to prospective crowdsale participants. 
 
