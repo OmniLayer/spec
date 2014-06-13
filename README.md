@@ -60,7 +60,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
-1. Version 0.4.5.9 released 12 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
+1. Version 0.4.5.9 released 13 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -501,7 +501,7 @@ The crowdsale is active until any of the following conditions occurs, which caus
 * the crowdsale is [manually closed](#close-a-crowdsale-manually)
 * the maximum number of tokens that can be issued by a crowdsale has been credited (92,233,720,368.54775807 divisible tokens or 9,223,372,036,854,775,807 indivisible tokens, see field [Number of Coins](#field-number-of-coins)).
 
-An address may have only one crowdsale active at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below. A Transaction type 51 message with a Deadline value different from the Deadline value for that address's active crowdsale must be invalidated.
+An address may have only one crowdsale active at any given time, eliminating the need for participants to specify which crowdsale from that address they are participating in when they purchase. See [Participating in a crowdsale](#participating-in-a-crowdsale) below.
 
 Tokens credited to each crowdsale participant and the crowdsale owner are immediately added to the available balance belonging to the respective address and can be spent or otherwise used by that address. Funds raised are added to the available balance belonging to the crowdsale owner's address as soon as they are received and can be spent or otherwise used by that address.
 
@@ -511,25 +511,27 @@ To provide an incentive for prospective crowdsale participants to purchase soone
 
 The early bird bonus percentage for crowdsale purchasers of new smart properties is calculated the same way as was used in the original distribution of Mastercoins by the Exodus Address (see [Initial Token Distribution via the “Exodus Address”](#initial-token-distribution-via-the-exodus-address)):
 
-percentage = (("Deadline" value in seconds - transaction timestamp in seconds) / 604800) * "Early bird bonus %/week" value
+EBpercentage = ( ("Deadline" value in seconds - transaction timestamp in seconds) / 604800) * "Early bird bonus %/week" value
 
-The number of tokens credited to the purchaser is the lesser of:
+The number of tokens credited to the purchaser is:
 
-(1 + (percentage / 100.0)) * "Number Properties per Unit Invested" value * the number of coins sent by the purchaser
-
-and
-
-(Max - Issued) / (1 + ( (percentage + Percentage for issuer) / 100.0) )
-
-where:
-* Max is the maximum number of tokens that can be issued
-* Issued is the number of tokens issued prior to this purchase
+(1 + (EBpercentage / 100.0) ) * "Number Properties per Unit Invested" value * the number of coins sent by the purchaser
 
 Note: To make it easier for issuers, a client UI could let the user enter an initial early bird bonus percentage and then convert that to the weekly percentage value required by the Transaction type 51 message. For example, an initial early bird bonus percentage of 30% would convert to "Early bird bonus %/week" value = 7  for a 30 day crowdsale. This would be particularly helpful for crowdsale lengths that are not a multiple of 7 days. Similarly, a client UI could do a complementary conversion in order to present the current early bird bonus percentage to prospective crowdsale participants. 
 
-The issuer may choose to receive a number of tokens in proportion to the number of tokens credited to each purchaser. The "Percentage for issuer" value is used to calculate the number of *additional* tokens generated and credited to the issuer's address as follows:
+The issuer may choose to receive a number of tokens in proportion to the number of tokens credited for each purchase. The "Percentage for issuer" value is used to calculate the number of *additional* tokens generated and credited to the issuer's address as follows:
 
 number of tokens credited to the purchaser * ("Percentage for issuer" value / 100.0)
+
+The client must ensure that the number of tokens credited to the purchaser plus the number of tokens credited to the issuer will not cause the total number of tokens issued in the crowdsale to exceed the maximum number of tokens that can be issued. If that condition occurs, the client must reduce the number of tokens for the purchaser and the issuer so they both receive the correct percentages and the number of tokens issued as a result of this purchase equals the number of tokens remaining that can be issued. This is a partial purchase. It is left to the issuer to respond to any requests for refunds due to partial purchases.
+
+The following expression may be used to calculate the maximum number of tokens that are available for purchase such that the current early bird bonus percentage and the Percentage for issuer can be applied without exceeding the maximum number of tokens that can be issued:
+
+(MaxNum - Issued) / ( (1 + (EBpercentage / 100.0) ) * (1 +  ("Percentage for issuer" value / 100.0) ) )
+
+where:
+* MaxNum is the maximum number of tokens that can be issued
+* Issued is the number of tokens issued prior to this purchase
 
 In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
 * "Previous Property ID" must be 0 when "Property Type" indicates a new property
