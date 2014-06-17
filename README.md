@@ -187,15 +187,20 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 32-bit unsigned integer, 4 bytes
 + Valid values: 0 to 4,294,967,295
 
+### Field: Integer-two byte
++ Description: used as a multiplier or in other calculations
++ Size: 16-bit unsigned integer, 2 bytes
++ Valid values: 0 to 65535
+
 ### Field: Integer-one byte
 + Description: used as a multiplier or in other calculations
 + Size: 8-bit unsigned integer, 1 byte
 + Valid values: 0 to 255
 
-### Field: Integer-two byte
-+ Description: used as a multiplier or in other calculations
-+ Size: 16-bit unsigned integer, 2 bytes
-+ Valid values: 0 to 65535
+### Field: Boolean array-one byte
++ Description: used for true/false flags
++ Size: 8-bit boolean array, 1 byte
++ Valid values: 0000 0000 to 1111 1111
 
 ### Field: Listing identifier (future)
 + Description: the unique identifier assigned to each sale listing an a per address basis
@@ -277,6 +282,7 @@ This section defines the fields that are used to construct transaction messages.
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
     *    3: [Pay Dividends (Send All)](#pay-dividends-send-all)
+    *    5: [Multi Send](#transfer-coins-multi-send)
     *   10: [Mark an Address as Savings](#marking-an-address-as-savings)
     *   11: [Mark a Savings Address as Compromised](#marking-a-savings-address-as-compromised)
     *   12: [Mark an Address as Rate-Limited](#marking-an-address-as-rate-limited)
@@ -627,7 +633,46 @@ Note that attempts to participate in a closed crowdsale will result in no invest
 
 # Future Transactions
 
-The transactions below are still subject to revision and therefore are not included in deployments based on this version of the spec. 
+The transactions below are still subject to revision and therefore are not included in deployments based on this version of the spec.  
+  
+### Transfer Coins (Multi Send)
+
+Description: Transaction type 5 transfers coins in the specified currency from the sending address to one or more output addresses.
+
+The first recipient will be defined similarly to the recipient of a Simple Send, with the primary differences being that the address is explicitly stated and the quantity of coins transferred is calculated. The amount of coins sent is calculated by subtracting an offset from the amount of bitcoin sent to that address, and multiplying that value by 10 to the power of x, where x is specified by the sender.
+
+The bit-field following the data for the first recipient specifies whether the following recipients require the index and currency fields to be included. This is done to save space - the cost of specifying these is 9 bytes per recipient. By leaving these cleared, coins can be sent to recipients at the cost of 1 byte per additional recipient.
+
+* If bit 0 is set, the currency must be specified for each recipient. If bit 0 is cleared, each recipient will receive the currency that is sent to the first recipient.
+* If bit 1 is set, the output index must be specified for each recipient. If bit 0 is cleared, each sequential recipient will correspond to sequential outputs, starting from the output index specified for the first recipient.
+
+
+The transaction is invalid if any of the following conditions are true:
+* the sending address has zero coins in its available balance for the specified currency identifier
+* the amount to transfer exceeds the number owned and available by the sending address
+* the specified currency identifier is non-existent
+* the specified currency identifier is 0 (bitcoin)
+
+A Multi send to a non-existent address will destroy the coins in question, just like it would with bitcoin.
+
+[Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
+
+Say you want to transfer 1 Mastercoin to another address, and 1.234 Mastercoin to another address. Only 15 bytes are needed. The data stored is:
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = 5
+1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
+1. [Output index](#field-integer-one-byte) = 0, indicating that the 0th output is the recipient
+1. [Offset](#field-integer-two-byte) = 5460
+1. [Magnitude to transfer](#field-integer-one-byte) = 8, when the value at output 0 is 5461, the total transferred is (5461 - 5460) * 10 ** 8 = 100,000,000 (1.00000000 MSC)
+1. [Additional recipients](#field-integer-one-byte) = 1, indicating that there is 1 additional recipient following the Flags data field.
+1. [Flags](#field-boolean-array-one-byte):
+	* 0 = Cleared, indicating that all recipients will receive currency specified by first recipient.
+	* 1 = Cleared, indicating that sequential recipients correspond to sequential output indices starting from the index of the first recipient.
+	* 2-7 = Reserved.
+1. [Magnitude to transfer](#field-integer-one-byte) = 5, when the value at output 1 is 6694, the total transferred is (6694 - 5460) * 10 ** 5 = 123,400,000 (1.23400000 MSC)
+
+Fields can be added as necessary for additional recipients.
 
 ## Transactions to Limit Funds (Theft Prevention)
 
