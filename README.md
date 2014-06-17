@@ -187,15 +187,20 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 32-bit unsigned integer, 4 bytes
 + Valid values: 0 to 4,294,967,295
 
+### Field: Integer-two byte
++ Description: used as a multiplier or in other calculations
++ Size: 16-bit unsigned integer, 2 bytes
++ Valid values: 0 to 65535
+
 ### Field: Integer-one byte
 + Description: used as a multiplier or in other calculations
 + Size: 8-bit unsigned integer, 1 byte
 + Valid values: 0 to 255
 
-### Field: Integer-two byte
-+ Description: used as a multiplier or in other calculations
-+ Size: 16-bit unsigned integer, 2 bytes
-+ Valid values: 0 to 65535
+### Field: Boolean array-one byte
++ Description: used for true/false flags
++ Size: 8-bit boolean array, 1 byte
++ Valid values: 0000 0000 to 1111 1111
 
 ### Field: Listing identifier (future)
 + Description: the unique identifier assigned to each sale listing an a per address basis
