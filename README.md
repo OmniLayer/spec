@@ -277,6 +277,7 @@ This section defines the fields that are used to construct transaction messages.
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
     *    3: [Pay Dividends (Send All)](#pay-dividends-send-all)
+    *    7: [Consolidated Send](#transfer-coins-consolidated-send)
     *   10: [Mark an Address as Savings](#marking-an-address-as-savings)
     *   11: [Mark a Savings Address as Compromised](#marking-a-savings-address-as-compromised)
     *   12: [Mark an Address as Rate-Limited](#marking-an-address-as-rate-limited)
@@ -627,7 +628,18 @@ Note that attempts to participate in a closed crowdsale will result in no invest
 
 # Future Transactions
 
-The transactions below are still subject to revision and therefore are not included in deployments based on this version of the spec. 
+The transactions below are still subject to revision and therefore are not included in deployments based on this version of the spec.  
+
+### Transfer Coins (Consolidated Send)
+
+Description: Transaction type 7 transfers all Mastercoin and derived coins/tokens from all input addresses to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). Any input that has 0 Mastercoin and derived coins/tokens will be ignored, and will be assumed included to provide any necessary transaction fees.
+
+A Consolidated send to a non-existent address will destroy the coins in question, just like it would with bitcoin.
+
+[Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = 7
 
 ## Transactions to Limit Funds (Theft Prevention)
 
