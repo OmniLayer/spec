@@ -608,7 +608,7 @@ A Multi send to a non-existent address will destroy the coins in question, just 
 
 [Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
 
-Say you want to transfer 1 Mastercoin to another address, and 1.234 Mastercoin to another address.. Only 12 bytes are needed. The data stored is:
+Say you want to transfer 1 Mastercoin to another address, and 1.234 Mastercoin to another address.. Only xx bytes are needed. The data stored is:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 5
