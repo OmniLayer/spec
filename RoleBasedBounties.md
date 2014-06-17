@@ -20,7 +20,7 @@ The reason an RBB exists is to complement the traditional bounty system. We want
 
 The following standard conditions apply to all RBBs:
 
-* In addition to USD or BTC, each RBB also wins a proportional amount of the Dev MSCs. The amount they receive is proportional to the relative share of their USD or BTC allocation, out of all the Bounty BTC awarded that month.
+* In addition to USD or BTC, each RBB also wins a proportional amount of the Dev MSCs. The amount they receive is proportional to the relative share of their USD or BTC allocation, out of all the Bounty BTC awarded that month. Dev MSC is released on a vesting schedule, currently described here: https://docs.google.com/document/d/1q6vuIPC7JSCiFKFTsXx24BvGhaXPKpNy2574XeqmAos/edit (should probably be moved to github)
 * The payment schedule is monthly, usually via bitcoins (but we can pay via other means if needed e.g. wire transfer).
 * The position is "at will", meaning both the Foundation and the RBB can terminate the RBB position without any reason.
 * We do set a mutual 30 days notice period. Both the Foundation and the RBB are obligated not to terminate this RBB position without giving a 30 days notice.
