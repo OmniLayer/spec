@@ -49,7 +49,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.1.9 (previously 0.7) released 29 Jul 2013 (Preview of 0.2, but without revealing the Exodus Address)
 1. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the fund-raiser)
 1. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
-1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Pay Dividend" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
+1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Send To All" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
 1. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
 1. Version 0.4.5 released 20 Feb 2014 (added smart property crowdsale, other improvements to future features)
 1. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
@@ -61,6 +61,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
 1. Version 0.4.5.9 released 13 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
+1. Version 0.4.5.11 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to all", and that we don't encourage illegal behavior!
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -276,7 +277,7 @@ This section defines the fields that are used to construct transaction messages.
 
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
-    *    3: [Pay Dividends (Send All)](#pay-dividends-send-all)
+    *    3: [Send To All](#send-to-all)
     *   10: [Mark an Address as Savings](#marking-an-address-as-savings)
     *   11: [Mark a Savings Address as Compromised](#marking-a-savings-address-as-compromised)
     *   12: [Mark an Address as Rate-Limited](#marking-an-address-as-rate-limited)
@@ -308,7 +309,7 @@ Any Mastercoin transaction from any address that attempts to transfer, reserve, 
 
 ## Transferring coins
 
-Transfers are unconditional payments from one Mastercoin address to another address, set of addresses, or to the owners of a specific property (i.e. dividends).
+Transfers are unconditional payments from one Mastercoin address to another address, set of addresses, or proportionally to owners of a specific property.
 
 ### Transfer Coins (Simple Send)
 
@@ -839,22 +840,20 @@ Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner ge
 
 ##Transferring coins (Future)
 
-We are not sure the "pay dividends" message will be feasible, given that it potentially affects a huge number of balances. Consequently, it is currently in the "future transactions" bucket. It might become feasible if some kind of anti-spam fee is added to make sure this message is used sparingly.
+We are not sure the "send to all" message will be feasible, given that it potentially affects a huge number of balances. Consequently, it is currently in the "future transactions" bucket. It might become feasible if some kind of anti-spam fee is added to make sure this message is used sparingly.
 
-### Pay Dividends (Send All)
+### Send To All
 
-Say your company has made a huge profit and wishes to pay 1000 MSC evenly distributed among the holders of Quantum Miner digital tokens. Doing so will use 20 bytes:
+Say you have grown wealthy and wish to gift all 1000 of your own Quantum Miner digital tokens to the other people holding those tokens. Doing so will use 16 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
-1. Transaction type = 3 for "send all" (32-bit unsigned integer, 4 bytes)
-2. Currency identifier = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
+1. Transaction type = 3 for "send to all" (32-bit unsigned integer, 4 bytes)
+2. Currency identifier = 6 for Quantum Miner Tokens (32-bit unsigned integer, 4 bytes)
 3. Amount to transfer = 100,000,000,000 (1000.00000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed number owned, but if it does, assume user is transferring all of them)
-4. Currency ID of Payees = 6 for Quantum Miner Tokens (32-bit unsigned integer, 4 bytes)
 
-Note that this transaction is very similar to "simple send", with just one extra field. The protocol will split up the 1000 MSC among the investors, according to how many tokens they have. 
+Note that this transaction is very similar to "simple send". The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. 
 
-Another use-case for this transaction type would be a giveaway, where someone wants to raise interest in their new coin or property by giving some away to everyone who owns (for instance) Mastercoins.
-
+This message can be used for giveaways, paying employees, or even paying dividends (please make sure your proposed use case is legal in your jurisdiction!!)
 
 ## Distributed E-Commerce
 
