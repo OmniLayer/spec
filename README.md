@@ -422,19 +422,33 @@ Description: Transaction type 21 is used to both publish and accept an offer to 
 
 If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell order is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell order. The seller could update the sell order to include these newly acquired coins, see [Change a Transaction Type 21 Coin Sell Order](#change-a-transaction-type-21-coin-sell-order) below.
 
-The new sell order's unit price is computed from two of the fields in the transaction message: the "Amount desired" divided by the "Amount for sale". The original values of existing orders is used to match against new orders. The unit price does not change except by using the Change action. See below.
+The new sell order's unit price is computed from two of the fields in the transaction message: the "Amount desired" divided by the "Amount for sale". An existing order's original unit price is used to match against new orders. The unit price does not change except by using the Change action. See below.
 
 An address cannot create a new sell order while that address has an active sell order with the same currencies in the same roles (for sale, desired). An active sell order is one that has not been canceled or fully accepted. The currency id for sale must be different from the currency id desired. Both currency id's must refer to existing currencies.
 
-To accept an existing sell order, another address simply publishes the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which is greater than or equal to the existing sell order's unit price. The protocol then finds existing orders that qualify (match). The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order until the new order is completely fulfilled or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. The purchaser’s address must be different than the seller’s address.
+To accept an existing sell order, an address simply publishes the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which is greater than or equal to the existing sell order's unit price. The protocol then finds existing sell orders that qualify (match), possibly including existing sell orders from that same address.
+
+A liquidity bonus for the seller provides an incentive for people to put their coins up for sale at a price which does not get filled instantly, increasing available liquidity on the exchange. The liquidity bonus for the existing seller is added to the amount paid by the new sell order. The liquidity bonus is 0.3% of the amount paid by the new sell order, rounded to the nearest satoshi. The liquidity bonus percentage and/or calculation may change in the future.
+
+The following table shows examples of the liquidity bonus based on the new order amount for sale and existing order amount desired, for divisible coins. This table does not show new order minimum amount desired or the existing order amount for sale, which are not subject to the liquidity bonus.
+
+|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder** | **Existing Order Remainder** |
+|---:|---:|:---|---:|---:|:---|
+| 100.0 | 100.0 | 99.70089731 | 0.29910269 | 0.0 | 0.29910269 |
+| 125.0 | 100.0 | 100.0 | 0.30 | 24.7 | 0.0 |
+| 50.0 | 100.0 | 49.85044865 | 0.14955135 | 0.0 | 50.14955135 |
+| 100.3 | 100.0 | 100.0 | 0.3 | 0.0 | 0.0 |
+
+The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. This can cause the effective unit price to be higher than the matching sell order's specified unit price, but still not greater than the reciprocal of the new sell order's unit price. 
+
+The purchaser’s address can be the same as the seller’s address.
 
 An existing order matches the new order when all of the following conditions are met: 
 
 1. the existing order's Currency id for sale is the same as the new order's Currency id desired
 1. the existing order's Currency id desired is the same as the new order's Currency id for sale
 1. the existing order's unit price is less than or equal to the reciprocal of the new order's unit price
-1. the existing order's address is not the new order's address
-1. the existing order is still open (not completely fulfilled or canceled)
+1. the existing order is still open (not completely sold or canceled)
 
 Existing orders that match are sorted as follows to be applied to the new order:
 
@@ -442,17 +456,19 @@ Existing orders that match are sorted as follows to be applied to the new order:
 1. then by transaction block number, ascending chronological order (oldest first)
 1. then by transaction position within the block, ascending order (oldest first)
 
-If there are no matches for the new sell order or the aggregate amount for sale in the matching orders is less than the amount desired in the new sell order, the new sell order is added to the list of existing sell orders, with its original amount desired, original amount for sale and remaining amount for sale. This order is now a candidate for matching against future sell orders. Note that when only some coins from an existing order are purchased, the remaining coins from that order are still for sale at the original unit price.
+If there are no matches for the new sell order or the aggregate amount desired in the matching orders is less than the amount for sale in the new sell order, the new sell order is added to the list of existing sell orders, with its original amount desired, original amount for sale and remaining amount for sale. This order is now a candidate for matching against future sell orders. Note that when only some coins from an existing order are purchased, the remaining coins from that order are still for sale at the original unit price.
 
 Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 21 (sell Master Protocol coins for another Master Protocol currency)
-1. [Currency identifier for sale](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount for sale](#field-number-of-coins) = 250,000,000 (2.50000000 Mastercoins) 
-1. [Currency identifier desired](#field-currency-identifier) = 3 for GoldCoin 
-1. [Amount desired](#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins)
-1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 21| 
+|Currency identifier for sale| [Currency identifier](#field-currency-identifier) |1 for Mastercoin|
+|Amount for sale|[Number of Coins](#field-number-of-coins)|250,000,000 (2.5 Mastercoins) |
+|Currency identifier desired| [Currency identifier](#field-currency-identifier) |3 for GoldCoin |
+|Amount desired|[Number of Coins](#field-number-of-coins)|5,000,000,000 (50.0 GoldCoins) |
+| Action | [Sell Offer sub-action](#field-sell-offer-sub-action) | 1 (New offer) | 
 
 Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if the Mastercoin community (Mastercoin holders) votes to change it.
 
@@ -466,7 +482,7 @@ The amount reserved from the available balance for this address must be adjusted
 
 The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
 
-Say you decide you want to change a sell order, e.g. the number of coins you are offering for sale, or the number of coins desired. Send the transaction with the new value(s), the same currency identifiers and Action = 2 (Update) so it is processed before the whole amount offered has been matched. Note that while the portion of a sell order which has been matched cannot be changed, sending an update message affects any coins which have not been matched. 
+Say you decide you want to change a sell order, e.g. the number of coins you are offering for sale, or the number of coins desired. Send the transaction with the new value(s), the same currency identifiers and Action = 2 (Update) so it is processed before the whole amount for sale has been matched. Note that while the portion of a sell order which has been matched and sold cannot be changed, sending an update message affects any coins which have not been matched. 
 
 #### Cancel a Transaction Type 21 Coin Sell Order
 
@@ -478,7 +494,7 @@ When canceling a sell order, the values in the following fields are not tested f
 
 The cancel will apply to the remaining Amount for sale. The UI must indicate if the cancellation was successful and how many coins were not sold.
 
-If you want to cancel a sell order, specify the same currency identifiers and Action = 3 (Cancel) and send the transaction so it is processed before the full amount for sale has been matched. Note that while the portion of an offer which has been matched cannot be canceled, sending the cancel message cancels any portion of the order which has not been matched.
+If you want to cancel a sell order, specify the same currency identifiers and Action = 3 (Cancel) and send the transaction so it is processed before the full amount for sale has been matched. Note that while the portion of a sell order which has been matched and sold cannot be canceled, sending the cancel message cancels any portion of the order which has not been matched.
 
 ## Smart Property
 
