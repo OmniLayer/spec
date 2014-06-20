@@ -1,7 +1,7 @@
 ﻿The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.9 Smart Property Crowdsale Edition
+Version 0.4.5.11 Smart Property Crowdsale Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -61,7 +61,8 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
 1. Version 0.4.5.9 released 13 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
-1. Version 0.4.5.11 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to all", and that we don't encourage illegal behavior!
+1. Version 0.4.5.10 released 18 Jun 2014 (cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to all", and that we don't encourage illegal behavior!)
+1. Version 0.4.5.11 released 20 June 2014 (updated information about transaction costs, removed deprecated OP_RETURN reference)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -112,9 +113,7 @@ Technical notes:
 
 Bitcoin has some little-known advanced features (such as scripting) which many people imagine will enable it to perform fancy new tricks someday. The Master Protocol uses exactly NONE of those advanced features, because support for them is not guaranteed in the future, and the Master Protocol doesn't need them to embed data in the block chain.
 
-The Master Protocol was originally specified to embed data in the block chain using fake bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which embeds data in a bitcoin multi-signature transaction (Class B). Once bitcoin miners start supporting the new OP_RETURN opcode as part of version 0.9 of the Bitcoin reference client, Master Protocol will be able to use that opcode to make the Master Protocol data completely prune-able (Class C) see description here by Gavin Andresen here: https://bitcoinfoundation.org/blog/?p=290 
-
-Class C transactions are most preferred due to the Provably Prune-able Outputs avoiding issues of "bloat" and "pollution" of the block chain.
+The Master Protocol was originally specified to embed data in the blockchain using fake Bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which embeds data in fully redeemable, and therefore non-polluting, multi-signature transaction outputs (Class B).  Other storage options are actively explored and evaluated.
 
 The technical details for both Class A and Class B transactions can be found in Appendix A.
 
@@ -1132,43 +1131,47 @@ User B has a valid Purchase Offer to buy 5 MSC from User A. He sends out a trans
 
 The Master Protocol is at its core a layer of functionality on top of Bitcoin, utilizing the Bitcoin network for cryptographically secured data storage.  As such inherent to this approach are Bitcoin transaction fees.
 
+The transaction fee is based on the size of a transaction with a cost of 0.0001 BTC for each partial or full 1000 byte - a transaction with a size of 339 byte requires a fee of 0.0001 BTC for example.
+
 In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Master Protocol message.  
 
-Each output should carry a value higher than the dust threshold (0.00005460 as of Q2 2014) in order for the transaction to be relayed by the majority of nodes and considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
+Each output should carry a value higher than the dust threshold in order for the transaction to be relayed by the majority of nodes and considered for inclusion within a block.
 
-The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of 650 USD per BTC:
+An output is considered as "dust", if the amount spent is less than 1/3 of the minimum relay fee used by the relaying node in relation to the size of the output.  Before Bitcoin Core v0.9 the default relay fee was set to 0.0001 BTC per 1000 byte and with the release of v0.9 this value was reduced by a factor of ten to 0.00001 BTC/kB.  The minimum relay fee should not be confused with the transaction fee which is not affected by this reduction and set to 0.0001 BTC/kB on default.
+
+Please note: the majority of nodes and miners (as of Q2 2014) has not yet adopted this reduced value and to avoid longer confirmation times, it is advised to use the old minimum relay fee of 0.0001 BTC/kB.
+
+Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix the highest possible size of a class B output is used which consists of one uncompressed public key which belongs to the sender and two compressed public keys to store transaction data.
+
+The following calculations will demonstrate the perceived cost to the end-user, assuming a rate of 650 USD per BTC and pre-v0.9 Bitcoin Core default values as used by the majority of the network:
 
 **Class A**  
-0.00006 ($0.04) - Exodus Address Output  
-0.00006 ($0.04) - Reference Address Output  
-0.00006 ($0.04) - Data Address Output  
-0.0001 ($0.07) - Bitcoin Transaction Fee  
+0.0000546 ($0.0354) - Exodus address output  
+0.0000546 ($0.0354) - Data address output  
+0.0000546 ($0.0354) - Reference address output  
+0.0001 ($0.065) - Bitcoin transaction fee  
   
-Total perceived cost ~$0.18 per transaction.  
+Total perceived cost: ~$0.17 per transaction
   
 **Class B**  
-0.00006 ($0.04) - Exodus Address Output  
-0.00006 ($0.04) - Reference Address Output  
-0.00012 ($0.7) - Per Multisig Output  
-0.0001 ($0.07) - Bitcoin Transaction Fee  
+0.0000546 ($0.0354) - Exodus address output  
+0.0000882 ($0.0573) - Per multisig data output  
+0.0000546 ($0.0354) - Reference address output  
+0.0001 ($0.065) - Bitcoin transaction fee  
   
-Total perceived cost ~$0.22 per transaction.  
+Total perceived cost: ~$0.19 per transaction  
 
-Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
+Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes data, we increase perceived transaction cost by less than $0.06.
   
 The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
 In a class A transaction (note class A allows simple send only):
 * The foundation (by controlling the Exodus address) may redeem the Exodus output  
-* The reference address may redeem the Reference output
+* The receiver may redeem the reference output
 
 In a class B transaction:
 * The foundation may redeem the Exodus output
-* The reference address may redeem the Reference output
-* The sending address may redeem the Multisig output(s)
+* The receiver may redeem the reference output
+* The sender may redeem the multisig output(s)
 
-As we can see from the above, the true cost of a Master Protocol message may be less than that of the perceived cost (as for example the sender may recover some of the cost).  A challenge for communication strategy will be providing awareness on this topic in a clear and simple fashion to the community.
-
-A further consideration relates to how multisig outputs are presented in the bitcoin reference client.  It is technically accurate to state that any of the addresses within a Class B multisig output can redeem, however only one of these addresses (the sending address) actually has a known private key.  The bitcoin reference client however of course has no way of knowing this and so does not include unspent multisig outputs in the displayed balance.  
-
-It is envisaged that in future Master Protocol clients will 'clean up' periodically by redeeming and consolidating unspent multisig outputs.
+As we can see from the above, the true cost of a Master Protocol message may be significantly less than that of the perceived cost (as for example the sender may recover some of the cost).
