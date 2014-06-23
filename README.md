@@ -432,7 +432,7 @@ An address cannot create a new sell order while that address has an active sell 
 
 To accept an existing sell order, an address simply publishes the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which is greater than or equal to the existing sell order's unit price. The protocol then finds existing sell orders that qualify (match), possibly including existing sell orders from that same address.
 
-A liquidity bonus for the seller provides an incentive for people to put their coins up for sale at a price which does not get filled instantly, increasing available liquidity on the exchange. The liquidity bonus for the existing seller is added to the amount paid by the new sell order. The liquidity bonus is 0.3% of the amount paid by the new sell order, rounded to the nearest satoshi. The liquidity bonus percentage and/or calculation may change in the future.
+A liquidity bonus for the owners of existing sell orders provides an incentive for people to put their coins up for sale at a price which does not get filled instantly, increasing available liquidity on the exchange. The liquidity bonus for the owner of a matching sell order is added to the amount paid by the new sell order. The liquidity bonus is 0.3% of the amount paid by the new sell order, rounded to the nearest satoshi. The liquidity bonus percentage and/or calculation may change in the future.
 
 The following table shows examples of the liquidity bonus based on the new order amount for sale and existing order amount desired, for divisible coins. This table does not show new order minimum amount desired or the existing order amount for sale, which are not subject to the liquidity bonus.
 
@@ -443,9 +443,9 @@ The following table shows examples of the liquidity bonus based on the new order
 | 50.0 | 100.0 | 49.85044865 | 0.14955135 | 0.0 | 50.14955135 |
 | 100.3 | 100.0 | 100.0 | 0.3 | 0.0 | 0.0 |
 
-The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. This can cause the effective unit price to be higher than the matching sell order's specified unit price, but still not greater than the reciprocal of the new sell order's unit price. 
+The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the new sell order or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. This can cause the effective unit price to be higher than the matching sell order's specified unit price, but still never greater than the reciprocal of the new sell order's unit price. 
 
-The purchaser’s address can be the same as the seller’s address.
+It is valid for the purchaser’s address to be the same as the seller’s address.
 
 An existing order matches the new order when all of the following conditions are met: 
 
@@ -460,7 +460,7 @@ Existing orders that match are sorted as follows to be applied to the new order:
 1. then by transaction block number, ascending chronological order (oldest first)
 1. then by transaction position within the block, ascending order (oldest first)
 
-If there are no matches for the new sell order or the aggregate amount desired in the matching orders is less than the amount for sale in the new sell order, the new sell order is added to the list of existing sell orders, with its original amount desired, original amount for sale and remaining amount for sale. This order is now a candidate for matching against future sell orders. Note that when only some coins from an existing order are purchased, the remaining coins from that order are still for sale at the original unit price.
+If there are no matches for the new sell order or the aggregate amount desired in the matching orders is less than the amount for sale in the new sell order, the new sell order must be added to the list of existing sell orders, with the remaining amount for sale at the original unit price. This order is now a candidate for matching against future sell orders. Note that when only some coins from an existing order are purchased, the remaining coins from that order are still for sale at the original unit price.
 
 Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
 
