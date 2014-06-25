@@ -1130,6 +1130,8 @@ User B has a valid Purchase Offer to buy 5 MSC from User A. He sends out a trans
 
 # Appendix E - Understanding the cost of Master protocol messages
 
+[See this issue](https://github.com/mastercoin-MSC/spec/issues/192) for discussion on optimizing this cost.
+
 The Master Protocol is at its core a layer of functionality on top of Bitcoin, utilizing the Bitcoin network for cryptographically secured data storage.  As such inherent to this approach are Bitcoin transaction fees.
 
 In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Master Protocol message.  
