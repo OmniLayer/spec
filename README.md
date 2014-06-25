@@ -1056,11 +1056,15 @@ Once the obfuscated Mastercoin packet is prepared, the key identifier (02) is pr
 ![Mastercoin Protocol Layers](images/classb_obfuscated.png) 
 
 These compressed public key 'packets' can then be included in one or multiple OP_CHECKMULTISIG output along with the senders public key.  A single transaction must be constructed satisfying the following requirements: 
-* Has a single or the largest pay-to-pubkey-hash input by sum signed by the sending address
-* Has an output for the recipient address (the 'reference' address)
-* Has an output for the exodus address
-* Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be the sender's public key, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
-* Mastercoin 'data packages' must appear in order by their sequence number and must begin at seqeunce number 01 
++ Has a single or the largest pay-to-pubkey-hash input by sum signed by the sending address
++ Has an output for the recipient address (the 'reference' address)
++ Has an output for the exodus address
++ Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be the sender's public key, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
++ Mastercoin 'data packages' must appear in order within each multisig and each multisig must appear in order by vout, for example:
+    * voutn: sender, seqnum1, seqnum2
+    * voutn+1: sender, seqnum3, seqnum4
+    * voutn+2: sender, seqnum5, seqnum6 
+* Sequence numbers in Class B are ignored
 * Additional outputs are permitted 
 
 Further:
