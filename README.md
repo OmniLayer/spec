@@ -1061,9 +1061,9 @@ These compressed public key 'packets' can then be included in one or multiple OP
 + Has an output for the exodus address
 + Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be the sender's public key, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
 + Mastercoin 'data packages' must appear in order within each multisig and each multisig must appear in order by vout, for example:
-    * voutn: sender, seqnum1, seqnum2
-    * voutn+1: sender, seqnum3, seqnum4
-    * voutn+2: sender, seqnum5, seqnum6 
+    * voutn: sender, packet1, packet2
+    * voutn+1: sender, packet3, packet4
+    * voutn+2: sender, packet5, packet6 
 * Sequence numbers in Class B are ignored
 * Additional outputs are permitted 
 
