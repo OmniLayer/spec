@@ -49,7 +49,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.1.9 (previously 0.7) released 29 Jul 2013 (Preview of 0.2, but without revealing the Exodus Address)
 1. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the fund-raiser)
 1. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
-1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Send To All" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
+1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Send To Owners" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
 1. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
 1. Version 0.4.5 released 20 Feb 2014 (added smart property crowdsale, other improvements to future features)
 1. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
@@ -61,7 +61,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
 1. Version 0.4.5.9 released 13 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
-1. Version 0.4.5.11 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to all", and that we don't encourage illegal behavior!
+1. Version 0.4.5.10 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to owners", and that we don't encourage illegal behavior!
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -205,7 +205,7 @@ This section defines the fields that are used to construct transaction messages.
 
 ### Field: Number of coins
 + Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
-    * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
+    * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places, called satoshis)
     * for indivisible coins or tokens, the value in this field is the integer number of Master Protocol coins or tokens (e.g. 1 represents 1 indivisible token)
 + Size: 64-bit signed integer, 8 bytes (same as Bitcoin Core)
 + Inter-dependencies: [Property type](#field-property-type)
@@ -267,6 +267,7 @@ This section defines the fields that are used to construct transaction messages.
 + Inter-dependencies: [Transaction version](#field-transaction-version)
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
+    *    3: [Send To Owners](#send-to-owners)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-mastercoins-for-bitcoins)
     *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
@@ -277,7 +278,6 @@ This section defines the fields that are used to construct transaction messages.
 
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
-    *    3: [Send To All](#send-to-all)
     *   10: [Mark an Address as Savings](#marking-an-address-as-savings)
     *   11: [Mark a Savings Address as Compromised](#marking-a-savings-address-as-compromised)
     *   12: [Mark an Address as Rate-Limited](#marking-an-address-as-rate-limited)
@@ -299,7 +299,6 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values: 0 to 65535
 
 # Transaction Definitions
-The Master Protocol Distributed Exchange transactions are listed below. Transactions 0, 20, 21, 22 and 50 are to be implemented in the first deployment, per this spec. They are listed first. The other transactions will be fully defined and implemented in future releases.
 
 Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the Transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all spec versions starting with 0.4, the first field in each transaction message is the 2 byte version number, with an initial value of 0 and the Transaction type field is a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format associated with that version number.
 
@@ -332,6 +331,32 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 1. [Transaction type](#field-transaction-type) = 0
 1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+
+### Send To Owners
+
+Description: Transaction type 3 transfers coins in the specified currency from the sending address to the current owners of that currency. The current owners are all the addresses, excluding the sender's address, that have a non-zero balance of the specified currency when the transaction message is processed. The Amount to transfer is divided proportionately among the current owners based upon each owner's current available balance plus reserved amount, excluding the sender's amount. Indivisible coins will be transferred in integer units only. Divisible tokens will be transferred in satoshis. See [Number of Coins](#number-of-coins) above.
+
+This transaction can not be used to transfer bitcoins.
+
+The transaction is invalid if any of the following conditions is true:
+* the amount to transfer is zero
+* the sending address has zero coins in its available balance for the specified currency identifier
+* the amount to transfer exceeds the number owned and available by the sending address
+* the specified currency identifier is non-existent
+* the specified currency identifier is 0 (bitcoin)
+
+Implementation Note: It is possible, even likely, that the number of coins calculated to be transferred to an owner's address will have to be rounded to comply with the precision for representing quantities of that coin. To reward the owners of the largest quantities and to try to ensure they receive full distributions, it is recommended to first compute the amount for the largest holder and, if necessary, round that amount up to the nearest unit that can be represented for the currency. Then subtract that rounded amount from the total to be distributed and repeat for the next largest holder until there are no more coins to be distributed. This means that holders of lesser amounts may receive zero coins from the distribution. When there are multiple owners with exactly the same number of coins, use a predictable, repeatable method to distribute the coins in a known sequence.
+
+Say you have grown wealthy and wish to gift all 1000 of your own Quantum Miner digital tokens to the other people holding those tokens. The message to do so will use 16 bytes:
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = 3
+2. [Currency identifier](#field-currency-identifier) = 6 for Quantum Miner Tokens
+3. [Amount to transfer](#field-number-of-coins) = 100,000,000,000 (1000.00000000 Mastercoins)
+
+Note that this transaction is very similar to transaction type 0, "Simple Send". The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. 
+
+This message can be used for giveaways, paying employees, or even paying dividends (please make sure your proposed use case is legal in your jurisdiction!!)
 
 ## Distributed Exchange
 
@@ -840,20 +865,7 @@ Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner ge
 
 ##Transferring coins (Future)
 
-We are not sure the "send to all" message will be feasible, given that it potentially affects a huge number of balances. Consequently, it is currently in the "future transactions" bucket. It might become feasible if some kind of anti-spam fee is added to make sure this message is used sparingly.
-
-### Send To All
-
-Say you have grown wealthy and wish to gift all 1000 of your own Quantum Miner digital tokens to the other people holding those tokens. Doing so will use 16 bytes:
-
-1. [Transaction version](#field-transaction-version) = 0
-1. Transaction type = 3 for "send to all" (32-bit unsigned integer, 4 bytes)
-2. Currency identifier = 6 for Quantum Miner Tokens (32-bit unsigned integer, 4 bytes)
-3. Amount to transfer = 100,000,000,000 (1000.00000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed number owned, but if it does, assume user is transferring all of them)
-
-Note that this transaction is very similar to "simple send". The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. 
-
-This message can be used for giveaways, paying employees, or even paying dividends (please make sure your proposed use case is legal in your jurisdiction!!)
+We are not sure the "send to owners" message will be feasible, given that it potentially affects a huge number of balances. Consequently, it is currently in the "future transactions" bucket. It might become feasible if some kind of anti-spam fee is added to make sure this message is used sparingly.
 
 ## Distributed E-Commerce
 
