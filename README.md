@@ -356,7 +356,7 @@ Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doin
 1. [Amount for sale](#field-number-of-coins) = 150,000,000 (1.50000000 Mastercoins)
 1. [Amount of bitcoins desired](#field-number-of-coins) = 100,000,000,000 (1000.00000000 bitcoins)
 1. [Time limit in blocks](#field-time-period-in-blocks) = 10 (10 blocks in which to send payment after counter-party accepts these terms)
-1. [Minimum bitcoin transaction fee](#field-number-of-coins) = 10,000,000 (require the buyer to pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers)
+1. [Minimum bitcoin transaction fee](#integer-eight-byte) = 10,000,000 (require the buyer to pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers).  This field may be zero, however it is suggested that implementations enforce a minimum 0.0001 fee when listing sell offers at the UI layer.
 1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
 
 Note that some trading of Test MSC was done with version 0 of this message which did not have the Action field. Those transactions are treated as Action=3 (Cancel offer) when the Amount for sale is zero. For version 0 of this message and Amount for sale = 0 (Cancel offer), the values in the following fields are not tested for validity:
