@@ -862,11 +862,6 @@ Note that this bet will be matched against only half of the previous example, be
 
 Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner gets 99.5% of the money at stake. The other 0.5% goes to the creator of the data stream. 
 
-
-##Transferring coins (Future)
-
-We are not sure the "send to owners" message will be feasible, given that it potentially affects a huge number of balances. Consequently, it is currently in the "future transactions" bucket. It might become feasible if some kind of anti-spam fee is added to make sure this message is used sparingly.
-
 ## Distributed E-Commerce
 
 The Master Protocol allows for the buying and selling of physical goods in a sort of distributed classified ads system, with purchase money held in escrow by the protocol. Some might call this a "distributed e-bay", while the cynical might call it a "distributed silk road". Due to the potential for black-market uses of this feature, we encourage our users to know and follow the laws of their respective jurisdictions.
