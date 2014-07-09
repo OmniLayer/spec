@@ -314,14 +314,13 @@ Transfers are unconditional payments from one Mastercoin address to another addr
 
 Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
 
-The transaction is invalid if any of the following conditions is true:
-* the amount to transfer is zero
+In addition to the validity constraints on the message field datatypes, the transaction is invalid if any of the following conditions is true:
 * the sending address has zero coins in its available balance for the specified currency identifier
 * the amount to transfer exceeds the number owned and available by the sending address
 * the specified currency identifier is non-existent
 * the specified currency identifier is 0 (bitcoin)
 
-A simple send to a non-existent address will destroy the coins in question, just like it would with bitcoin.
+A Simple Send to a non-existent address will destroy the coins in question, just like it would with bitcoin.
 
 [Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
 
@@ -334,27 +333,29 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 
 ### Send To Owners
 
-Description: Transaction type 3 transfers coins in the specified currency from the sending address to the current owners of that currency. The current owners are all the addresses, excluding the sender's address, that have a non-zero balance of the specified currency when the transaction message is processed. The Amount to transfer is divided proportionately among the current owners based upon each owner's current available balance plus reserved amount, excluding the sender's amount. Indivisible coins will be transferred in integer units only. Divisible tokens will be transferred in satoshis. See [Number of Coins](#number-of-coins) above.
+Description: Transaction type 3 transfers coins in the specified currency from the sending address to the current owners of that currency. The current owners are all the addresses, excluding the sender's address, that have a non-zero balance of the specified currency when the transaction message is processed. The Amount to transfer must be divided proportionally among the current owners based upon each owner's current available balance plus reserved amount, excluding the amount owned by the sender. Indivisible coins must be transferred in integer units only. Divisible tokens must be transferred in satoshis. See [Number of Coins](#number-of-coins) above.
+
+The sending address must be charged a transfer fee of 0.00000001 Mastercoins for each address that receives coins as a result of this transaction. Be aware that owners of the specified currency might receive zero coins due to rounding in calculating the number of coins for each owner. See the Implementation Note below.
 
 This transaction can not be used to transfer bitcoins.
 
-The transaction is invalid if any of the following conditions is true:
-* the amount to transfer is zero
+In addition to the validity constraints on the message field datatypes, the transaction is invalid if any of the following conditions is true:
 * the sending address has zero coins in its available balance for the specified currency identifier
 * the amount to transfer exceeds the number owned and available by the sending address
 * the specified currency identifier is non-existent
 * the specified currency identifier is 0 (bitcoin)
+* the sending address does not have sufficient Mastercoins available to pay the transfer fee
 
-Implementation Note: It is possible, even likely, that the number of coins calculated to be transferred to an owner's address will have to be rounded to comply with the precision for representing quantities of that coin. To reward the owners of the largest quantities and to try to ensure they receive full distributions, it is recommended to first compute the amount for the largest holder and, if necessary, round that amount up to the nearest unit that can be represented for the currency. Then subtract that rounded amount from the total to be distributed and repeat for the next largest holder until there are no more coins to be distributed. This means that holders of lesser amounts may receive zero coins from the distribution. When there are multiple owners with exactly the same number of coins, use a predictable, repeatable method to distribute the coins in a known sequence.
+Implementation Note: It is possible, even likely, that the number of coins calculated to be transferred to an owner's address will have to be rounded to comply with the precision for representing quantities of that coin. To reward the owners of the largest quantities and to try to ensure they receive full distributions, it is recommended to first compute the amount for the largest holder and, if necessary, round that amount up to the nearest unit that can be represented for the currency. Then subtract that rounded amount from the total to be distributed and repeat for the next largest holder until there are no more coins to be distributed. This means that holders of lesser amounts may receive zero coins from the distribution. When there are multiple owners with exactly the same number of coins, use a predictable, repeatable method to distribute the coins in a known sequence - for instance, in reverse chronological order of activity in the specified currency.
 
 Say you have grown wealthy and wish to gift all 1000 of your own Quantum Miner digital tokens to the other people holding those tokens. The message to do so will use 16 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 3
 2. [Currency identifier](#field-currency-identifier) = 6 for Quantum Miner Tokens
-3. [Amount to transfer](#field-number-of-coins) = 100,000,000,000 (1000.00000000 Mastercoins)
+3. [Amount to transfer](#field-number-of-coins) = 100,000,000,000 (1000.00000000 Quantum Miner Tokens)
 
-Note that this transaction is very similar to transaction type 0, "Simple Send". The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. 
+The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. The sender will be charged a transfer fee based on the number of addresses that receive any of the 1000 Quantum Miner tokens.
 
 This message can be used for giveaways, paying employees, or even paying dividends (please make sure your proposed use case is legal in your jurisdiction!!)
 
