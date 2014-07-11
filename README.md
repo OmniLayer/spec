@@ -205,7 +205,7 @@ This section defines the fields that are used to construct transaction messages.
 
 ### Field: Number of coins
 + Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
-    * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places, called satoshis)
+    * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
     * for indivisible coins or tokens, the value in this field is the integer number of Master Protocol coins or tokens (e.g. 1 represents 1 indivisible token)
 + Size: 64-bit signed integer, 8 bytes (same as Bitcoin Core)
 + Inter-dependencies: [Property type](#field-property-type)
@@ -333,9 +333,9 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 
 ### Send To Owners
 
-Description: Transaction type 3 transfers coins in the specified currency from the sending address to the current owners of that currency. The current owners are all the addresses, excluding the sender's address, that have a non-zero balance of the specified currency when the transaction message is processed. The Amount to transfer must be divided proportionally among the current owners based upon each owner's current available balance plus reserved amount, excluding the amount owned by the sender. Indivisible coins must be transferred in integer units only. Divisible tokens must be transferred in satoshis. See [Number of Coins](#number-of-coins) above.
+Description: Transaction type 3 transfers coins in the specified currency from the sending address to the current owners of that currency. The current owners are all the addresses, excluding the sender's address, that have a non-zero balance of the specified currency when the transaction message is processed. The Amount to transfer must be divided proportionally among the current owners based upon each owner's current available balance plus reserved amount, excluding the amount owned by the sender.
 
-The sending address must be charged a transfer fee of 0.00000001 Mastercoins for each address that receives coins as a result of this transaction. Be aware that owners of the specified currency might receive zero coins due to rounding in calculating the number of coins for each owner. See the Implementation Note below.
+The sending address must be charged a transfer fee of 0.00000001 Mastercoins for each address that receives coins as a result of this transaction. Be aware that some owners of the specified currency might receive zero coins due to rounding in calculating the number of coins for each owner. See the Implementation Note below.
 
 This transaction can not be used to transfer bitcoins.
 
@@ -346,7 +346,7 @@ In addition to the validity constraints on the message field datatypes, the tran
 * the specified currency identifier is 0 (bitcoin)
 * the sending address does not have sufficient Mastercoins available to pay the transfer fee
 
-Implementation Note: It is possible, even likely, that the number of coins calculated to be transferred to an owner's address will have to be rounded to comply with the precision for representing quantities of that coin. To reward the owners of the largest quantities and to try to ensure they receive full distributions, it is recommended to first compute the amount for the largest holder and, if necessary, round that amount up to the nearest unit that can be represented for the currency. Then subtract that rounded amount from the total to be distributed and repeat for the next largest holder until there are no more coins to be distributed. This means that holders of lesser amounts may receive zero coins from the distribution. When there are multiple owners with exactly the same number of coins, use a predictable, repeatable method to distribute the coins in a known sequence - for instance, in reverse chronological order of activity in the specified currency.
+Implementation Note: It is possible, even likely, that the number of coins calculated to be transferred to an owner's address will have to be rounded to comply with the precision for representing quantities of that coin. To reward the owners of the largest quantities and to try to ensure they receive full distributions, the following method must be used: compute the amount for the largest holder and, if necessary, round that amount up to the nearest unit that can be represented for the currency. Then subtract that rounded amount from the total to be distributed and repeat for the next largest holder until there are no more coins to be distributed. This means that holders of lesser amounts might receive zero coins from the distribution. When there are multiple owners with exactly the same number of coins, compute the distributions to those in alphabetical order by address.
 
 Say you have grown wealthy and wish to gift all 1000 of your own Quantum Miner digital tokens to the other people holding those tokens. The message to do so will use 16 bytes:
 
@@ -357,7 +357,7 @@ Say you have grown wealthy and wish to gift all 1000 of your own Quantum Miner d
 
 The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. The sender will be charged a transfer fee based on the number of addresses that receive any of the 1000 Quantum Miner tokens.
 
-This message can be used for giveaways, paying employees, or even paying dividends (please make sure your proposed use case is legal in your jurisdiction!!)
+Note to users: please make sure your proposed use case is legal in your jurisdiction!!
 
 ## Distributed Exchange
 
