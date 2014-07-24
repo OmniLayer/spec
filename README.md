@@ -713,22 +713,7 @@ When the issued smart property token is sent to the feeder address, the protocol
 
 +13 [Data-feed Address] = <Bitcoin Address> or <SSL Certificate, Key, URL>
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-![Mastercoin Protocol Layers](images/ETF Multisig Circuit.jpg) 
-
-
+![Mastercoin Protocol Layers](images/Tx56.png) 
 
 
 ## Transactions to Limit Funds (Theft Prevention)
