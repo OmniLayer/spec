@@ -663,6 +663,74 @@ Note that attempts to participate in a closed crowdsale will result in no invest
 
 The transactions below are still subject to revision and therefore are not included in deployments based on this version of the spec. 
 
+### Open Ended Fundraiser with Creation/Redemption
+
+Description: Transaction type 56 is used to offer a fund similar in structure to an ETF, where the supply of smart property tokens is variable over time. Tokens are created when the desired input property is sent to a designated feeder address, and tokens are destroyed when sent to the same feeder address, which initiates a redemption process. The funds in the feeder address are not locked, automated or single-signature movements of funds will be limited to a finite list of other addresses, adding or removing these access-addresses requires multi-signature approval.
+
+The formula defining convertibility between the receipt currency and the emitted smart property can be defined in one of four ways: 
+
+- as a constant ratio
+
+-as a formula involving the OP_Return total emitted smart property and/or blocks_elapsed as variables
+
+- as a formula that also includes a signed data-feed based on parsing the meta-data of a specified address
+
+- as a formula that includes as variables data parsed from a 3rd party website with or without secondary signatures (Reality Keys, Truthcoin, the SLL of the website in question)
+
+These inputs are not mutually exclusive.
+
+A feeder address may optionally require a Know-Your-Customer token to be held in the address sending the recipient currency. This requirement is one of the parameters in initializing an open-ended fund - it induces the protocol to create a simple send identical to the one received returning the payment if no KYC token is detected. In the case of BTC payments, funds would have to be returned manually, with the transaction flagged as “Did not pass KYC, Return to Sender”.   
+
+In general, if a payment is made to the fund’s feeder address that is not in the fund’s smart property token or the approved receipt currency, the payment will be auto-returned or if BTC, flagged for manual return.
+
+When the issued smart property token is sent to the feeder address, the protocol creates a simple send to return the converse amount in the Receipt Currency. If there are insufficient funds in the feeder address, the protocol parses for the adequate funding to execute a chronologically populated queue of simple sends. If the Receipt Currency is bitcoin then a later version would need to support the bitcoind function for batch-paying the queue of redemptions.  
+ 
+
++1. [Transaction version](#field-transaction-version) = 0
+
++2. [Transaction type](#field-transaction-type) = 56
+
++3. [Ecosystem](#field-ecosystem) = 1
+
++4. [Property Type](#field-property-type) = 2 for divisible shares
+
++5. [Previous Property ID](#field-property-id) = 0 (to replace or append properties from the same issuing address)
+
++6. [Recipient Currency ID](#field-property-id) = 0
+
++7. [Property Category](#field-string-null-terminated) = “ETFs\0” (10 bytes)
+
++8. [Property Subcategory](#field-string-null-terminated) = “Actively Managed Funds\0” (15 bytes)
+
++9. [Property Name](#field-string-null-terminated) = “CryptoCapital\0” (14 bytes)
+
++10. [Property URL](#field-string)  = “www.fundwebsite.com” (22 bytes)
+
++11. [Property Data](#field-string-null-terminated) (1 byte)
+[Enforce KYC](#field-property-ID) (1 byte)
+
++12. [Number Properties per unit invested](#field-integer-eight-byte) = totalIssuedTokens/last.NAV(data-feed)
+
++13 [Data-feed Address] = <Bitcoin Address> or <SSL Certificate, Key, URL>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+![Mastercoin Protocol Layers](images/ETF Multisig Circuit.jpg) 
+
+
+
+
 ## Transactions to Limit Funds (Theft Prevention)
 
 The Master Protocol defines some transactions which effectively lock funds from being spent quickly, making theft of a "savings" wallet much more difficult, even if that wallet is online.
