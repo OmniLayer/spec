@@ -1322,3 +1322,14 @@ The transition to an output model and removal of the requirement that Master Pro
 - Eliminates controversial "tax" to the Exodus address.
 - Decreases data footprint of Master Protocol transactions.
 - Decreases total cost of Master Protocol transactions.
+
+### Optimizing the Cost of Master Protocol Messages
+
+The output model's transparent support of P2SH inputs and outputs enables a method of Master Protocol transaction construction that:
+
+- Eliminates the required output to the Exodus address (0.00006 BTC).
+- Eliminates the required output to a multisig output (0.00012 BTC).
+- Eliminates potential blockchain bloat.
+- Reduces the cost of a Master Protocol transaction to the smallest value that one can expect to pay for *any* Bitcoin transaction (0.00016 BTC)
+
+This is accomplished by using the intended recipient's public key as the 1-of-n public keys in a P2SH redeem script. By using the other public keys in the redeem script to encode Master Protocol data, the same as Class B transactions, we can reduce Master Protocol transactions to requiring only a single transaction output, and reduce the cost of transactions by nearly 53% (from 0.00034 BTC with Class B transactions to 0.00016 BTC).
