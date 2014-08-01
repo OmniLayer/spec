@@ -1189,3 +1189,105 @@ As we can see from the above, the true cost of a Master Protocol message may be 
 A further consideration relates to how multisig outputs are presented in the bitcoin reference client.  It is technically accurate to state that any of the addresses within a Class B multisig output can redeem, however only one of these addresses (the sending address) actually has a known private key.  The bitcoin reference client however of course has no way of knowing this and so does not include unspent multisig outputs in the displayed balance.  
 
 It is envisaged that in future Master Protocol clients will 'clean up' periodically by redeeming and consolidating unspent multisig outputs.
+
+# Appendix F - Details on the Proposal to Transition to an Output Model
+
+Issue https://github.com/mastercoin-MSC/spec/issues/189 discusses the question, "Should we migrate to an output model rather than a address model?" The idea behind the question is that the Master Protocol, since its inception, has associated balances of Master Protocol tokens with Bitcoin addresses. While there is nothing inherently wrong with this it has many implications that concern how the protocol is implemented, what the protocol can do, and how secure its transactions can be. With the consideration that Bitcoin associates balances with UXTOs (unspent transaction outputs), the association of balances with addresses is an unprecedented and novel concept.
+
+With that said, the proposal to transition to an output model also describes an unprecedented and novel concept. This appendix details specifics about the proposal to transition the Master Protocol to an output model, and explores the implications of the transition away from the address model.
+
+## The Output Transaction Model
+
+The transaction model for all Master Protocol tokens that are associated with transaction outputs can be generalized by the following rules of interpretation:
+
+- A transaction consumes the tokens represented by the input.
+- A transaction will send all tokens to the last output, unless otherwise specified by a data output.
+
+If we spend an output that represents a quantity of tokens in a normal Bitcoin transaction, the tokens will typically be returned to the sender at a change address. By carefully crafting transactions, we can guarantee that an invalid Master Protocol transaction will return all tokens to the sender. This basic mechanism of token transfer allows the Master Protocol to stay in line with Bitcoin best practices by not reusing addresses.
+
+## Transaction Definitions
+
+This section may appear sparse in comparison to the section titled the same in the main Master Protocol specification. It should be understood that this isn't necessarily due to a decrease in functionality. In some circumstances a function that previously required a transaction type to be defined can be implicitly performed without a specific Master Protocol definition.
+
+### Output Transition
+
+Description: Transaction type yyy that will convert Master Protocol tokens to be associated with a Bitcoin transaction output rather than a Bitcoin address. This transaction type is irreversible.
+
+* All tokens of specified currency identifier in the data output are henceforth attached to the output that is sent to the reference address.
+* The data output will include the currently valid chain of ownership from the Exodus address all the way to the current transaction in the form of a merkle tree of transaction hashes concatenated with current balance.
+
+Say you want to convert Mastercoin. Only 8 bytes are needed. The data stored is:
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Transaction type](#field-transaction-type) = yyy
+1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
+
+## Distributed Exchange
+
+As a core function of the Master Protocol, the distributed exchange (DEx) boasts the largest improvements by the transition to an output model over the address model implementations. The specifics are discussed in detail below as they are relevant to the sub-section - however a few items are relevant to all output model DEx functions:
+
+- Instantaneous and trustless trading, regardless of what is being traded.
+- Reduce complexity in implementation by tracking transaction outputs rather than the resolution of matching buy/sell orders.
+- Eliminate circumstances in which Bitcoin payment is confirmed after block deadline.
+
+### Atomic DEx
+
+Master Protocol tokens can quickly and safely be traded for bitcoins through the utilization of atomic trades, provided that the tokens are of the output model. The main advantage over the previous methods is the amount of time that a trade takes. Previously a trade could only be finalized after 3 distinct Master Protocol transactions had been confirmed in the blockchain.
+
+The atomic DEx allows traders to instantaneously trade Master Protocol tokens for bitcoins and the tokens may immediately be treated as if they were bitcoin i.e. an unconfirmed Master Protocol token output may be treated the same as an unconfirmed bitcoin output.
+
+The atomic DEx does not require any specific Master Protocol transactions due to the nature of the output model. Not only does this simplify the Master Protocol specification, but it reduces the cost of trading for its users.
+
+### Atomic Meta DEx
+
+The atomic meta DEx is a technical addition to the atomic DEx that allows any Master Protocol token to be traded for any other Master Protocol token. The atomic meta DEx should be considered when trading Master Protocol tokens that are unique, represent physical goods, or are not universally considered valuable.
+
+If Bob wishes to accept Alice's offer to trade 1 Mastercoins for 1000 LOLcoins, Bob can create a transaction that enables an atomic swap. This transaction should send 1000 LOLcoins to a multisignature output that requires 2-of-3 signatures in order to spend. The first and second signatures should belong to Bob while the third belongs to Alice.
+
+Once the unsigned transaction is created, Bob sends it to Alice who adds an input with the required 1 Mastercoin and signs it with her private keys as necessary. Since Alice could only sign 1 of the required 2 signatures required to spend the multisignature output, she must send the transaction back to Bob to complete.
+
+If Bob finds that the transaction satisfies the requirements of the trade he can add the second signature that is required to spend the multisignature output, and finally broadcast the transaction.
+
+In this manner we can guarantee that both traders receive the Master Protocol tokens without requiring trust. In the scenario that Alice refrains from signing the transaction, Bob still maintains control of his LOLcoins. While this method requires an additional transaction compared to trades with Bitcoin, it's still preferable to the previous methods - and it should be noted that the traders need not wait for the first transaction to be confirmed before broadcasting the second.
+
+### Cross Protocol Atomic Meta DEx
+
+Master Protocol's transition to an output model allows the ability to perform trustless atomic trades of Mastercoins for tokens on various other protocols and platforms. This currently applies to colored coin implementations, however the Master Protocol transparently supports atomic trades with any future protocol that can represent an asset with a single UXTO.
+
+This groundbreaking interoperability sets the stage for Mastercoins and the Master Protocol to become a centerpiece in the Bitcoin 2.0 space by bridging numerous implementations and providing a liquidity layer for assets that may not otherwise acheive the exposure necessary to succeed.
+
+## Smart Property
+
+### Atomic Crowdsale
+
+https://github.com/mastercoin-MSC/spec/issues/189#issuecomment-50251410
+
+### Atomic Meta Crowdsale
+
+Just as Master Protocol tokens can be traded for other Master Protocol tokens on the DEx by utilizing a multisignature output, the same idea can be applied to the atomic crowdsale to allow payment from currencies other than Bitcoin.
+
+### Concerning the Use of Mastercoin in an Output Model
+
+The transition of the Master Protocol to an output model can make the specific uses of Mastercoin unclear. Despite the fact that the Mastercoin token is not inherently different than any other Master Protocol token, it is unique in that it is the only fundamental and universal Master Protocol token. With this in consideration, it's reasonable to leverage the fundamental and universal properties of Mastercoin to create a liquidity layer which we can count on to enable the advanced features of the Master Protocol.
+
+- Only Mastercoins will be supported for the Send to Owners transaction type.
+- Only Mastercoins will be burned where anti-spam fees are required.
+- Only Mastercoins will be used in escrow applications.
+- Only Mastercoins will be supported in Savings and Rate-Limited transaction types.
+- Only Mastercoins will be supported for cross protocol atomic transactions.
+
+## Additional Considerations
+
+### Smart Property
+
+One of the core features that bitcoin protocol layers, including Mastercoin, Counterparty and various colored coins implementations, provide is the creation of coins or tokens that represent something else. Thus far, the items represented by protocol layer coins have been relegated to the digital world. Though we must consider that the bitcoin ecosystem is in its infancy, and the protocol layers even younger, it’s important to look forward to the future and consider how the approaches of different protocol implementations affect a properties interaction with the physical world. 
+
+The address model imposes resounding limitations due to the challenge in verifying transactions. Since address model coins aren’t “attached” to transaction outputs, the entire blockchain and internet access is, at a minimum, required for a smart object to verify ownership. This renders many smart object infeasible. For example, it’s not reasonable for smart door locks, smart cars, and smart phones to have these requirements - especially because internet connectivity is not universally available, cheap, or dependable. Another consideration is storage space. With the blockchain ever growing, it’s not feasible to create smart devices with enough storage space to store the blockchain for the indefinite future.
+
+### Thin clients 
+
+Since address model protocol layers require the entire blockchain to verify transactions, it’s not possible to develop a secure thin client like Electrum, Multibit, or mobile wallets.
+
+### Transparent P2SH and multisignature support
+
+By associating tokens with transaction outputs, the challenge that the Master Protocol has historically had with *uncommon* transaction inputs and outputs dissolves. Not only does this allow for transparent support of P2SH and multisignature inputs and outputs, but it allows the Master Protocol to support any future input and output types found in Bitcoin transactions. The alignment of the Master Protocol with the fundamental structure of the Bitcoin protocol allows the Master Protocol to take advantage of the advancements made in the Bitcoin network.
