@@ -1250,6 +1250,23 @@ If Bob finds that the transaction satisfies the requirements of the trade he can
 
 In this manner we can guarantee that both traders receive the Master Protocol tokens without requiring trust. In the scenario that Alice refrains from signing the transaction, Bob still maintains control of his LOLcoins. While this method requires an additional transaction compared to trades with Bitcoin, it's still preferable to the previous methods - and it should be noted that the traders need not wait for the first transaction to be confirmed before broadcasting the second.
 
+A more detailed example follows:
+
+1. Alice broadcasts a transaction tx_offer with the offer to trade Mastercoins for LOLcoins, where the UXTO representing the Mastercoins is spendable by the private key privKey_a0 with the public key pubKey_a0.
+2. Bob wishes to fill the offer defined by tx_offer. He generates private key privKey_b0 with the associated public key pubKey_b0 and private key privKey_b1 with the associated public key pubKey_b1.
+3. Bob crafts, signs, and broadcasts a transaction tx_accept as follows:
+    * Input 0: A UXTO that represents a quantity of LOLcoins
+    * Output 0: 2-of-3 multisig output, where the public keys are pubKey_a0, pubKey_b0, and pubKey_b1.
+    * Output 1: Data output
+4. Alice sees the transaction tx_accept and crafts a transaction tx_final as follows:
+    * Input 0: UXTO at index 0 from the transaction tx_accept
+    * Input 1: UXTO that represents Mastercoins from the transaction tx_offer
+    * Output 0: pubKey_a0, to which Alice will receive LOLcoins
+    * Output 1: pubKey_b0, to which Bob will receive Mastercoins
+    * Output 2: Data output
+5. Alice signs the inputs at indices 0 and 1 from the transaction tx_final with the private key privKey_a0 and then sends the incomplete transaction to Bob.
+6. Bob verifies that the transaction tx_final is acceptable and adds his signature to the input at index 0 with the private key privKey_b0. He then broadcasts the transaction to the Bitcoin network to finalize the trade.
+
 ### Cross Protocol Atomic Meta DEx
 
 Master Protocol's transition to an output model allows the ability to perform trustless atomic trades of Mastercoins for tokens on various other protocols and platforms. This currently applies to colored coin implementations, however the Master Protocol transparently supports atomic trades with any future protocol that can represent an asset with a single UXTO.
