@@ -1308,3 +1308,17 @@ Since address model protocol layers require the entire blockchain to verify tran
 ### Transparent P2SH and multisignature support
 
 By associating tokens with transaction outputs, the challenge that the Master Protocol has historically had with *uncommon* transaction inputs and outputs dissolves. Not only does this allow for transparent support of P2SH and multisignature inputs and outputs, but it allows the Master Protocol to support any future input and output types found in Bitcoin transactions. The alignment of the Master Protocol with the fundamental structure of the Bitcoin protocol allows the Master Protocol to take advantage of the advancements made in the Bitcoin network.
+
+### The Exodus Address
+
+The Exodus address is iconic to the Master Protocol, being the address to which bitcoins were sent and from which Mastercoins were generated, and the address that defines the conception of Bitcoin protocol layers. Despite this the Mastercoin project has been criticized for requiring a bitcoin payment, albeit small, to the Exodus address for every single Master Protocol transaction.
+
+The challenge of recognizing Master Protocol transactions is ameliorated by requiring an output to the Exodus address. It allows Master Protocol implementations to check only a relatively small set of transactions - those which have an output to the Exodus address - rather than having to check every single Bitcoin transaction for the inclusion of Master Protocol data.
+
+Under the output model, the Master Protocol would be able to absolve the requirement that users send an output to the Exodus address. This is due to the ability to determine the validity of a Master Protocol transaction with only it's chain of ownership, rather than requiring the complete blockchain.
+
+The transition to an output model and removal of the requirement that Master Protocol transactions have an output to the Exodus address:
+
+- Eliminates controversial "tax" to the Exodus address.
+- Decreases data footprint of Master Protocol transactions.
+- Decreases total cost of Master Protocol transactions.
