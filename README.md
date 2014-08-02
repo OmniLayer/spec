@@ -1,4 +1,4 @@
-﻿The Master Protocol / Mastercoin Complete Specification
+The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
 Version 0.4.5.9 Smart Property Crowdsale Edition
@@ -1085,9 +1085,21 @@ Further:
 * Only pay-to-pubkey-hash outputs will be considered for the reference address
 * Only multisig outputs will be considered for the data packets
 * If there are multiple outputs remaining, the first output to the sending address (if such an output exists) will be ignored as change
-* The reference address will be determined by the remaining output with the highest vout index  
+* The reference address will be determined by the remaining output with the highest vout index 
 
+## Class D transactions (also known as the modified 'multisig' method) 
 
+Class D transactions attempt to optimize Class B transactions by:
+
+- Reducing the cost of Master Protocol transactions that require less than 31 bytes of data by 0.00012 BTC.
+- Increasing the quantity of bytes available in which to encode Master Protocol data for transactions that require more than 30 bytes of data by  30 bytes, at the same cost as Class B transactions.
+- Decreasing the potential for UXTO bloat, by increasing the chance that multisig data outputs will be spent.
+- Eliminating the "Exodus address tax."
+- Minimizing the data footprint of Master Protocol transactions.
+
+By deprecating the outputs that a Class B transaction requires to the Exodus and Reference addresses, we can include the respective public keys in a 1-of-3 multisig output. The first public key should be the intended recipient, the second the public key of the Exodus address, and the third a Master Protocol data packet. In this manner, the cost of a Simple Send transaction can be reduced from 0.00034 BTC to 0.00022 BTC, and can be performed with a single transaction output.
+
+For Master Protocol transactions that require more than 30 bytes of embedded data, additional multisig outputs can be added as necessary following the same guidelines as Class B transactions.
 
 # Appendix B – Regulatory and Legal Compliance - Know Your Jurisdiction
 
@@ -1171,8 +1183,16 @@ Total perceived cost ~$0.18 per transaction.
   
 Total perceived cost ~$0.22 per transaction.  
 
-Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
+**Class D**  
+0.00012 ($0.7) - Multisig Output  
+0.0001 ($0.07) - Bitcoin Transaction Fee  
   
+Total perceived cost ~$0.14 per transaction.  
+
+Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
+
+Class D transactions may contain one Master Protocol of 30 bytes. We can infer (again at 650 USD per BTC) that for every 60 bytes of additional data, we increase perceived transaction by ~$0.08.
+
 The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
 In a class A transaction (note class A allows simple send only):
