@@ -1178,13 +1178,13 @@ Total perceived cost ~$0.18 per transaction.
 **Class B**  
 0.00006 ($0.04) - Exodus Address Output  
 0.00006 ($0.04) - Reference Address Output  
-0.00012 ($0.7) - Per Multisig Output  
+0.00012 ($0.07) - Per Multisig Output  
 0.0001 ($0.07) - Bitcoin Transaction Fee  
   
 Total perceived cost ~$0.22 per transaction.  
 
 **Class D**  
-0.00012 ($0.7) - Multisig Output  
+0.00012 ($0.07) - Multisig Output  
 0.0001 ($0.07) - Bitcoin Transaction Fee  
   
 Total perceived cost ~$0.14 per transaction.  
