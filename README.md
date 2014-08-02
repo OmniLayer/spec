@@ -1191,7 +1191,7 @@ Total perceived cost ~$0.14 per transaction.
 
 Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
 
-Class D transactions may contain one Master Protocol of 30 bytes. We can infer (again at 650 USD per BTC) that for every 60 bytes of additional data, we increase perceived transaction by ~$0.08.
+Class D transactions may contain one Master Protocol of 30 bytes. We can infer (again at 650 USD per BTC) that for every 60 bytes of additional data, we increase perceived transaction cost by ~$0.08.
 
 The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
