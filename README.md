@@ -1209,18 +1209,48 @@ If we spend an output that represents a quantity of tokens in a normal Bitcoin t
 
 This section may appear sparse in comparison to the section titled the same in the main Master Protocol specification. It should be understood that this isn't necessarily due to a decrease in functionality. In some circumstances a function that previously required a transaction type to be defined can be implicitly performed without a specific Master Protocol definition.
 
-### Output Transition
+### Sponsored Send
 
-Description: Transaction type yyy that will convert Master Protocol tokens to be associated with a Bitcoin transaction output rather than a Bitcoin address. This transaction type is irreversible.
+Description: Transaction type aaa is a special transaction that allows a coin issuer to sponsor the transition of those coins to the output model. The primary purpose of this transaction type is to define a means by which coins that transition to the output model can be validated by a thin (SPV) Master Protocol client.
 
-* All tokens of specified currency identifier in the data output are henceforth attached to the output that is sent to the reference address.
-* The data output will include the currently valid chain of ownership from the Exodus address all the way to the current transaction in the form of a merkle tree of transaction hashes concatenated with current balance.
+The Sponsored Send transaction has a unique requirement in that the transaction must be signed by the original coin issuer. The idea is that the issuer validates the transaction proposal with the Master Protocol reference client, such that no fraud can be perpetrated through the transition process. By including his signature in the transaction, the coin issuer ensures that the quantity of coins coming *into* the transaction is equal to the coins at the output.
 
-Say you want to convert Mastercoin. Only 8 bytes are needed. The data stored is:
+It should be noted that the Sponsored Send is technically a coin generation transaction, bound to the output sent to the reference address. The inclusion of a Sponsored Send transaction in the blockchain irreversibly destroys the coins from the sending address of the specified Currency Identifier. Thus, it is the responsibility of the issuer to verify that the quantity of coins from the sending address is equal to the coins represented by the output.
+
+[Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
+
+Say you want to convert 1 Mastercoin to another address. Only 123 bytes are needed. The data stored is:
 
 1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = yyy
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
+1. [Transaction type](#field-transaction-type) = aaa
+1. TXID in which coins were issued, or 0 filled in case of Mastercoin = 
+1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+
+### TXID Reference Seed
+
+The TXID Reference seed defines the properties that the coins generated from the Sponsored Send transaction inherit from a property issued under the address model.
+
+    {
+    txidReference, txidIssue, txidSponsoredSend
+    }
+    
+Where:
+
+- txidReference: Seed identification string
+- txidIssue: Master Protocol transaction of either type 50 or 51. 
+- txidSponsoredSend: TXID of Sponsored Send transaction
+
+A TXID Reference seed that references a type 50 or 51 Master Protocol transaction thus inherits properties as follows:
+
+1. [Transaction version](#field-transaction-version) = 0
+1. [Property Type](#field-property-type) = 1 for new indivisible tokens
+1. [Property Category](#field-string-255-byte-null-terminated) = “Companies\0” (10 bytes)
+1. [Property Subcategory](#field-string-255-byte-null-terminated) = “Bitcoin Mining\0” (15 bytes)
+1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
+1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
+1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
+
+Verification of a UTXO defined by the TXID Reference seed has the additional requirement that the associated Sponsored Send transaction was signed with the private key that also signed the property issuance transaction (type 50 or 51) of the txidIssue parameter.
 
 ## Distributed Exchange
 
