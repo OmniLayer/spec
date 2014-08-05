@@ -432,18 +432,30 @@ An address cannot create a new sell order while that address has an active sell 
 
 To accept an existing sell order, an address simply publishes the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which is greater than or equal to the existing sell order's unit price. The protocol then finds existing sell orders that qualify (match), possibly including existing sell orders from that same address.
 
-A liquidity bonus for the owners of existing sell orders provides an incentive for people to put their coins up for sale at a price which does not get filled instantly, increasing available liquidity on the exchange. The liquidity bonus for the owner of a matching sell order is added to the amount paid by the new sell order. The liquidity bonus is 0.3% of the amount paid by the new sell order, rounded to the nearest satoshi. The liquidity bonus percentage and/or calculation may change in the future.
+A liquidity bonus for the owners of existing sell orders provides an incentive for people to put their coins up for sale at a price which does not get filled instantly, increasing available liquidity on the exchange. The liquidity bonus for the owner of a matching sell order is taken from the amount paid by the new sell order. The liquidity bonus is 0.3% of the amount paid by the new sell order, rounded to the nearest .00000001 for divisible tokens or to the nearest whole number for indivisible tokens. The liquidity bonus percentage and/or calculation may change in the future.
 
-The following table shows examples of the liquidity bonus based on the new order amount for sale and existing order amount desired, for divisible coins. This table does not show new order minimum amount desired or the existing order amount for sale, which are not subject to the liquidity bonus.
+The following table shows examples of the liquidity bonus based on the new order's amount for sale and the existing order's minimum amount desired, for *divisible* coins. This table does not show the new order's minimum amount desired or the existing order's amount for sale, which are not subject to the liquidity bonus.
 
-|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder** | **Existing Order Remainder** |
+|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder for Sale** | **Existing Order Remainder Desired** |
 |---:|---:|:---|---:|---:|:---|
+| 100.3 | 100.0 | 100.0 | 0.3 | 0.0 | 0.0 |
 | 100.0 | 100.0 | 99.70089731 | 0.29910269 | 0.0 | 0.29910269 |
 | 125.0 | 100.0 | 100.0 | 0.30 | 24.7 | 0.0 |
 | 50.0 | 100.0 | 49.85044865 | 0.14955135 | 0.0 | 50.14955135 |
-| 100.3 | 100.0 | 100.0 | 0.3 | 0.0 | 0.0 |
 
-The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the new sell order or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. This can cause the effective unit price to be higher than the matching sell order's specified unit price, but still never greater than the reciprocal of the new sell order's unit price. 
+The following table shows examples of the liquidity bonus based on the new order's amount for sale and the existing order's minimum amount desired, for *indivisible* coins. This table does not show the new order's minimum amount desired or the existing order's amount for sale, which are not subject to the liquidity bonus.
+
+|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder for Sale** | **Existing Order Remainder Desired** |
+|---:|---:|---:|---:|---:|---:|
+| 1003 | 1000 | 1000 | 3 | 0 | 0 |
+| 1000 | 1000 | 997 | 3 | 0 | 3 |
+| 502 | 502 | 500 | 2 | 0 | 2 |
+| 500 | 1000 | 499 | 1 | 0 | 501 |
+| 500 | 500 | 499 | 1 | 0 | 1 |
+| 100 | 100 | 100 | 0 | 0 | 0 |
+| 125 | 100 | 100 | 0 | 25 | 0 |
+
+The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. This can cause the effective unit price to be higher than the matching sell order's specified unit price, but still never greater than the reciprocal of the new sell order's unit price. 
 
 It is valid for the purchaser’s address to be the same as the seller’s address.
 
