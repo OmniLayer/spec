@@ -60,7 +60,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.6 released 19 Apr 2014 (SP crowdsale funds not locked)
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
-1. Version 0.4.5.10 released 5 Jun 2014 (completed tx21 description)
+1. Version 0.4.5.10 released 7 Aug 2014 (completed tx21 description)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
