@@ -1,7 +1,7 @@
-﻿The Master Protocol / Mastercoin Complete Specification
+The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.9 Smart Property Crowdsale Edition
+Version 0.4.5.11 Smart Property Transaction 21 Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -62,6 +62,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
 1. Version 0.4.5.9 released 13 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
 1. Version 0.4.5.10 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to owners", and that we don't encourage illegal behavior!
+1. Version 0.4.5.11 released 8 Aug 2014 (completed tx21 description)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -326,10 +327,12 @@ A Simple Send to a non-existent address will destroy the coins in question, just
 
 Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are needed. The data stored is:
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 0
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 0 | 
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin)|
+|Amount to transfer|[Number of Coins](#field-number-of-coins)|100,000,000 (1.0 coins) |
 
 ### Send To Owners
 
@@ -372,25 +375,28 @@ The Master Protocol allows users to trade coins without trusting a centralized w
 
 Consequently, the messages below are different for mastercoin/bitcoin exchange than they are for exchange between mastercoin and other Master Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/mastercoin exchange as well as the additional anti-spam fees and race conditions inherent in the system.
 
-
 ### Sell Mastercoins for Bitcoins
 
 Description: Transaction type 20 posts the terms of an offer to sell Mastercoins or Test Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for MSC or 2 for Test MSC.
 
-If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, will be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell offer amount not yet accepted at the time of the update.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
 
-An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) for the same currency identifier.
+The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
+
+Note: An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has *any* active offer that accepts Bitcoins. Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins.
 
 Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 34 bytes:
 
-1. [Transaction version](#field-transaction-version) = 1
-1. [Transaction type](#field-transaction-type) = 20 (currency trade offer for bitcoins)
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount for sale](#field-number-of-coins) = 150,000,000 (1.50000000 Mastercoins)
-1. [Amount of bitcoins desired](#field-number-of-coins) = 100,000,000,000 (1000.00000000 bitcoins)
-1. [Time limit in blocks](#field-time-period-in-blocks) = 10 (10 blocks in which to send payment after counter-party accepts these terms)
-1. [Minimum bitcoin transaction fee](#field-number-of-coins) = 10,000,000 (require the buyer to pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers)
-1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 1 |
+| Transaction type | [Transaction type](#field-transaction-type) | 20| 
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
+|Amount for sale|[Number of Coins](#field-number-of-coins)|150,000,000 (1.5 coins) |
+|Amount of bitcoins desired|[Number of Coins](#field-number-of-coins)|100,000,000,000 (1000.0 coins) |
+|Payment window|[Time Period in Blocks](#field-time-period-in-blocks) | 10  (10 blocks to send payment after counter-party accepts these terms)|
+|Minimum bitcoin transaction fee|[Number of coins](#field-number-of-coins) | 10,000,000 (buyer must pay 0.1 BTC fee to the miner, discouraging fake offers)|
+|Action|[Sell Offer sub-action](#field-sell-offer-sub-action) | 1 (New offer)|
 
 Note that some trading of Test MSC was done with version 0 of this message which did not have the Action field. Those transactions are treated as Action=3 (Cancel offer) when the Amount for sale is zero. For version 0 of this message and Amount for sale = 0 (Cancel offer), the values in the following fields are not tested for validity:
 * Amount of bitcoins desired
@@ -401,11 +407,11 @@ For version 0 of this message and Amount for sale is non-zero, it is treated as 
 
 #### Change a Coin Sell Offer
 
-An offer to sell coins can be changed by using Action = 2 (Update) until either: there are valid corresponding purchase offers (Transaction type 22) for the whole amount offered, or the sell offer is canceled.
+An offer to sell coins can be changed by using Action = 2 (Update) until either: there are valid corresponding purchase offers (transaction type 22) for the whole amount offered, or the sell offer is canceled. The Currency identifier cannot be changed.
 
-The change will apply to the balance that has not yet been accepted with a purchase offer. The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
+The change will apply to the balance that has not yet been accepted with a purchase offer. The stored unit price must be updated using the updated Amount for sale and Amount of bitcoins desired. The Amount desired value can be discarded after the unit price is updated. The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
 
-The amount reserved from the available balance for this address will be adjusted to reflect the new amount for sale.
+The amount reserved from the available balance for this address will be adjusted to reflect the new amount for sale. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell offer amount not yet accepted at the time of the update.
 
 Say you decide you want to change an offer, e.g. the number of coins you are offering for sale, or change the asking price. Send the transaction with the new values and the values that are not changing and Action = 2 (Update) before the whole amount offered has been accepted. Note that while the portion of an offer which has been accepted cannot be changed, sending an update message still has an effect, in that it affects any coins which have not been accepted, and it affects accepted coins if the buyer fails to send payment. 
 
@@ -429,7 +435,7 @@ Description: Transaction type 22 posts acceptance of an offer to sell Mastercoin
 
 The reference address must point to the seller's address, to identify whose offer you are accepting. The purchaser’s address must be different than the seller’s address.
 
-If you send an offer for more coins than are available by the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address that does not have a matching active Sell Offer, e.g. the Sell offer has been canceled or is all sold out, the Purchase Offer must be invalidated. 
+If you send an offer for more coins than are available at the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address that does not have a matching active Sell Offer, e.g. the Sell offer has been canceled or is all sold out, the Purchase Offer must be invalidated. It is not valid to send a Purchase Offer to an address if the sending address has an active Purchase Offer (not fully paid for and time limit not yet reached) with that address.
 
 Note: Your total expenditure on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
 
@@ -443,36 +449,104 @@ Other Master Protocol messages (for instance if the buyer wants to change his of
 
 Say you see an offer such as the one listed above, and wish to initiate a purchase of those coins. Doing so takes 16 bytes:
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 22 (accept currency trade offer)
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount to be purchased](#field-number-of-coins) = 130,000,000 (1.30000000 Mastercoins)
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 22| 
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
+|Amount to be purchased|[Number of Coins](#field-number-of-coins)|130,000,000 (1.3 coins) |
 
 ### Sell Master Protocol Coins for Another Master Protocol Currency
 
-Description: Transaction type 21 is used to both publish and accept an offer to sell coins in a Master Protocol Currency for coins in another Master Protocol Currency.
+Description: Transaction type 21 is used to both publish and accept an offer to sell coins in one Master Protocol Currency for coins in another Master Protocol Currency.
 
-If the amount offered exceeds the number available to be sold by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like anfy other exchange platform.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell order is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell order. The seller could update the sell order to include these newly acquired coins, see [Change a Transaction Type 21 Coin Sell Order](#change-a-transaction-type-21-coin-sell-order) below.
 
-An address cannot create a new offer while that address has an active sell offer with the same currencies in the same roles. An active sell offer is one that has not been canceled or fully accepted.
+The new sell order's unit price is computed from two of the fields in the transaction message: the "Amount desired" divided by the "Amount for sale". An existing order's original unit price is used to match against new orders. The unit price does not change except by using the Change action. See below.
 
-To accept a sell offer, simply publish the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a price which matches or beats the seller's price. The protocol then finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers. The purchaser’s address must be different than the seller’s address.
+An address cannot create a new sell order while that address has an active sell order with the same currencies in the same roles (for sale, desired). An active sell order is one that has not been canceled or fully accepted. The currency id for sale must be different from the currency id desired. Both currency id's must refer to existing currencies.
 
-Note that when only some coins are purchased, the rest are still for sale with the same terms.
+To accept an existing sell order, an address simply publishes the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which is greater than or equal to the existing sell order's unit price. The protocol then finds existing sell orders that qualify (match), possibly including existing sell orders from that same address.
+
+A liquidity bonus for the owners of existing sell orders provides an incentive for people to put their coins up for sale at a price which does not get filled instantly, increasing available liquidity on the exchange. The liquidity bonus for the owner of a matching sell order is taken from the amount paid by the new sell order. The liquidity bonus is 0.3% of the amount paid by the new sell order, rounded to the nearest .00000001 for divisible tokens or to the nearest whole number for indivisible tokens. The liquidity bonus percentage and/or calculation may change in the future.
+
+The following table shows examples of the liquidity bonus based on the new order's amount for sale and the existing order's minimum amount desired, for *divisible* coins. This table does not show the new order's minimum amount desired or the existing order's amount for sale, which are not subject to the liquidity bonus.
+
+|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder for Sale** | **Existing Order Remainder Desired** |
+|---:|---:|:---|---:|---:|:---|
+| 100.3 | 100.0 | 100.0 | 0.3 | 0.0 | 0.0 |
+| 100.0 | 100.0 | 99.70089731 | 0.29910269 | 0.0 | 0.29910269 |
+| 125.0 | 100.0 | 100.0 | 0.30 | 24.7 | 0.0 |
+| 50.0 | 100.0 | 49.85044865 | 0.14955135 | 0.0 | 50.14955135 |
+
+The following table shows examples of the liquidity bonus based on the new order's amount for sale and the existing order's minimum amount desired, for *indivisible* coins. This table does not show the new order's minimum amount desired or the existing order's amount for sale, which are not subject to the liquidity bonus.
+
+|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder for Sale** | **Existing Order Remainder Desired** |
+|---:|---:|---:|---:|---:|---:|
+| 1003 | 1000 | 1000 | 3 | 0 | 0 |
+| 1000 | 1000 | 997 | 3 | 0 | 3 |
+| 502 | 502 | 500 | 2 | 0 | 2 |
+| 500 | 1000 | 499 | 1 | 0 | 501 |
+| 500 | 500 | 499 | 1 | 0 | 1 |
+| 100 | 100 | 100 | 0 | 0 | 0 |
+| 125 | 100 | 100 | 0 | 25 | 0 |
+
+The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. This can cause the effective unit price to be higher than the matching sell order's specified unit price, but still never greater than the reciprocal of the new sell order's unit price. 
+
+It is valid for the purchaser’s address to be the same as the seller’s address.
+
+An existing order matches the new order when all of the following conditions are met: 
+
+1. the existing order's Currency id for sale is the same as the new order's Currency id desired
+1. the existing order's Currency id desired is the same as the new order's Currency id for sale
+1. the existing order's unit price is less than or equal to the reciprocal of the new order's unit price
+1. the existing order is still open (not completely sold or canceled)
+
+Existing orders that match are sorted as follows to be applied to the new order:
+
+1. by unit price, ascending (best price for the new order first)
+1. then by transaction block number, ascending chronological order (oldest first)
+1. then by transaction position within the block, ascending order (oldest first)
+
+If there are no matches for the new sell order or the aggregate amount desired in the matching orders is less than the amount for sale in the new sell order, the new sell order must be added to the list of existing sell orders, with the remaining amount for sale at the original unit price. This order is now a candidate for matching against future sell orders. Note that when only some coins from an existing order are purchased, the remaining coins from that order are still for sale at the original unit price.
 
 Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
 
-1. [Transaction version](#field-transaction-version) = 1
-1. [Transaction type](#field-transaction-type) = 21 (currency trade offer for another Master Protocol currency)
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount for sale](#field-number-of-coins) = 250,000,000 (2.50000000 Mastercoins) 
-1. [Currency identifier desired](#field-currency-identifier) = 3 for GoldCoin 
-1. [Amount of GoldCoins desired](#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins)
-1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 21| 
+|Currency identifier for sale| [Currency identifier](#field-currency-identifier) |1 for Mastercoin|
+|Amount for sale|[Number of Coins](#field-number-of-coins)|250,000,000 (2.5 coins) |
+|Currency identifier desired| [Currency identifier](#field-currency-identifier) |3 for GoldCoin |
+|Amount desired|[Number of Coins](#field-number-of-coins)|5,000,000,000 (50.0 coins) |
+| Action | [Sell Offer sub-action](#field-sell-offer-sub-action) | 1 (New offer) | 
 
-Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if someday more stable Master Protocol currencies become dominant and users no longer need to exit the Mastercoin ecosystem.
+Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if the Mastercoin community (Mastercoin holders) votes to change it.
 
-To change or cancel these order, use the action byte as described earlier for the message selling mastercoins for bitcoins. The only difference is that there are no coins "in limbo" (accepted but not purchased) complicating these messages.
+#### Change a Transaction Type 21 Coin Sell Order
+
+An offer to sell coins can be changed by using Action = 2 (Update) until the whole Amount for sale has been sold or the offer is canceled. An Update is equivalent to a [Cancel a Transaction Type 21 Coin Sell Order](#cancel-a-transaction-type-21-coin-sell-order) followed by a new Transaction Type 21 Coin Sell Order.
+
+The Amount for sale and the Amount desired are the two fields that can be updated. Neither of these fields can have a value of zero. Attempts to change the Currency identifier for sale or the Currency identifier desired must invalidate the update transaction. Attempts to update a sell order that is not active for any reason must be invalidated. A  valid transaction type 21 with Action=2 updates the existing sell order, including block number and position within the block, and then performs the same matching process as for a transaction type 21 with Action=1 (New).
+
+The amount reserved from the available balance for this address must be adjusted to reflect the new amount for sale. Note that the amount for sale as a result of the update is limited by the available balance at the time of the update plus the existing sell order amount not yet matched at the time of the update.
+
+The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
+
+Say you decide you want to change a sell order, e.g. the number of coins you are offering for sale, or the number of coins desired. Send the transaction with the new value(s), the same currency identifiers and Action = 2 (Update) so it is processed before the whole amount for sale has been matched. Note that while the portion of a sell order which has been matched and sold cannot be changed, sending an update message affects any coins which have not been matched. 
+
+#### Cancel a Transaction Type 21 Coin Sell Order
+
+An offer to sell coins can be canceled by using Action = 3 (Cancel) before the order has been fully matched. When a sell order is canceled, the associated coins are no longer reserved. Attempts to cancel a sell order that is not active for any reason must be invalidated.
+
+When canceling a sell order, the values in the following fields are not tested for validity:
+* Amount for sale
+* Amount desired
+
+The cancel will apply to the remaining Amount for sale. The UI must indicate if the cancellation was successful and how many coins were not sold.
+
+If you want to cancel a sell order, specify the same currency identifiers and Action = 3 (Cancel) and send the transaction so it is processed before the full amount for sale has been matched. Note that while the portion of a sell order which has been matched and sold cannot be canceled, sending the cancel message cancels any portion of the order which has not been matched.
 
 ## Smart Property
 
@@ -510,19 +584,21 @@ In addition to the validity constraints for each message field type, the followi
 * When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
 * "Property Name" must not be blank or null
 
-Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
+Say you want to create 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 50
-1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
-1. [Property Type](#field-property-type) = 1 for new indivisible tokens
-1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
-1. [Property Category](#field-string-255-byte-null-terminated) = “Companies\0” (10 bytes)
-1. [Property Subcategory](#field-string-255-byte-null-terminated) = “Bitcoin Mining\0” (15 bytes)
-1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
-1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
-1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
-1. [Number Properties](#field-number-of-coins) = 1,000,000 indivisible tokens
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 50|
+|Ecosystem|[Ecosystem](#field-ecosystem) | 1 (Mastercoin ecosystem)|
+|Property Type|[Property Type](#field-property-type) | 1 (new Indivisible tokens)|
+|Previous Property ID|[Currency identifier](#field-currency-identifier) | 0 (for a new smart property)|
+|Property Category|[String null-terminated](#field-string-255-byte-null-terminated) | “Companies\0” (10 bytes) |
+|Property Subcategory | [String null-terminated](#field-string-255-byte-null-terminated) | “Bitcoin Mining\0” (15 bytes)|
+|Property Name | [String null-terminated](#field-string-255-byte-null-terminated) | “Quantum Miner\0” (14 bytes)|
+|Property URL| [String null-terminated](#field-string-255-byte-null-terminated)  | “tinyurl.com/kwejgoig\0” (21 bytes) |
+|Property Data | [String null-terminated](#field-string-255-byte-null-terminated)  | “\0” (1 byte) |
+| Number Properties | [Number of coins](#field-number-of-coins) | 1,000,000 (indivisible tokens)|
 
 ### New Property Creation via Crowdsale with Variable number of Tokens
 
@@ -576,22 +652,23 @@ In addition to the validity constraints for each message field type, the followi
 
 Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending, for example, at midnight UTC January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
-1. [Transaction version](#field-transaction-version) = 1
-1. [Transaction type](#field-transaction-type) = 51
-1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
-1. [Property Type](#field-property-type) = 1 for new indivisible tokens
-1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
-1. [Property Category](#field-string-255-byte-null-terminated) = “Companies\0” (10 bytes)
-1. [Property Subcategory](#field-string-255-byte-null-terminated) = “Bitcoin Mining\0” (15 bytes)
-1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
-1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
-1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
-1. [Currency Identifier Desired](#field-currency-identifier\*) = 1 for Mastercoin  
-    * Note: starting with version 1 of Transaction type 51, the value 0 (bitcoin) is added to the valid values for the [Currency Identifier Desired](#field-currency-identifier) field
-1. [Number Properties per Unit Invested](#field-number-of-coins) = 100 indivisible tokens
-1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
-1. [Early Bird Bonus %/Week](#field-integer-one-byte) = 10
-1. [Percentage for issuer](#field-integer-one-byte) = 12
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 51|
+|Ecosystem|[Ecosystem](#field-ecosystem) | 1 (Mastercoin ecosystem)|
+|Property Type|[Property Type](#field-property-type) | 1 (new Indivisible tokens)|
+|Previous Property ID|[Currency identifier](#field-currency-identifier) | 0 (for a new smart property)|
+|Property Category|[String null-terminated](#field-string-255-byte-null-terminated) | “Companies\0” (10 bytes) |
+|Property Subcategory | [String null-terminated](#field-string-255-byte-null-terminated) | “Bitcoin Mining\0” (15 bytes)|
+|Property Name | [String null-terminated](#field-string-255-byte-null-terminated) | “Quantum Miner\0” (14 bytes)|
+|Property URL| [String null-terminated](#field-string-255-byte-null-terminated)  | “tinyurl.com/kwejgoig\0” (21 bytes) |
+|Property Data | [String null-terminated](#field-string-255-byte-null-terminated)  | “\0” (1 byte) |
+|Currency Identifier Desired| [Currency identifier](#field-currency-identifier) |1 for Mastercoin |
+| Number Properties per Unit Invested | [Number of Coins](#field-number-of-coins) | 100 indivisible tokens |
+| Deadline | [UTC Datetime](#field-utc-datetime) | January 1st, 2215 00:00:00 UTC (must be in the future) |
+| Early Bird Bonus %/Week | [Integer one-byte](#field-integer-one-byte) | 10 |
+| Percentage for issuer | [Integer one-byte](#field-integer-one-byte) | 12 |
 
 ### Accepting Multiple Currencies in a Crowdsale
 
@@ -619,7 +696,7 @@ For divisible properties, the sending address will be credited with the number o
 
 For indivisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the percentage based on the "Early Bird Bonus %/Week" value, rounded down to an integer number of tokens (with no fractional portion). 
 
-The UI should accurately display the number of tokens that will be credited to the sending address.
+The aggregate number of tokens credited in a crowdsale is limited by the maximum allowable number of tokens in a Smart Property (see [Number of coins](#field-number-of-coins)). The UI should accurately display the number of tokens that will be credited to the sending address.
 
 Note these important details:
 
@@ -636,7 +713,7 @@ Say that having created your "Quantum Miner" smart property (which was assigned 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 52
 1. [Ecosystem](#field-ecosystem) = 1 for a property within the Mastercoin ecosystem (as opposed to Test Mastercoin)
-1. [Property ID](#field-property-id) = 8
+1. [Property ID](#field-currency-identifier) = 8
 1. [Number of Mastercoins](#field-number-of-coins) = 300,000,000 (3.00000000 Mastercoins)
 
 This transaction permanently destroys Mastercoins in exchange for favorable placement of this property in the default sort-ordering of properties on every UI. Protocol parsers accumulate all promotions of a property (which can be done by any address which has Mastercoins), with newer promotions being worth more than older promotions. 
@@ -653,9 +730,11 @@ Since crowdsales are generally open-ended, it leaves the potential that raising 
 
 It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 53
-1. [Property ID](#field-property-id) = 9
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ——: |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 53| 
+| Property ID | [Currency identifier](#field-currency-identifier) | 9 |
 
 Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
 
