@@ -731,7 +731,7 @@ Since crowdsales are generally open-ended, it leaves the potential that raising 
 It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
 
 | **Field** | **Type** | **Example** |
-| ---- | ---- | ——: |
+| ---- | ---- | ----: |
 | Transaction version |[Transaction version](#field-transaction-version) | 0 |
 | Transaction type | [Transaction type](#field-transaction-type) | 53| 
 | Property ID | [Currency identifier](#field-currency-identifier) | 9 |
