@@ -153,9 +153,7 @@ Not all features described in this document are active by default. Each feature 
 
 ## Transaction versioning
 
-Occasionally it seems prudent to change the format or interpretation of a Master Protocol message in order to improve the feature or fix a bug. To that end, each message has a version number. All Master Protocol implementations are expected to keep pace with changes of this nature, but in the event one falls behind, it must treat addresses which broadcast messages using version numbers it does not recognize as "black holes". That is, any funds or properties which enter the control of that address are considered lost and unspendable, since that address is using a newer version of the Master Protocol. In the event that the out-dated implementation is upgraded to recognize the new message formats, the blockchain can be re-parsed, and nothing will be lost.
-
-This approach allows old versions of the Master Protocol to continue operating using the transactions they recognize without trying to parse messages of unknown meaning.
+Occasionally it seems prudent to change the format or interpretation of a Master Protocol message in order to improve the feature or fix a bug. To that end, each message has a version number. 
 
 Generally, an out-dated parsing engine should either be upgraded to rejoin consensus, or retired by the owner. Implementations which are not in consensus can be used to attempt to defraud people
 
@@ -738,7 +736,8 @@ It is invalid to attempt to close a crowdsale that is not active. Closing an act
 
 Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
 
-# Future Transactions
+# Future Transactions & Additions
+
 
 The transactions below are still subject to revision and therefore are not included in deployments based on this version of the spec. 
 
@@ -1072,6 +1071,10 @@ When an escrow fund is unhealthy, lowering the aggression factor makes the escro
 Escrow funds should generally be tuned to act slowly. This will allow arbitrage traders to do the heavy lifting, as the knowledge that the escrow fund will eventually get the price back to the target makes for a self-fulfilling prophecy when traders act on that knowledge. If the escrow fund acts too quickly, it loses money when the bitcoin version of a security leads the real-world version, as would happen if someone was engaging in insider trading anonymously using the bitcoin version.
 
 
+### Black holes approach to versioning
+All Master Protocol implementations are expected to keep pace with changes of this nature, but in the event one falls behind, it must treat addresses which broadcast messages using version numbers it does not recognize as "black holes". That is, any funds or properties which enter the control of that address are considered lost and unspendable, since that address is using a newer version of the Master Protocol. In the event that the out-dated implementation is upgraded to recognize the new message formats, the blockchain can be re-parsed, and nothing will be lost.
+
+This approach allows old versions of the Master Protocol to continue operating using the transactions they recognize without trying to parse messages of unknown meaning.                               
 
 # Appendix A – Storing Mastercoin data in the blockchain 
 By Zathras, Copyright © 2013 The Mastercoin Foundation 
