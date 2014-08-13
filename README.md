@@ -752,7 +752,7 @@ In addition to the validity constraints for each message field type, the followi
 * When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
 * "Property Name" must not be blank or null
 
-Using the “Quantum Miner” details from the fixed token issuance, the transaction fields would be:
+Using the “Quantum Miner” details from the fixed token issuance, the transaction fields would be 72 bytes:
 
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ---- |
@@ -771,7 +771,9 @@ Using the “Quantum Miner” details from the fixed token issuance, the transac
 
 Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction have no tokens by default.  After issuance, tokens may be added to the balance of the wallet whose address originally broadcast the property creation transaction.
 
-It is invalid to attempt to grant tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens).  If you want to grant 1,000 tokens into your wallet for the property with an ID of 8 it would be X bytes:
+It is invalid to attempt to grant tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens).  
+
+Say that you have a smart property whose ID is 8 and you have just reached a fundraising milestone for the project related to that smart property.  If you wanted to grant 1,000 tokens into your wallet as a result of this milestone so that you could distribute them, it would be 40 bytes:
 
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ----: |
@@ -779,13 +781,15 @@ It is invalid to attempt to grant tokens on any property that was not broadcast 
 | Transaction type | [Transaction type](#field-transaction-type) | 55| 
 | Property ID | [Currency identifier](#field-currency-identifier) | 8 |
 | Number Properties | [Number of coins](#field-number-of-coins) | 1,000 |
-
+| Memo | [String null-terminated](#field-string-255-byte-null-terminated)  | “First Milestone Reached!” (24 byte) |
 
 ### Revoking Tokens for a Managed Property
 
 Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction may have tokens revoked from the balance of the wallet address that originally broadcast the property creation transaction.
 
-It is invalid to attempt to revoke tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens).  If you want to revoke 1,000 tokens from your wallet for the property with an ID of 8 it would be X bytes::
+It is invalid to attempt to revoke tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens).  
+
+Say that your project is finished and you want to start burning tokens in exchange for the rewards your promised early backers.  If you wanted to revoke 1,000 tokens from your wallet in exchange for shipping a reward it would be 58 bytes:
 
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ----: |
@@ -793,6 +797,7 @@ It is invalid to attempt to revoke tokens on any property that was not broadcast
 | Transaction type | [Transaction type](#field-transaction-type) | 56| 
 | Property ID | [Currency identifier](#field-currency-identifier) | 8 |
 | Number Properties | [Number of coins](#field-number-of-coins) | 1,000 |
+| Memo | [String null-terminated](#field-string-255-byte-null-terminated)  | “Redemption of tokens for Bob, Thanks Bob!” (42 byte) |
 
 # Future Transactions
 
