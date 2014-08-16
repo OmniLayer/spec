@@ -290,6 +290,8 @@ This section defines the fields that are used to construct transaction messages.
     *   61: [Initiate a Purchase from a Listing](#initiating-a-purchase)
     *   62: [Respond to a Buyer Offer](#accepting-a-buyer)
     *   63: [Release Funds and Leave Feedback](#leaving-feedback)
+    *   70: [Update Administration of Smart Property](#update-administraion-of-smart-property)
+    *   71: [Cast Administrative Vote](#cast-administrative-vote)
     * 100: [Create a New Child Currency](#new-currency-creation)
 
 ### Field: Transaction version
@@ -737,6 +739,145 @@ It is invalid to attempt to close a crowdsale that is not active. Closing an act
 | Property ID | [Currency identifier](#field-currency-identifier) | 9 |
 
 Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
+
+## Smart Property Administration
+
+The Master Protocol provides support for a unified extensible model of administration of a Smart Property so that issuers may have finer controls over the way the Property behaves.  Additionally, this model provides for enhancements to security necessary for maintaining the long term integrity of Smart Properties where necessary.
+
+Administrative power of a Smart Property is held by an Electorate which is defined during the issuance of the Smart Property.  This Electorate must approve all actions taken on a Smart Property or with its tokens implicitly or explicitly.  Each action, for instance [granting new tokens](#granting-tokens-for-a-managed-property), [Simple Sends of Tokens](#transfer-coins-simple-send) or [Closing a Crowdsale](#close-a-crowdsale-manually), can have its own set of parameters for approval including, but not limited to, implicit automatic approval.
+
+By default, all Smart Properties are implicitly administered by an [Explicit Address Electorate](#explicit-address-electorate) containing the address that broadcast the Smart Properties creation transaction.  
+
+By default, all [Transfer of Coins](#transferring-coins) and [Distributed Exchange](#distributed-exchange) transactions implicitly have approval rules in the form of "true", see [How Actions are Approved](#how-actions-are-approved), meaning they are automatically approved upon broadcast.  Likewise, all [Smart Property] transactions implicitly have approval rules in the form of "yay = SIZE" requiring unanimous approval from the single-member Electorate.
+
+Broadcasting a transaction from an address associated with an Electorate constitutes implicit vote as described in the definition of the Electorate.  By default, Smart Properties carry an implicit vote of "yay" with any transaction broadcast from an Electorate member.  
+
+The sum of the default parameters guarantees that Smart Properties issued after the introduction of Administration are functionally identical to the pre-Administration Smart Properties until they chose to enable specific administration features and that existing Smart Properties can be retroactively included in the system using the defaults without any functional change.
+
+### Electorates
+
+An electorate is a group of addresses responsible for approving actions in a Smart Property.  In the future these groups may be defined in many different ways, for example the set of addresses that holds tokens for a given Smart Property.  Presently, only one definition is supported: Explicit Electorates.  
+
+Electorates can be several types, identified by their ID
+
+*   1: [Explicit Address Electorate](#explicit-address-electorate)
+*   2: [Token Ownership Electorate](#token-ownership-electorate)
+
+
+#### Explicit Address Electorate
+
+An Explicit Address Electorate is a single member electorate that consists of a single wallet address that.  Explicit Electorates are published as the RIPEMD-160 hash of the wallet address.  By Default, when a new Smart Property is issued it is implicitly administered by an Explicit Address Electorate containing the address from which the original issuance was broadcast.
+
+#### Token Ownership Electorate
+
+A Token Ownership Electorate is a multi member electorate that consists of all wallets carrying a positive value for a specific Smart Property Token.  The Smart Property token which defines membership in a Token Ownership Electorate is not required to be of the Smart Property that an Electorate Administers however, in can be.
+
+For example, say you wanted to create a Smart Property where the owners of the Smart Property itself managed the approval of actions, then the Token Ownership Electorate's Smart Property ID would be equal to the Administered Smart Property's ID.  If instead you wanted to issue a separate token whose ownership implied the ability to Administer another Smart Property, then the Token Ownership Electorates Smart Property ID would not be Equal to the Administered Smart Property's ID.
+
+For the purposes of tallying votes, membership in a Token Ownership Electorate is defined as the set of addresses that carried a positive value for a specific property on the block the pending action was broadcast.  Transfer of the tokens that define membership *after* an action has been broadcast will not affect the vote tally for that action, however they will affect all future broadcast actions.
+
+### How Actions are Approved
+
+Actions are approved or disapproved by members of the Electorate casting votes.  A vote can be any string and for the purposes of a tallying votes these strings are case-insensitive.  Canonically, vote strings such as "yay", "nay", "abstain", "approve", "disapprove" carry implicit meaning and it is recommended that Smart Properties use standard strings to avoid confusion, however it is not required by the protocol.  Vote strings are restricted to the letters a-z, number 0-9 and underscore characters.  They may not be the same as any reserved words and they cannot be only numbers.
+
+Votes are accumulated and used to evaluate the approval rule associated with an action.  Approval rules are short human-readable scripts whose inputs are the tallied votes and a small set of state from the block-chain itself and whose output is a logical true or false.  For instance, the standard simple majority rule would be "yay GT 50%".  This would use the "GT" or "greater than" operator to compare the sum of all "yay" votes with 50% of the size of the Electorate.  
+
+Actions are immediately and permanently approved when the state at the end of a single block of transactions meets the approval rules requirements even if future blocks reveal votes which would otherwise violate the rule.  The only exception is when a re-org of the blockchain causes the block to be removed from the longest chain.   
+
+Numbers present in a approval rule are interpreted as double precision floating point numbers.
+
+#### Available Operators
+The following operators are also reserved words
+##### Logical Operators
+
+| **Operator** | **Usage** | **Description** |
+| ---- | ---- | ----: |
+| OR or &#124; | *x* OR *y* | evaluates to true if either x or y evaluate to true |
+| AND or & | *x* AND *y* | evaluates to true if both x and y evaluate to true |
+| NOT or ! | NOT *x* | evaluates to true if x evaluates to false, evaluates to false otherwise |
+| GT or > | *x* GT *y* | evaluates to true if x is greater than y |
+| LT or < | *x* LT *y* | evaluates to true if x is less than y |
+| GTE or >= | *x* GTE *y* | evaluates to true if x is greater or equal to y |
+| LTE or <= | *x* LTE *y* | evaluates to true if x is less than or equal to y |
+| IS or = | *x* IS *y* | evaluates to true if x is equal to y |
+
+##### Math Operators
+For the purpose of math operators any true value is considered as 1 and any false value is considered as 0
+
+| **Operator** | **Usage** | **Description** |
+| ---- | ---- | ----: |
+| ADD or + | *x* ADD *y* | evaluates to the sum of x and y |
+| SUB or - | *x* SUB *y* | evaluates to the difference of x and y |
+| MUL or * | *x* MUL *y* | evaluates to the product of x times y |
+| DIV or / | *x* DIV *y* | evaluates to the quotient of x divided by y |
+
+NOTE: Parenthesis can be used to resolve order of operations ambiguities, otherwise standard order of operations rules apply.
+
+#### Other Inputs/Constants
+The following keywords represent other input data and are also reserved words
+
+| **Operator** | **Description** |
+| ---- |----: |
+| AGE | The integral difference between the current block height and the actions broadcast block height | 
+| TALLY | The integral sum of all tallied votes |
+| SIZE | The size of the Electorate |
+| TRUE | Always evaluates to true |
+| FALSE | Always evaluates to false |
+
+#### Other Reserved Words
+The following are reserved words that do not have an effect currently but may be added in future protocol releases and are therefore invalid vote strings.
+* XOR
+* MIN
+* MAX
+* AVG
+
+
+#### Examples
+"yay GT 0.5 MUL TALLY AND TALLY GTE 0.75 MUL SIZE AND AGE GTE 50 AND AGE LTE 100" or "yay > 0.5 * TALLY & TALLY >= 0.75 * SIZE & AGE >= 50 & AGE <= 100"
+This rule would be a simple majority vote of "yay" with a quorum of no less than 75% of the Electorate required to vote in some way.  The action could not be approved before 50 blocks had passed to allow votes to broadcast.  This action would be provably impossible to approve after 100 blocks.
+
+"sign GTE 3 & reject IS 0 & AGE LTE 100" or "sign >= 3 & reject = 0 & age <= 100"
+This action would require 3 "sign"s before any "rejects" are broadcast and would be provably impossible to approve after 100 blocks.  Note: since there is no minimum age, this action may approve immediately after a block in which the total "sign" tally is greater than or equal to 3 so long as the "reject" tally is 0.  If a "reject" was broadcast the next block it would have no affect as the action will have already been irrevocably approved.  The exception is when a re-org of the block-chain places the "reject" broadcast in the same block or an earlier block as the broacasted "sign"s that would bring the tally to or above 3.
+
+"pass IS SIZE" or "pass = SIZE"
+This action would require a unanimous "pass" vote in order to be approved and the action could stay pending approval indefinately.
+
+Note: Using Unanimous rules for actions such as "Update Electorate for Smart Property" negates the Electorate's ability to purge compromised keys as any compromised keys could simply vote against the change in administration.  Therefore, it is not advised to use unanimous rules for  "Update Electorate for Smart Property" actions for any multi-member electorate.
+
+### Update Administration for Smart Property
+Description: Master Protocol allows the existing administrating Electorate to udpate both the administrating Electorate and the rules for approval atomically.  Each update completely supplants a previously declared administrating Electorate and all approval rules.  Each update contains a default approval template which is applied to all actions and a variable number of overrides which can be used to replace this default on specific actions.  
+
+Say you wanted to transfer administration of a Smart party to an address with a RIPEMD-160 of 7f332f68db77bd9d7edd4969571ad671cf9dd3b.  Additionally, you want to implicitly approve all actions on that Smart Property with one exception: future updates or changes of administration which would require a simple majority of the new Electorate.
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ----: |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 70| 
+| Property ID | [Currency identifier](#field-currency-identifier) | 9 |
+| Electorate type | [Electorate type](#field-electorate-type) | 0| 
+| Electorate Definition | [Electorate Definition](#field-electorate-definition) | 000832f68db77bd9d7edd4969571ad671cf9dd3b | 
+| Implicit Vote | [String null-terminated](#field-string-255-byte-null-terminated) | "approve\0” (8 bytes) |
+| Approval Template | [String null-terminated](#field-string-255-byte-null-terminated) | "TRUE\0” (5 bytes) |
+| Override Count | [Integer-two byte](#field-integer-two-byte) | 1| 
+| Transaction type | [Transaction type](#field-transaction-type) | 70| 
+| Approval Rule | [String null-terminated](#field-string-255-byte-null-terminated) | "approve GT 0.5 MUL SIZE\0” (24 bytes) |
+
+### Cast Administrative Vote
+Description: Master Protocol members of an Electorate to vote on previously broadcast action and approve them using the rules defined in the Smart Property administration declaration.  The effects of a action will not be recognized by the Master Protocol until they are approved.
+
+Say you wanted to "approve" the action broadcast in transaction 9595c9df90075148eb06860365df33584b75bff782a510c6cd4883a419833d50 from your address which is a member of an Electorate.
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ----: |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 71| 
+| Property ID | [Currency identifier](#field-currency-identifier) | 9 |
+| Transaction ID | [Integer-thirty two byte](#field-integer-thirty-two-byte) | 9595c9df90075148eb06860365df33584b75bff782a510c6cd4883a419833d50 |
+| Vote | [String null-terminated](#field-string-255-byte-null-terminated) | "approve\0” (5 bytes) |
+| Memo | [String null-terminated](#field-string-255-byte-null-terminated) | "I think this is swell\0” (22 bytes) |
+
+
+
 
 # Future Transactions
 
