@@ -301,6 +301,34 @@ This section defines the fields that are used to construct transaction messages.
 + Inter-dependencies: [Transaction type](#field-transaction-type)
 + Valid values: 0 to 65535
 
+### Field: Address Reference
++ Description: RIPEMD-160 hash of a bitcoin wallet public address
++ Size: 20bytes
++ Valid values: any 20byte value
+
+### Field: Transaction Reference
++ Description: hash of a bitcoin transaction
++ Size: 32bytes
++ Valid values: any 32byte value
+
+### Field: Electorate Type
++ Description: The type of [Electorate](#electorates) described by the rest of the tranaction
++ Size: 8-bit unsigned integer, 1 byte
++ Inter-dependencies: [Electorate Definition](#field-electorate-definition)
++ Current Valid values:
+    *    1: [Explicit Address Electorate](#explicit-address-electorate)
+    *    2: [Token Ownership Electorate](#token-ownership-electorate)
+
+### Field: Electorate Definition
++ Description: the concrete definition of an [Electorate](#electorates)
++ Size: Variable length depending on the [Electorate Type](#field-electorate-type)
++ Required/optional: Required
++ Inter-dependencies: [Electorate Type](#field-electorate-type)
++ Valid values (by [Electorate Type](#field-electorate-type)):
+    *    1: [Address Reference](#field-address-reference) that serves as the [Explicit Address Electorate](#explicit-address-electorate)
+    *    2: [Currency identifier](#field-currency_identifier) used to define membership in a [Token Ownership Electorate](#token-ownership-electorate)
+
+
 # Transaction Definitions
 
 Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the Transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all spec versions starting with 0.4, the first field in each transaction message is the 2 byte version number, with an initial value of 0 and the Transaction type field is a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format associated with that version number.
@@ -872,7 +900,7 @@ Say you wanted to "approve" the action broadcast in transaction 9595c9df90075148
 | Transaction version |[Transaction version](#field-transaction-version) | 0 |
 | Transaction type | [Transaction type](#field-transaction-type) | 71| 
 | Property ID | [Currency identifier](#field-currency-identifier) | 9 |
-| Transaction ID | [Integer-thirty two byte](#field-integer-thirty-two-byte) | 9595c9df90075148eb06860365df33584b75bff782a510c6cd4883a419833d50 |
+| Transaction ID | [Transaction Reference](#field-transaction-reference) | 9595c9df90075148eb06860365df33584b75bff782a510c6cd4883a419833d50 |
 | Vote | [String null-terminated](#field-string-255-byte-null-terminated) | "approve\0” (5 bytes) |
 | Memo | [String null-terminated](#field-string-255-byte-null-terminated) | "I think this is swell\0” (22 bytes) |
 
