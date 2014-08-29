@@ -150,6 +150,7 @@ Not all features described in this document are active by default. Each feature 
 + Contract-for-difference bets are unlocked as of block # (TBD)
 + Distributed e-commerce features are unlocked as of block # (TBD)
 + Escrow-backed currencies are unlocked as of block # (TBD)
++ Managed Token-pool Smart Property features are unlocked as of block (TBD) 
 
 ## Transaction versioning
 
@@ -742,10 +743,11 @@ It is invalid to attempt to close a crowdsale that is not active. Closing an act
 Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
 
 ### New Property with Managed Number of Tokens
+This feature will be supported as of block number TBD
 
 Description: Transaction type 54 is used to create a new Smart Property whose token pool is actively managed by the address that creates the property.
 
-Creating a managed smart property does not automatically grant any tokens to the address that broadcasts the transaction.  Instead to additional transaction types exist to actively manage the size of the token pool: [Grant Tokens](#granting-tokens-for-a-managed-property) and [Revoke Tokens](#revoking-tokens-for-a-managed-property).
+Creating a managed smart property does not automatically grant any tokens to the address that broadcasts the transaction.  Instead two additional transaction types exist to actively manage the size of the token pool: [Grant Tokens](#granting-tokens-for-a-managed-property) and [Revoke Tokens](#revoking-tokens-for-a-managed-property).
 
 In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
 * "Previous Property ID" must be 0 when "Property Type" indicates a new property
@@ -768,12 +770,17 @@ Using the “Quantum Miner” details from the fixed token issuance, the transac
 |Property Data | [String null-terminated](#field-string-255-byte-null-terminated)  | “\0” (1 byte) |
 
 ### Granting Tokens for a Managed Property
+This feature will be supported as of block number TBD
 
-Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction have no tokens by default.  After issuance, tokens may be added to the balance of the wallet whose address originally broadcast the property creation transaction.
+Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction have no tokens by default.  After issuance, tokens may be added to the balance of a referenced address by broadcasting a this type of transaction.
 
-It is invalid to attempt to grant tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens).  
+It is invalid to attempt to grant tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens).
 
-Say that you have a smart property whose ID is 8 and you have just reached a fundraising milestone for the project related to that smart property.  If you wanted to grant 1,000 tokens into your wallet as a result of this milestone so that you could distribute them, it would be 40 bytes:
+It is invalid to attempt to broadcast a token grant on any property from an address other than the address that originally broadcast the [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction.
+
+It is invalid to attempt to grant tokens on any property that would increase the total number of tokens in circulation for that property to more than the maximum number of coins for a smart property, [see Number of coins](#field-number-of-coins).
+
+Say that you have a smart property whose ID is 8 and you have just reached a fundraising milestone for the project related to that smart property.  If you wanted to grant 1,000 tokens into your address as a result of this milestone so that you could distribute them, it would be 40 bytes:
 
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ----: |
@@ -781,15 +788,20 @@ Say that you have a smart property whose ID is 8 and you have just reached a fun
 | Transaction type | [Transaction type](#field-transaction-type) | 55| 
 | Property ID | [Currency identifier](#field-currency-identifier) | 8 |
 | Number Properties | [Number of coins](#field-number-of-coins) | 1,000 |
-| Memo | [String null-terminated](#field-string-255-byte-null-terminated)  | “First Milestone Reached!” (24 byte) |
+| Memo (Optional) | [String null-terminated](#field-string-255-byte-null-terminated)  | “First Milestone Reached!” (24 byte) |
 
 ### Revoking Tokens for a Managed Property
+This feature will be supported as of block number TBD
 
-Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction may have tokens revoked from the balance of the wallet address that originally broadcast the property creation transaction.
+Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction may have tokens revoked from the balance of the address that originally broadcast the property creation transaction.
 
-It is invalid to attempt to revoke tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens).  
+It is invalid to attempt to revoke tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens). 
 
-Say that your project is finished and you want to start burning tokens in exchange for the rewards your promised early backers.  If you wanted to revoke 1,000 tokens from your wallet in exchange for shipping a reward it would be 58 bytes:
+It is invalid to attempt to broadcast a token revoke on any property from an address other than the address that originally broadcast the [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction.
+
+It is invalid to attempt to revoke any amount of tokens in excess of the number owned and available by the address that broadcasts the transaction.
+
+Say that your project is finished and you want to start burning tokens in exchange for the rewards your promised early backers.  If you wanted to revoke 1,000 tokens from your address in exchange for shipping a reward it would be 58 bytes:
 
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ----: |
