@@ -151,6 +151,7 @@ Not all features described in this document are active by default. Each feature 
 + Distributed e-commerce features are unlocked as of block # (TBD)
 + Escrow-backed currencies are unlocked as of block # (TBD)
 + Managed Token-pool Smart Property features are unlocked as of block (TBD) 
++ Pay-to-script-hash address support is unlocked as of block # (TBD)
 
 ## Transaction versioning
 
@@ -1163,7 +1164,7 @@ Class A transactions were the first class of Mastercoin transaction and store da
 
 The transaction data is encoded into said fake Bitcoin address which is then used as an output in a single Bitcoin transaction satisfying the following requirements: 
 
-* Has a single or the largest pay-to-pubkey-hash input signed by the sending address
+* Has a single or the largest pay-to-pubkey-hash or pay-to-script-hash input with a valid signature to designate the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
 * Has an output for the encoded fake address (the 'data' address)
@@ -1174,8 +1175,9 @@ The transaction data is encoded into said fake Bitcoin address which is then use
 Further:
 
 * Exodus outputs are ignored in decoding
-* Any input not meeting the requirement for type (pay-to-pubkeyhash) will trigger the invalidation of the transaction
-* Only pay-to-pubkey-hash outputs will be considered for the reference address
+* Any input not meeting the requirement for type (pay-to-pubkey-hash or pay-to-script-hash) will trigger the invalidation of the transaction
+* Only pay-to-pubkey-hash and pay-to-script-hash outputs will be considered for the reference address
+* pay-to-script-hash output addresses will be the opaque script-hash address and not assume any decomposition into addresses which may be used in the redemption of such outputs
 
 NOTE: The sequence number for a given address is defined as a 1 -byte integer stored as the first byte of each 'packet'.   Sequence numbers are continuous with 0 following 255 (256=0, 255+1=0). 
 
@@ -1191,9 +1193,9 @@ NOTE: Class A transactions are restricted to the ‘simple send’ transaction t
 
 ## Class B transactions (also known as the ‘multisig’ method) 
 
-Class B transactions attempt to address the UTXO ‘bloat’ issue by storing data in the blockchain by utilizing ‘1-of-n’ multisignature outputs where one of the signatories should be the sender.   
+Class B transactions attempt to address the UTXO ‘bloat’ issue by storing data in the blockchain by utilizing ‘1-of-n’ multisignature outputs where one of the signatories is the sender or another public key address the sender has designated.   
 
-By adopting a ‘1-of-n’ approach (credit Tachikoma @ bitcointalk) we can increase n to the number of packets (public keys) needed to store the transaction data while maintaining the ability of the sender to redeem the output.  
+By adopting a ‘1-of-n’ approach (credit Tachikoma @ bitcointalk) we can increase n to the number of packets (public keys) needed to store the transaction data while maintaining the ability of the sender or their designated party to redeem the output.  
 
 NOTE: The reference client currently supports a maximum value of 3 for n.  As one signatory should be the sender for redemption purposes, there is a current limit of 2 data packets per output.  A number of multisig outputs can be combined to increase the space available for transaction data as required.  On decoding all Mastercoin packets from all multisig outputs are ordered via their sequence number and evaluated as a continuous data stream. 
 
@@ -1223,18 +1225,19 @@ Once the obfuscated Mastercoin packet is prepared, the key identifier (02) is pr
 ![Mastercoin Protocol Layers](images/classb_obfuscated.png) 
 
 These compressed public key 'packets' can then be included in one or multiple OP_CHECKMULTISIG output along with the senders public key.  A single transaction must be constructed satisfying the following requirements: 
-* Has a single or the largest pay-to-pubkey-hash input by sum signed by the sending address
+* Has a single or the largest pay-to-pubkey-hash or pay-to-script-hash input with a valid signature to designate the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
-* Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be the sender's public key, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
+* Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be a valid public key address designated by the sender which may be used to reclaim the bitcoin assigned to the output, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
 * Mastercoin 'data packages' appear in order by their sequence number 
 * Additional outputs are permitted 
 
 Further:
 
 * Exodus outputs are ignored in decoding
-* Any input not meeting the requirement for type (pay-to-pubkeyhash) will trigger the invalidation of the transaction
-* Only pay-to-pubkey-hash outputs will be considered for the reference address
+* Any input not meeting the requirement for type (pay-to-pubkey-hash or pay-to-script-hash) will trigger the invalidation of the transaction
+* Only pay-to-pubkey-hash or pay-to-script-hash outputs will be considered for the reference address
+* pay-to-script-hash output addresses will be the opaque script-hash address and not assume any decomposition into addresses which may be used in the redemption of such outputs
 * Only multisig outputs will be considered for the data packets
 * If there are multiple outputs remaining, the first output to the sending address (if such an output exists) will be ignored as change
 * The reference address will be determined by the remaining output with the highest vout index  
