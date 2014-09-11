@@ -140,6 +140,40 @@ The most important thing is that reorgs ARE detected. If an implementation does 
 
 Also, in many cases a user may wish to do something with Mastercoins recently sent to them or otherwise affected by a recent transaction. Where possible, Mastercoin-aware wallets should re-use bitcoins from the previous transactions in subsequent transactions which are dependent on the earlier transactions. In this way, if the earlier transaction is invalidated (by a reorg), the dependent transaction will also be invalidated.
 
+## Fees
+
+There are two broad categories of transactions which have no fees (other than fees charged by the bitcoin protocol layer):
+
+1. All tokens in the MSC protocol can be sent (using simple send) with no fees. 
+2. Any transaction which directly uses Mastercoin also has no fees.
+
+Here are some examples of transactions which have no fee:
+
+* Sending MaidsafeCoin using simple send 
+* Buying and selling MaidsafeCoin using Mastercoin on the distributed exchange 
+* Placing a bet denominated in Mastercoin
+* Paying Mastercoin to all MaidsafeCoin holders (pay to all)
+* Paying Mastercoin to purchase a physical good on the distributed e-commerce platform
+
+Transactions which do not meet this criteria pay a flat 0.3% fee, deducted from whatever currency or property is being used (rounded to the nearest representable amount).
+
+Here are some examples of transactions which would pay a 0.3% fee:
+
+* Buying and selling MaidsafeCoins with USDCoins on the distributed exchange
+* Placing a bet denominated in USDCoins
+* Paying MaidsafeCoin to all USDCoin holders (pay to all)
+* Paying USDCoin to purchase a physical good on the distributed e-commerce platform
+
+Fees are used to automatically purchase and destroy Mastercoin on the distributed exchange. In some cases, fees may round down to zero, or round up as high as 0.6%. 
+
+Here's an example:
+
+Peter bets against Paul about what the price of Gold will do over the next 3 days. The bet is denominated in USDCoin, and is worth $10,000. When the bet is settled, 0.3% of the bet amount is deducted ($30). That $30 is automatically applied to purchase Mastercoin on the Mastercoin/USDCoin distributed exchange, using a "market" order. If at least 0.00000001 MSC is not available for purchase for $30, a limit order is created for 0.00000001 MSC for $30.  Once the order has been filled, the Mastercoins are destroyed, gone forever.
+
+Notice at no point does Peter or Paul have to own any Mastercoins, yet their bet automatically results in the purchase and destruction of Mastercoins, which benefits everyone who owns Mastercoins.
+
+You can read more about this fee structure on our blog: http://blog.mastercoin.org/2014/06/11/mastercoin-is-for-burning/
+
 ## Unlocking features
 
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
@@ -371,7 +405,7 @@ Say you have grown wealthy and wish to gift all 1000 of your own Quantum Miner d
 2. [Currency identifier](#field-currency-identifier) = 6 for Quantum Miner Tokens
 3. [Amount to transfer](#field-number-of-coins) = 100,000,000,000 (1000.00000000 Quantum Miner Tokens)
 
-The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. The sender will be charged a transfer fee based on the number of addresses that receive any of the 1000 Quantum Miner tokens.
+The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. When using currencies other than Mastercoin, a small fee will be deducted (see [fees](#fees) above). The sender is also charged a transfer fee based on the number of addresses that receive any of the 1000 Quantum Miner tokens (as described earlier).
 
 Note to users: please make sure your proposed use case is legal in your jurisdiction!!
 
@@ -528,7 +562,7 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 |Amount desired|[Number of Coins](#field-number-of-coins)|5,000,000,000 (50.0 coins) |
 | Action | [Sell Offer sub-action](#field-sell-offer-sub-action) | 1 (New offer) | 
 
-Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Mastercoin ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could. If another currency becomes widely used in the Master Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade.
+Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Mastercoin ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could. If another currency becomes widely used in the Master Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade. When both currencies being traded are not Mastercoin, a small fee will be deducted (see [fees](#fees) above) when a trade is completed. 
 
 #### Change a Transaction Type 21 Coin Sell Order
 
@@ -711,6 +745,7 @@ Note these important details:
 + If the Send transaction is confirmed after the crowdsale is closed or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Send itself will complete.
 + Tokens credited to the sending address and the issuer address are immediately added to the available balance belonging to the respective addresses and can be spent or otherwise used by that address.
 + The funds received are immediately added to the available balance belonging to the crowdsale owner's address and can be spent or otherwise used by that address.
++ When accepting currencies other than Mastercoin, a small fee will be deducted (see [fees](#fees) above) from the coins issued to crowdsale participants. 
 
 ### Promote a property
 
@@ -1022,7 +1057,7 @@ Say you see a bet which you would like to accept. Simply publish the inverse bet
 
 Note that this bet will be matched against only half of the previous example, because while the odds match (2:1 vs. 1:2), the amount of this bet is for less. This bet is only for $50, so would only win $100 if they win, as opposed to the full $200. Once the bets are matched, the first bet still has $100 available for someone else to bet $50 against.
 
-Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner gets 99.5% of the money at stake. The other 0.5% goes to the creator of the data stream. 
+Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner gets 99.5% of the money at stake. The other 0.5% goes to the creator of the data stream.  When using currencies other than Mastercoin, a small fee will be deducted (see [fees](#fees) above). 
 
 ## Distributed E-Commerce
 
@@ -1068,7 +1103,7 @@ If the buyer offers a bad price, has a bad reputation, or has no reputation, the
 1. Transaction type = 62 for Accept buyer offer (32-bit unsigned integer, 4 bytes)
 2. Which buyer = 2 (3rd offer received) (16-bit unsigned integer, 2 bytes) 
 
-Once a buyer has been accepted, the seller may ship the Bible.
+Once a buyer has been accepted, the seller may ship the Bible. When using currencies other than Mastercoin, a small fee will be deducted (see [fees](#fees) above). 
 
 
 ### Leaving Feedback
