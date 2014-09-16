@@ -152,25 +152,27 @@ Here are some examples of transactions which have no fee:
 * Sending MaidsafeCoin using simple send 
 * Buying and selling MaidsafeCoin using Mastercoin on the distributed exchange 
 * Placing a bet denominated in Mastercoin
-* Paying Mastercoin to all MaidsafeCoin holders (pay to all)
+* Paying Mastercoin to all Mastercoin holders (pay to owners)
 * Paying Mastercoin to purchase a physical good on the distributed e-commerce platform
 
-Transactions which do not meet this criteria pay a flat 0.3% fee, deducted from whatever currency or property is being used (rounded to the nearest representable amount).
+Transactions which do not meet this criteria pay a flat 0.1% fee, deducted from whatever currency or property is being used (rounded to the nearest representable amount).
 
-Here are some examples of transactions which would pay a 0.3% fee:
+Here are some examples of transactions which would pay a 0.1% fee:
 
 * Buying and selling MaidsafeCoins with USDCoins on the distributed exchange
 * Placing a bet denominated in USDCoins
-* Paying MaidsafeCoin to all USDCoin holders (pay to all)
+* Paying MaidsafeCoin to all MaidsafeCoin holders (pay to owners)
 * Paying USDCoin to purchase a physical good on the distributed e-commerce platform
 
-Fees are used to automatically purchase and destroy Mastercoin on the distributed exchange. In some cases, fees may round down to zero, or round up as high as 0.6%. 
+Fees are used to automatically purchase and destroy Mastercoin on the distributed exchange. In some cases, fees may round down to zero, or round up as high as 0.2%. For example, there is never a fee as long as the number of traded units is less than 500 (0.00000500 for divisible currencies), because 0.1% of 499 rounds to zero, while 0.1% of 500 rounds up to 1. Similarly, 0.1% of 1499 rounds down to 1, and so on.
 
 Here's an example:
 
-Peter bets against Paul about what the price of Gold will do over the next 3 days. The bet is denominated in USDCoin, and is worth $10,000. When the bet is settled, 0.3% of the bet amount is deducted ($30). That $30 is automatically applied to purchase Mastercoin on the Mastercoin/USDCoin distributed exchange, using a "market" order. If at least 0.00000001 MSC is not available for purchase for $30, a limit order is created for 0.00000001 MSC for $30.  Once the order has been filled, the Mastercoins are destroyed, gone forever.
+Peter bets against Paul about what the price of Gold will do over the next 3 days. The bet is denominated in USDCoin, and is worth $10,000. When the bet is settled, 0.1% of the bet amount is deducted ($10). That $10 is automatically applied to purchase Mastercoin on the Mastercoin/USDCoin distributed exchange, using a "market" order. If at least 0.00000001 MSC is not available for purchase for $10, a limit order is created for 0.00000001 MSC for $10.  Once the order has been filled, the Mastercoins are destroyed, gone forever.
 
 Notice at no point does Peter or Paul have to own any Mastercoins, yet their bet automatically results in the purchase and destruction of Mastercoins, which benefits everyone who owns Mastercoins.
+
+When a transaction has other percentage-of-total calculations (for instance, the distributed exchange liquidity bonus), those calculations are based on the total before any fees are deducted. For instance, the 0.3% liquidity bonus and 0.1% fee would be calculated from the same total - they do not affect each other.
 
 You can read more about this fee structure on our blog: http://blog.mastercoin.org/2014/06/11/mastercoin-is-for-burning/
 
@@ -562,11 +564,11 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 |Amount desired|[Number of Coins](#field-number-of-coins)|5,000,000,000 (50.0 coins) |
 | Action | [Sell Offer sub-action](#field-sell-offer-sub-action) | 1 (New offer) | 
 
-Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Mastercoin ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could. If another currency becomes widely used in the Master Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade. When both currencies being traded are not Mastercoin, a small fee will be deducted (see [fees](#fees) above) when a trade is completed. 
+Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Mastercoin ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Master Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin. 
 
 #### Change a Transaction Type 21 Coin Sell Order
 
-An offer to sell coins can be changed by using Action = 2 (Update) until the whole Amount for sale has been sold or the offer is canceled. An Update is equivalent to a [Cancel a Transaction Type 21 Coin Sell Order](#cancel-a-transaction-type-21-coin-sell-order) followed by a new Transaction Type 21 Coin Sell Order.
+An offer to sell coins can be changed by using Action = 2 (Update) until the whole Amount for sale has been sold or the offer is cancelled. An Update is equivalent to a [Cancel a Transaction Type 21 Coin Sell Order](#cancel-a-transaction-type-21-coin-sell-order) followed by a new Transaction Type 21 Coin Sell Order.
 
 The Amount for sale and the Amount desired are the two fields that can be updated. Neither of these fields can have a value of zero. Attempts to change the Currency identifier for sale or the Currency identifier desired must invalidate the update transaction. Attempts to update a sell order that is not active for any reason must be invalidated. A  valid transaction type 21 with Action=2 updates the existing sell order, including block number and position within the block, and then performs the same matching process as for a transaction type 21 with Action=1 (New).
 
