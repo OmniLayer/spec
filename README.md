@@ -1,7 +1,6 @@
 
 The Master Protocol / Mastercoin Complete Specification
 =======================================================
-
 Implemented Features Only
 For unimplemented features, see the master branch of this spec
 
