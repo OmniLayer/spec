@@ -146,6 +146,8 @@ There are two broad categories of transactions which have no fees (other than fe
 
 1. All tokens in the MSC protocol can be sent (using simple send) with no fees. 
 2. Any transaction which directly uses Mastercoin also has no fees.
+3. Creating a property does not carry a fee (we don't want barriers to entry)
+4. Property management (changing ownership, issuing new tokens, revoking tokens, etc) does not carry a fee (integral to some business models, which we don't want to discourage)
 
 Here are some examples of transactions which have no fee:
 
