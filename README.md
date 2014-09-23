@@ -322,7 +322,7 @@ This section defines the fields that are used to construct transaction messages.
     *   54: [Create a Managed Property with Grants and Revocations](#new-property-with-managed-number-of-tokens)
     *   55: [Grant Property Tokens](#granting-tokens-for-a-managed-property)
     *   56: [Revoke Property Tokens](#revoking-tokens-for-a-managed-property)
-    *   70: [Change Property Issuer on Record](#change-issuer=on-record-for-a-property)
+    *   70: [Change Property Issuer on Record](#change-issuer-on-record-for-a-property)
 
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
@@ -710,9 +710,9 @@ Say that your project is finished and you want to start burning tokens in exchan
 ## Smart Property Administration
 
 The Master Protocol provides support for a limited number of administrative tasks regarding Smart Properties. Administrative actions are permitted only by the Issuer on Record (issuer) which is implicitly recognized as the address which originally broadcast the transaction that reserved the currency ID of the Smart Property in question until explicitly changed.  The transactions which create an implicit Issuer on Record are:
-    *   50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
-    *   51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
-    *   54: [Create a Managed Property with Grants and Revocations](#new-property-with-managed-number-of-tokens)
+* 50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
+* 51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
+* 54: [Create a Managed Property with Grants and Revocations](#new-property-with-managed-number-of-tokens)
 
 ### Change Issuer on Record for a Smart Property
 
