@@ -287,7 +287,7 @@ This section defines the fields that are used to construct transaction messages.
 
 ### Field: UTC Datetime
 + Description: Datetime, assuming UTC timezone (the same timezone used by the bitcoin blockchain)
-+ Size: 64-bits standard unix timestamp, 8 bytes
++ Size: 64-bits standard unix timestamp, 8 bytes (note: seconds, not milliseconds)
 + Valid values: http://en.wikipedia.org/wiki/Unix_time, with precision to the second for computation and display, same as used by the Bitcoin protocol
 
 ### Field: Time period in seconds (future)
