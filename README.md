@@ -1130,6 +1130,28 @@ The reference address points to the address which listed the Bible for sale. Fun
 
 In order to avoid people gaming the reputation system, some coins must be destroyed with every purchase. The percentage of coins destroyed goes down with each new purchase. The percentage is calculated as (value of this purchase) / (2 \* value of all purchases, including this one). Note that this formula causes 50% of the coins from the first purchase to be destroyed.
 
+## Communications
+
+The Master Protocol can be used for certain limited communications. For instance, the Master Protocol team can send a message to all users if an urgent security issue is found which requires an upgrade. Users of a currency can opt-in to messages from the issuer of that currency. It is expected that the UI will ignore messages which the user has not opted-in to receive (with the exception of critical security messages from the Mastercore Team, which should be opt-out), regardless of the senders' intent.
+
+### Send a notification message
+
+Say the Master Protocol team wishes to notify all users of Quantum Mining Shares (currency id 8) that a security issue affecting only them requires an upgrade to the Mastercore Engine versions 2.3.313 and prior.
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 0 | 
+|Currency identifier| [Currency identifier](#field-currency-identifier) |8 (Quantum Miner Shares, use 0 to reach all users)|
+| Mastercore Version Affected (Major) | [Integer one-byte](#field-integer-one-byte) | 2 |
+| Mastercore Version Affected (Minor) | [Integer one-byte](#field-integer-one-byte) | 3 |
+| Mastercore Version Affected (Build) | [Integer two-byte](#field-integer-two-byte) | 313 |
+| Message to Display | [String null-terminated](#field-string-255-byte-null-terminated)  | “Quantum Miner Scripts have security vulnerability. Please upgrade Mastercore to 2.3.444 or later” |
+| Message to Replace | [String null-terminated](#field-string-255-byte-null-terminated)  | hexadecimal txID of message to replace, if any |
+
+For messages not limited by Mastercore version, use 0.0.0. All important communications from the Master Protocol team (i.e. security upgrade warnings) must come from 1MpNote1jsHkbQLwEmgoMr29EoUC1nyxxV. If any empty message replaces another message, the UI should not display anything - this is interpreted as the issuer cancelling their notification.
+
+
 ## Escrow-Backed User Currencies (experimental proposed feature)
 
 The most important and also the most controversial feature (at least the escrow backed part) of the Master Protocol is the built-in support for users to create their own currencies out of existing Mastercoins. For the purposes of demonstrating how user currencies will work, we will use an example currency called “GoldCoins”, which are intended to track the value of one ounce of gold, and which may be stored, transferred, bought, and sold similarly to Mastercoins.
