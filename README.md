@@ -959,12 +959,15 @@ If you wish to cancel your data stream (and all unsettled bets on it), update th
 
 ### Publishing Data
 
-Say you decide you would like publish that today's gold price is 15 Mastercoins per ounce, using the datastream described above. Doing so takes 13 bytes:
+Say you decide you would like publish that today's gold price is 15 Mastercoins per ounce, using the datastream described above. Doing so takes 14 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 31
 1. [Ecosystem](#field-ecosystem) = 1 for useable within Mastercoin ecosystem (as opposed to Test Mastercoin)
 1. [Data](#field-number-of-coins) = 1,500,000,000 (15.00000000 Mastercoins per ounce of gold)
+1. [Memo/Notification](#field-string-255-byte-null-terminated)  = “\0” (1 byte) Optional memo or notification
+
+In addition to publishing data for betting, this transaction type can also publish arbitrary text. For instance, it is expected that Mastercore will probably use this transaction for notifying users when an upgrade is recommended. If used in this way, it is up to the UI to define behavior. For instance, Mastercore update messages will probably use the data field to signify the newest version to display the notification to, and the UI will require that the notification come from one of a few trusted addresses controlled by Mastercore developers.
 
 ### Offering a Bet
 
@@ -1129,27 +1132,6 @@ The reference address points to the address which listed the Bible for sale. Fun
 * 5 Stars: Tip >= 10%
 
 In order to avoid people gaming the reputation system, some coins must be destroyed with every purchase. The percentage of coins destroyed goes down with each new purchase. The percentage is calculated as (value of this purchase) / (2 \* value of all purchases, including this one). Note that this formula causes 50% of the coins from the first purchase to be destroyed.
-
-## Communications
-
-The Master Protocol can be used for certain limited communications. For instance, the Master Protocol team can send a message to all users if an urgent security issue is found which requires an upgrade. Users of a currency can opt-in to messages from the issuer of that currency. It is expected that the UI will ignore messages which the user has not opted-in to receive (with the exception of critical security messages from the Mastercore Team, which should be opt-out), regardless of the senders' intent.
-
-### Send a notification message
-
-Say the Master Protocol team wishes to notify all users of Quantum Mining Shares (currency id 8) that a security issue affecting only them requires an upgrade to the Mastercore Engine versions 2.3.313 and prior.
-
-| **Field** | **Type** | **Example** |
-| ---- | ---- | ---- |
-| Transaction version |[Transaction version](#field-transaction-version) | 0 |
-| Transaction type | [Transaction type](#field-transaction-type) | 70 | 
-|Currency identifier| [Currency identifier](#field-currency-identifier) |8 (Quantum Miner Shares, use 0 to reach all users)|
-| Mastercore Version Affected (Major) | [Integer one-byte](#field-integer-one-byte) | 2 |
-| Mastercore Version Affected (Minor) | [Integer one-byte](#field-integer-one-byte) | 3 |
-| Mastercore Version Affected (Build) | [Integer two-byte](#field-integer-two-byte) | 313 |
-| Message to Display | [String null-terminated](#field-string-255-byte-null-terminated)  | “Quantum Miner Scripts have security vulnerability. Please upgrade Mastercore to 2.3.444 or later” |
-| Message to Replace | [String null-terminated](#field-string-255-byte-null-terminated)  | hexadecimal txID of message to replace, if any |
-
-For messages not limited by Mastercore version, use 0.0.0. All important communications from the Master Protocol team (i.e. security upgrade warnings) must come from 1MpNote1jsHkbQLwEmgoMr29EoUC1nyxxV. If any empty message replaces another message, the UI should not display anything - this is interpreted as the issuer cancelling their notification.
 
 
 ## Escrow-Backed User Currencies (experimental proposed feature)
