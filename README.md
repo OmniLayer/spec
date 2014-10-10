@@ -883,6 +883,10 @@ Say you send funds out of a savings wallet. Doing so requires using a transactio
 
 An address marked as savings can only do this "restricted send" transaction type. All other transaction types must be ignored, as they are invalid from a savings address. This transaction type is also used for sending from rate-limited wallets.
 
+Funds sent with "restricted send" cannot be used until the send is complete. For instance, when funds are sent from a savings wallet, they are considered "pending" until the reversibility window is past. During the window, the transfer is not considered complete. The recipient address cannot use the funds in any way, including sending them to someone else, selling them, betting them, etc.
+
+The UI should show the fund transfer as "pending" until the time window for reversing the send is past.
+
 ### Marking a Savings Address as Compromised
 
 Say you notice that the address you marked as savings has been compromised, and you want to reverse transactions and transfer everything to the guardian address. Doing this takes 4 bytes:
