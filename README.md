@@ -580,9 +580,9 @@ An offer to sell coins can be changed by using Action = 2 (Update) until the who
 
 The Amount for sale and the Amount desired are the two fields that can be updated. Neither of these fields can have a value of zero when updating a sell order. The fields *Previous amount for sale* and *Previous amount desired* are required, per the table below.
 
-Attempts to change the Currency identifier for sale or the Currency identifier desired must invalidate the update transaction. Attempts to update a sell order that is not active for any reason must be invalidated. A  valid transaction type 21 with Action=2 updates the existing sell order, including block number and position within the block, and then performs the same matching process as for a transaction type 21 with Action=1 (New).
+Attempts to change the Currency identifier for sale or the Currency identifier desired must invalidate the update transaction. Attempts to update a sell order that is not active for any reason must be invalidated. A valid transaction type 21 with Action=2 updates the existing sell order, including block number and position within the block, and then performs the same matching process as for a transaction type 21 with Action=1 (New).
 
-To update a specific sell order, the values in the following fields must match the corresponding values in the message that created the sell order or in the latest Action = 2 (Update) message that affected the sell order, if there is one:
+To update a specific sell order, the values in the following fields must match the corresponding values in the most recent transaction type 21 message that affected the sell order: the original Action = 1 (New) message or the most recent Action = 2 (Update) message, if there is one, based on block number and transaction sequence number within the block.
 
 | **This Message** | **Matched Message** |
 | ---- | ---- | ---- |
@@ -591,7 +591,7 @@ To update a specific sell order, the values in the following fields must match t
 | Previous amount for sale  | Amount for sale|
 | Previous amount desired  | Amount desired|
 
-If multiple sell orders match the corresponding values, the Update must be applied to the oldest sell order based on blocktime and transaction sequence number within the block. 
+If multiple sell orders match the corresponding values, the Update must be applied to the oldest sell order based on block number and transaction sequence number within the block. 
 
 The amount reserved from the available balance for this address must be adjusted to reflect the new amount for sale. Note that the amount for sale as a result of the update is limited by the available balance at the time of the update plus the existing sell order amount not yet matched at the time of the update.
 
@@ -605,7 +605,7 @@ An offer to sell coins can be canceled by using Action = 3 (Cancel) before the o
 
 The cancel will apply to the remaining amount for sale. The UI must indicate if the cancellation was successful and how many coins were not sold
 
-To cancel a specific sell order, the values in the following fields must match the corresponding values in the message that created the sell order or in the latest Action = 2 (Update) message that affected the sell order, if there is one:
+To cancel a specific sell order, the values in the following fields must match the corresponding values in the most recent transaction type 21 message that affected the sell order: the original Action = 1 (New) message or the most recent Action = 2 (Update) message, if there is one, based on block number and transaction sequence number within the block.
 
 | **This Message** | **Matched Message** |
 | ---- | ---- | ---- |
@@ -614,7 +614,7 @@ To cancel a specific sell order, the values in the following fields must match t
 | Currency identifier desired  | Currency identifier desired|
 | Amount desired  | Amount desired|
 
-If multiple sell orders match the corresponding values, the Cancel must be applied to the oldest sell order based on blocktime and transaction sequence number within the block. The cancel will apply to the remaining Amount for sale. The UI must indicate if the cancellation was successful and how many coins were not sold.
+If multiple sell orders match the corresponding values, the Cancel must be applied to the oldest sell order based on block number and transaction sequence number within the block. The cancel will apply to the remaining Amount for sale. The UI must indicate if the cancellation was successful and how many coins were not sold.
 
 To cancel a specific sell order, specify the same currency identifiers, amounts and Action = 3 (Cancel) and send the transaction so it is processed before the full amount for sale has been matched. Note that while the portion of a sell order which has been matched and sold cannot be canceled, sending the message with the Cancel action cancels any portion of the order which has not been matched.
 
