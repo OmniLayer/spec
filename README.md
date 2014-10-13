@@ -1076,13 +1076,13 @@ The Master Protocol allows for the buying and selling of physical goods in a sor
 Say you want to sell a Bible for 0.001 Mastercoins. Creating a sell offer will use a variable number of bytes due to the use of null-terminated strings:
 
 1. [Transaction version](#field-transaction-version) = 0
-1. Transaction type = 60 for sale listing  (32-bit unsigned integer, 4 bytes)
-2. Currency identifier of price = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
-3. Desired price = 100,000 (0.00100000 Mastercoins) (64-bit unsigned integer, 8 bytes)
-4. Item category = "Contraband\0" (11 bytes)
-5. Item subcategory = "Forbidden Books\0" (16 bytes)
-6. Item title = "Bible, NASB\0" (12 bytes)
-7. Description/Notes = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your description!)
+2. [Transaction type] = 60 for sale listing  (16-bit unsigned integer, 2 bytes)
+3. Currency identifier of price = 1 for Mastercoin (32-bit unsigned integer, 4 bytes)
+4. Desired price = 100,000 (0.00100000 Mastercoins) (64-bit unsigned integer, 8 bytes)
+5. Item category = "Contraband\0" (11 bytes)
+6. Item subcategory = "Forbidden Books\0" (16 bytes)
+7. Item title = "Bible, NASB\0" (12 bytes)
+8. Description/Notes = "tinyurl.com/kwejgoig\0" (21 bytes) (Please save space in the block chain by linking to your description!)
 
 Every sale offer published by a given address gets a 32-bit "Listing ID" number assigned, which increments for each item offered for sale from that address. We'll assume this is the first item offered for sale from this address (Listing ID=0).
 
@@ -1090,22 +1090,26 @@ To delist an unsold item, publish the exact same message, but with a price of ze
 
 ### Initiating a Purchase
 
-Say you see the Bible listed above and wish to purchase it. However, you have no reputation as a buyer, so you want to offer a 10% higher purchase price than what the seller is asking. You want your purchase offer to expire in 3 days, which is 1/1/2225. Starting the purchase process takes 24 bytes:
+Say you see the Bible listed above and wish to purchase it. However, you have no reputation as a buyer, so you want to offer a 10% higher purchase price than what the seller is asking. You want your purchase offer to expire in 3 days, which is 259200 seconds. Starting the purchase process takes 20 bytes. The optional comment field adds additional bytes:
 
 1. [Transaction version](#field-transaction-version) = 0 (2 bytes)
-1. Transaction type = 61 for Initiate purchase from listing  (2 bytes)
-1. Listing ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
-1. [Expiration Date](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (8 bytes)
-1. Offered price = 110,000 (0.00110000 Mastercoins) (64-bit unsigned integer, 8 bytes)
+2. [Transaction type] = 61 for Initiate purchase from listing  (16-bit unsigned integer, 2 bytes)
+3. Listing ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
+4. [Offer Valid For](#field-time-period-in-seconds-future) = 259200 seconds - 3 days (4 bytes)
+5. Offered price = 110,000 (0.00110000 Mastercoins) (64-bit unsigned integer, 8 bytes)
+6. Comment = "I really want this book!\0" (25 bytes)
 
-The reference address points to the address which listed the Bible for sale. The seller now has 3 days to accept this buyer before the offer expires. The buyer's money is now locked in escrow until their offer expires or the purchase is complete.
+The reference address points to the address which listed the Bible for sale with the currency identifier set to 1 (Mastercoin). The seller now has 3 days to accept this buyer's before the offer expires. The buyer's money is now locked in escrow until their offer expires or the purchase is complete. 
 
 The purchaser may also offer less than the suggested price. This may be viable for an established buyer and/or a stale listing.
 
+The comment field can be used by the prospective buyer to communicate with the seller either a message, link to a public key, link to a shipping address, email address, plea to accept the lower price, or the answer to a question the seller included with their sale offer. 
 
 ### Accepting a Buyer
 
-If the buyer offers a bad price, has a bad reputation, or has no reputation, then you may not wish to do business with them. If you see an offer that you like, the message to accept the offer takes X bytes:
+If you see an offer that you like, you can initiate a transaction to accept the offer. For any offers that you do not wish to accept because the buyer offers a bad price, has a bad reputation, or has no reputation, then you simply do not accept that specific transaction
+
+The message to accept the offer takes X bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. Transaction type = 62 for Accept buyer offer (32-bit unsigned integer, 4 bytes)
@@ -1119,10 +1123,10 @@ Once a buyer has been accepted, the seller may ship the Bible. When using curren
 Once a buyer has been accepted, they may release funds held in escrow (or destroy those funds) and leave feedback. To do so takes a variable number of bytes due to the use of a null-terminated string:
 
 1. [Transaction version](#field-transaction-version) = 0
-1. Transaction type = 63 for Release Funds and Leave Feedback (32-bit unsigned integer, 4 bytes)
-2. Listind ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
-3. Percentage of funds to release = 105% (65536*1.05 68813) (32-bit unsigned integer, 4 bytes)
-4. Text feedback = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your feedback!)
+2. [Transaction type] = 63 for Release Funds and Leave Feedback (16-bit unsigned integer, 2 bytes)
+3. Listing ID = 0 (the ID for the listing above) (32-bit unsigned integer, 4 bytes)
+4. Tip percentage = 5 (Offered price + (Offered price * (Tip percentage / 100)))  (8-bit unsigned integer, 1 byte) 
+5. Text feedback = “tinyurl.com/kwejgoig\0” (21 bytes) (Please save space in the block chain by linking to your feedback!)
 
 The reference address points to the address which listed the Bible for sale. Funds which are not released are permanently destroyed. Specifying more than 100% signifies an additional tip beyond the funds held in escrow. Funds are released automatically after 60 days if the buyer never leaves feedback. In addition to the text feedback, each transaction gets "1 star" to "5 stars" based on the following criteria:
 
