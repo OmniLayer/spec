@@ -1145,7 +1145,7 @@ Say the Master Protocol team wishes to notify all users of Quantum Mining Shares
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ---- |
 | Transaction version |[Transaction version](#field-transaction-version) | 0 |
-| Transaction type | [Transaction type](#field-transaction-type) | 70 | 
+| Transaction type | [Transaction type](#field-transaction-type) | 0 | 
 |Currency identifier| [Currency identifier](#field-currency-identifier) |8 (Quantum Miner Shares, use 0 to reach all users)|
 | Mastercore Version Affected (Major) | [Integer one-byte](#field-integer-one-byte) | 2 |
 | Mastercore Version Affected (Minor) | [Integer one-byte](#field-integer-one-byte) | 3 |
