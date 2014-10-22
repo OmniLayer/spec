@@ -575,7 +575,7 @@ Although the formatting of this message technically allows trading between any t
 
 An offer to sell coins can be changed/cancelled by using additional transactions with Action = 1 (ADD) or the Action = 2 (SUBTRACT) variation of the transaction above. Orders are merged (both in the database and the UI) when their unit prices are the same. If the UI wishes to cancel ALL open orders for a given currency pair, use action=2 (SUBTRACT) amount for sale=0 and amount desired=0. Note that changing an existing order does not change its datestamp (oldest orders are matched first, as described above), until the order is completely consumed or cancelled. 
 
-Any time coins are added, whether merged with another order or not, the same matching process is run as for a new order as described above. Subtracting more coins than are for sale simply cancels the order.
+Any time coins are added, whether merged with another order or not, the same matching process is run as for a new order as described above. Subtracting more coins than are for sale simply cancels all coins for sale at that price.
 
 With any changes, the amount reserved from the available balance for this address must be adjusted to reflect the new amount for sale. Note that the amount for sale as a result of the update is limited by the available balance at the time of the update plus the existing sell order amount not yet matched at the time of the update.
 
