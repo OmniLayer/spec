@@ -784,7 +784,7 @@ It is invalid to attempt to close a crowdsale that is not active. Closing an act
 Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
 
 ### New Property with Managed Number of Tokens
-This feature is supported since block number 32323.
+This feature is supported since block number 323230.
 
 Description: Transaction type 54 is used to create a new Smart Property whose token pool is actively managed by the address that creates the property.
 
@@ -811,7 +811,7 @@ Using the “Quantum Miner” details from the fixed token issuance, the transac
 |Property Data | [String null-terminated](#field-string-255-byte-null-terminated)  | “\0” (1 byte) |
 
 ### Granting Tokens for a Managed Property
-This feature is supported since block number 32323.
+This feature is supported since block number 323230.
 
 Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction have no tokens by default.  After issuance, tokens may be added to the balance of a referenced address by broadcasting a this type of transaction.
 
@@ -832,7 +832,7 @@ Say that you have a smart property whose ID is 8 and you have just reached a fun
 | Memo (Optional) | [String null-terminated](#field-string-255-byte-null-terminated)  | “First Milestone Reached!” (24 byte) |
 
 ### Revoking Tokens for a Managed Property
-This feature is supported since block number 32323.
+This feature is supported since block number 323230.
 
 Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction may have tokens revoked from the balance of the address that originally broadcast the property creation transaction.
 
