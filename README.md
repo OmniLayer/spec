@@ -308,7 +308,9 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 8-bit unsigned integer, 1 byte
 + Valid values:
     * 1: ADD
-    * 2: SUBTRACT
+    * 2: CANCEL-AT-PRICE
+    * 3: CANCEL-ALL-FOR-CURRENCY-PAIR
+    * 4: CANCEL-EVERYTHING
 
 ### Field: Transaction type
 + Description: the MSC Protocol function to be performed
@@ -430,7 +432,7 @@ Consequently, the messages below are different for mastercoin/bitcoin exchange t
 
 Description: Transaction type 20 posts the terms of an offer to sell Mastercoins or Test Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for MSC or 2 for Test MSC.
 
-If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
 
 The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
 
@@ -573,9 +575,9 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 
 Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Mastercoin ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Master Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin. 
 
-An offer to sell coins can be changed/cancelled by using additional transactions with Action = 1 (ADD) or the Action = 2 (SUBTRACT) variation of the transaction above. Orders are merged (both in the database and the UI) when their unit prices are the same. If the UI wishes to cancel ALL open orders for a given currency pair, use action=2 (SUBTRACT) amount for sale=0 and amount desired=0. Note that changing an existing order does not change its datestamp (oldest orders are matched first, as described above), until the order is completely consumed or cancelled. 
+An offer to sell coins can be changed/cancelled by using additional transactions with Action = 2 (CANCEL-AT-PRICE), Action = 3 (CANCEL-ALL-FOR-CURRENCY-PAIR), or Action = 4 (CANCEL-EVERYTHING) variations of the transaction above. Action = 1 (ADD) orders are merged (both in the database and the UI) when their unit prices are exactly the same.
 
-Any time coins are added, whether merged with another order or not, the same matching process is run as for a new order as described above. Subtracting more coins than are for sale simply cancels all coins for sale at that price.
+Any time coins are added, whether merged with another order or not, the same matching process is run as for a new order as described above.
 
 With any changes, the amount reserved from the available balance for this address must be adjusted to reflect the new amount for sale. Note that the amount for sale as a result of the update is limited by the available balance at the time of the update plus the existing sell order amount not yet matched at the time of the update.
 
