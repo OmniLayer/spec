@@ -303,6 +303,15 @@ This section defines the fields that are used to construct transaction messages.
     * 2: Update
     * 3: Cancel
 
+### Field: Metadex Sell offer sub-action
++ Description: the specific action to be applied to the sell offer by this transaction
++ Size: 8-bit unsigned integer, 1 byte
++ Valid values:
+    * 1: ADD
+    * 2: CANCEL-AT-PRICE
+    * 3: CANCEL-ALL-FOR-CURRENCY-PAIR
+    * 4: CANCEL-EVERYTHING
+
 ### Field: Transaction type
 + Description: the MSC Protocol function to be performed
 + Size: 16-bit unsigned integer, 2 bytes
@@ -423,7 +432,7 @@ Consequently, the messages below are different for mastercoin/bitcoin exchange t
 
 Description: Transaction type 20 posts the terms of an offer to sell Mastercoins or Test Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for MSC or 2 for Test MSC.
 
-If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
 
 The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
 
@@ -504,11 +513,9 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 
 Description: Transaction type 21 is used to both publish and accept an offer to sell coins in one Master Protocol Currency for coins in another Master Protocol Currency.
 
-If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell order is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell order. The seller could update the sell order to include these newly acquired coins, see [Change a Transaction Type 21 Coin Sell Order](#change-a-transaction-type-21-coin-sell-order) below.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), the transaction is invalid. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell order. The seller could update the sell order to include these newly acquired coins, see [Change a Transaction Type 21 Coin Sell Order](#change-a-transaction-type-21-coin-sell-order) below.
 
-The new sell order's unit price is computed from two of the fields in the transaction message: the "Amount desired" divided by the "Amount for sale". An existing order's original unit price is used to match against new orders. The unit price does not change except by using the Change action. See below.
-
-An address cannot create a new sell order while that address has an active sell order with the same currencies in the same roles (for sale, desired). An active sell order is one that has not been canceled or fully accepted. The currency id for sale must be different from the currency id desired. Both currency id's must refer to existing currencies.
+The new sell order's unit price is computed from two of the fields in the transaction message: the "Amount desired" divided by the "Amount for sale". An existing order's original unit price is used to match against new orders. The unit price does not change. The currency id for sale must be different from the currency id desired. Both currency id's must refer to existing currencies.
 
 To accept an existing sell order, an address simply publishes the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which is greater than or equal to the existing sell order's unit price. The protocol then finds existing sell orders that qualify (match), possibly including existing sell orders from that same address.
 
@@ -564,33 +571,17 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 |Amount for sale|[Number of Coins](#field-number-of-coins)|250,000,000 (2.5 coins) |
 |Currency identifier desired| [Currency identifier](#field-currency-identifier) |3 for GoldCoin |
 |Amount desired|[Number of Coins](#field-number-of-coins)|5,000,000,000 (50.0 coins) |
-| Action | [Sell Offer sub-action](#field-sell-offer-sub-action) | 1 (New offer) | 
+| Action | [Metadex Sell Offer sub-action](#field-metadex-sell-offer-sub-action) | 1 (ADD new funds for sale) | 
 
 Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Mastercoin ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Master Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin. 
 
-#### Change a Transaction Type 21 Coin Sell Order
+An offer to sell coins can be changed/cancelled by using additional transactions with Action = 2 (CANCEL-AT-PRICE), Action = 3 (CANCEL-ALL-FOR-CURRENCY-PAIR), or Action = 4 (CANCEL-EVERYTHING) variations of the transaction above. Action = 1 (ADD) orders are merged (both in the database and the UI) when their unit prices are exactly the same. CANCEL-AT-PRICE requires that the currency IDs and price exactly match the order to be canceled. CANCEL-ALL-FOR-CURRENCY-PAIR cancels all open orders for a given set of two currencies (one side of the order book). CANCEL-EVERYTHING cancels all open orders for all currencies.
 
-An offer to sell coins can be changed by using Action = 2 (Update) until the whole Amount for sale has been sold or the offer is cancelled. An Update is equivalent to a [Cancel a Transaction Type 21 Coin Sell Order](#cancel-a-transaction-type-21-coin-sell-order) followed by a new Transaction Type 21 Coin Sell Order.
+Any time coins are added, whether merged with another order or not, the same matching process is run as for a new order as described above.
 
-The Amount for sale and the Amount desired are the two fields that can be updated. Neither of these fields can have a value of zero. Attempts to change the Currency identifier for sale or the Currency identifier desired must invalidate the update transaction. Attempts to update a sell order that is not active for any reason must be invalidated. A  valid transaction type 21 with Action=2 updates the existing sell order, including block number and position within the block, and then performs the same matching process as for a transaction type 21 with Action=1 (New).
-
-The amount reserved from the available balance for this address must be adjusted to reflect the new amount for sale. Note that the amount for sale as a result of the update is limited by the available balance at the time of the update plus the existing sell order amount not yet matched at the time of the update.
+With any changes, the amount reserved from the available balance for this address must be adjusted to reflect the new amount for sale. Note that the amount for sale as a result of the update is limited by the available balance at the time of the update plus the existing sell order amount not yet matched at the time of the update.
 
 The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
-
-Say you decide you want to change a sell order, e.g. the number of coins you are offering for sale, or the number of coins desired. Send the transaction with the new value(s), the same currency identifiers and Action = 2 (Update) so it is processed before the whole amount for sale has been matched. Note that while the portion of a sell order which has been matched and sold cannot be changed, sending an update message affects any coins which have not been matched. 
-
-#### Cancel a Transaction Type 21 Coin Sell Order
-
-An offer to sell coins can be canceled by using Action = 3 (Cancel) before the order has been fully matched. When a sell order is canceled, the associated coins are no longer reserved. Attempts to cancel a sell order that is not active for any reason must be invalidated.
-
-When canceling a sell order, the values in the following fields are not tested for validity:
-* Amount for sale
-* Amount desired
-
-The cancel will apply to the remaining Amount for sale. The UI must indicate if the cancellation was successful and how many coins were not sold.
-
-If you want to cancel a sell order, specify the same currency identifiers and Action = 3 (Cancel) and send the transaction so it is processed before the full amount for sale has been matched. Note that while the portion of a sell order which has been matched and sold cannot be canceled, sending the cancel message cancels any portion of the order which has not been matched.
 
 ## Smart Property
 
