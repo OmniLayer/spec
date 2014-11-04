@@ -189,8 +189,8 @@ Not all features described in this document are active by default. Each feature 
 + Contract-for-difference bets are unlocked as of block # (TBD)
 + Distributed e-commerce features are unlocked as of block # (TBD)
 + Escrow-backed currencies are unlocked as of block # (TBD)
-+ Managed Token-pool Smart Property features are unlocked as of block (TBD) 
-+ Pay-to-script-hash address support is unlocked as of block # (TBD)
++ Managed Token-pool Smart Property features are unlocked as of block #323230
++ Pay-to-script-hash address support is unlocked as of block #322000
 
 ## Transaction versioning
 
@@ -775,7 +775,7 @@ It is invalid to attempt to close a crowdsale that is not active. Closing an act
 Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
 
 ### New Property with Managed Number of Tokens
-This feature will be supported as of block number TBD
+This feature is supported since block number 323230.
 
 Description: Transaction type 54 is used to create a new Smart Property whose token pool is actively managed by the address that creates the property.
 
@@ -802,7 +802,7 @@ Using the “Quantum Miner” details from the fixed token issuance, the transac
 |Property Data | [String null-terminated](#field-string-255-byte-null-terminated)  | “\0” (1 byte) |
 
 ### Granting Tokens for a Managed Property
-This feature will be supported as of block number TBD
+This feature is supported since block number 323230.
 
 Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction have no tokens by default.  After issuance, tokens may be added to the balance of a referenced address by broadcasting a this type of transaction.
 
@@ -823,7 +823,7 @@ Say that you have a smart property whose ID is 8 and you have just reached a fun
 | Memo (Optional) | [String null-terminated](#field-string-255-byte-null-terminated)  | “First Milestone Reached!” (24 byte) |
 
 ### Revoking Tokens for a Managed Property
-This feature will be supported as of block number TBD
+This feature is supported since block number 323230.
 
 Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction may have tokens revoked from the balance of the address that originally broadcast the property creation transaction.
 
@@ -1199,7 +1199,7 @@ Class A transactions were the first class of Mastercoin transaction and store da
 
 The transaction data is encoded into said fake Bitcoin address which is then used as an output in a single Bitcoin transaction satisfying the following requirements: 
 
-* Has a single or the largest pay-to-pubkey-hash or pay-to-script-hash input with a valid signature to designate the sending address
+* Has a single or the largest pay-to-pubkey-hash or pay-to-script-hash (since block height 322000) input with a valid signature to designate the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
 * Has an output for the encoded fake address (the 'data' address)
@@ -1212,7 +1212,8 @@ Further:
 * Exodus outputs are ignored in decoding
 * Any input not meeting the requirement for type (pay-to-pubkey-hash or pay-to-script-hash) will trigger the invalidation of the transaction
 * Only pay-to-pubkey-hash and pay-to-script-hash outputs will be considered for the reference address
-* pay-to-script-hash output addresses will be the opaque script-hash address and not assume any decomposition into addresses which may be used in the redemption of such outputs
+* Pay-to-script-hash output addresses will be the opaque script-hash address and not assume any decomposition into addresses which may be used in the redemption of such outputs
+* Pay-to-script-hash is enabled since block height 322000
 
 NOTE: The sequence number for a given address is defined as a 1 -byte integer stored as the first byte of each 'packet'.   Sequence numbers are continuous with 0 following 255 (256=0, 255+1=0). 
 
@@ -1260,7 +1261,7 @@ Once the obfuscated Mastercoin packet is prepared, the key identifier (02) is pr
 ![Mastercoin Protocol Layers](images/classb_obfuscated.png) 
 
 These compressed public key 'packets' can then be included in one or multiple OP_CHECKMULTISIG output along with the senders public key.  A single transaction must be constructed satisfying the following requirements: 
-* Has a single or the largest pay-to-pubkey-hash or pay-to-script-hash input with a valid signature to designate the sending address
+* Has a single or the largest pay-to-pubkey-hash or pay-to-script-hash (since block height 322000) input with a valid signature to designate the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
 * Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be a valid public key address designated by the sender which may be used to reclaim the bitcoin assigned to the output, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
@@ -1272,7 +1273,8 @@ Further:
 * Exodus outputs are ignored in decoding
 * Any input not meeting the requirement for type (pay-to-pubkey-hash or pay-to-script-hash) will trigger the invalidation of the transaction
 * Only pay-to-pubkey-hash or pay-to-script-hash outputs will be considered for the reference address
-* pay-to-script-hash output addresses will be the opaque script-hash address and not assume any decomposition into addresses which may be used in the redemption of such outputs
+* Pay-to-script-hash output addresses will be the opaque script-hash address and not assume any decomposition into addresses which may be used in the redemption of such outputs
+* Pay-to-script-hash is enabled since block height 322000
 * Only multisig outputs will be considered for the data packets
 * If there are multiple outputs remaining, the first output to the sending address (if such an output exists) will be ignored as change
 * The reference address will be determined by the remaining output with the highest vout index  
