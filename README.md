@@ -1,7 +1,8 @@
-﻿The Master Protocol / Mastercoin Complete Specification
+
+The Master Protocol / Mastercoin Complete Specification
 =======================================================
 
-Version 0.4.5.9 Smart Property Crowdsale Edition
+Version 0.4.5.11 Smart Property Transaction 21 Edition
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -49,7 +50,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.1.9 (previously 0.7) released 29 Jul 2013 (Preview of 0.2, but without revealing the Exodus Address)
 1. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the fund-raiser)
 1. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
-1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Send To All" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
+1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Send To Owners" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
 1. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
 1. Version 0.4.5 released 20 Feb 2014 (added smart property crowdsale, other improvements to future features)
 1. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
@@ -61,7 +62,8 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.7 released 2 May 2014 (lock down transaction decoding rules)
 1. Version 0.4.5.8 released 8 May 2014 (adjust output value requirements)
 1. Version 0.4.5.9 released 13 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
-1. Version 0.4.5.11 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to all", and that we don't encourage illegal behavior!
+1. Version 0.4.5.10 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to owners", and that we don't encourage illegal behavior!
+1. Version 0.4.5.11 released 8 Aug 2014 (completed tx21 description)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -138,6 +140,44 @@ The most important thing is that reorgs ARE detected. If an implementation does 
 
 Also, in many cases a user may wish to do something with Mastercoins recently sent to them or otherwise affected by a recent transaction. Where possible, Mastercoin-aware wallets should re-use bitcoins from the previous transactions in subsequent transactions which are dependent on the earlier transactions. In this way, if the earlier transaction is invalidated (by a reorg), the dependent transaction will also be invalidated.
 
+## Fees
+
+There are two broad categories of transactions which have no fees (other than fees charged by the bitcoin protocol layer):
+
+1. All tokens in the MSC protocol can be sent (using simple send) with no fees. 
+2. Any transaction which directly uses Mastercoin also has no fees.
+3. Creating a property does not carry a fee (we don't want barriers to entry)
+4. Property management (changing ownership, issuing new tokens, revoking tokens, etc) does not carry a fee (integral to some business models, which we don't want to discourage)
+
+Here are some examples of transactions which have no fee:
+
+* Sending MaidsafeCoin using simple send 
+* Buying and selling MaidsafeCoin using Mastercoin on the distributed exchange 
+* Placing a bet denominated in Mastercoin
+* Paying Mastercoin to all Mastercoin holders (pay to owners)
+* Paying Mastercoin to purchase a physical good on the distributed e-commerce platform
+
+Transactions which do not meet this criteria pay a flat 0.1% fee, deducted from whatever currency or property is being used (rounded to the nearest representable amount).
+
+Here are some examples of transactions which would pay a 0.1% fee:
+
+* Buying and selling MaidsafeCoins with USDCoins on the distributed exchange
+* Placing a bet denominated in USDCoins
+* Paying MaidsafeCoin to all MaidsafeCoin holders (pay to owners)
+* Paying USDCoin to purchase a physical good on the distributed e-commerce platform
+
+Fees are used to automatically purchase and destroy Mastercoin on the distributed exchange. In some cases, fees may round down to zero, or round up as high as 0.2%. For example, there is never a fee as long as the number of traded units is less than 500 (0.00000500 for divisible currencies), because 0.1% of 499 rounds to zero, while 0.1% of 500 rounds up to 1. Similarly, 0.1% of 1499 rounds down to 1, and so on.
+
+Here's an example:
+
+Peter bets against Paul about what the price of Gold will do over the next 3 days. The bet is denominated in USDCoin, and is worth $10,000. When the bet is settled, 0.1% of the bet amount is deducted ($10). That $10 is automatically applied to purchase Mastercoin on the Mastercoin/USDCoin distributed exchange, using a "market" order. If at least 0.00000001 MSC is not available for purchase for $10, a limit order is created for 0.00000001 MSC for $10.  Once the order has been filled, the Mastercoins are destroyed, gone forever.
+
+Notice at no point does Peter or Paul have to own any Mastercoins, yet their bet automatically results in the purchase and destruction of Mastercoins, which benefits everyone who owns Mastercoins.
+
+When a transaction has other percentage-of-total calculations (for instance, the distributed exchange liquidity bonus), those calculations are based on the total before any fees are deducted. For instance, the 0.3% liquidity bonus and 0.1% fee would be calculated from the same total - they do not affect each other.
+
+You can read more about this fee structure on our blog: http://blog.mastercoin.org/2014/06/11/mastercoin-is-for-burning/
+
 ## Unlocking features
 
 Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
@@ -149,6 +189,8 @@ Not all features described in this document are active by default. Each feature 
 + Contract-for-difference bets are unlocked as of block # (TBD)
 + Distributed e-commerce features are unlocked as of block # (TBD)
 + Escrow-backed currencies are unlocked as of block # (TBD)
++ Managed Token-pool Smart Property features are unlocked as of block #323230
++ Pay-to-script-hash address support is unlocked as of block #322000
 
 ## Transaction versioning
 
@@ -245,7 +287,7 @@ This section defines the fields that are used to construct transaction messages.
 
 ### Field: UTC Datetime
 + Description: Datetime, assuming UTC timezone (the same timezone used by the bitcoin blockchain)
-+ Size: 64-bits standard unix timestamp, 8 bytes
++ Size: 64-bits standard unix timestamp, 8 bytes (note: seconds, not milliseconds)
 + Valid values: http://en.wikipedia.org/wiki/Unix_time, with precision to the second for computation and display, same as used by the Bitcoin protocol
 
 ### Field: Time period in seconds (future)
@@ -261,12 +303,22 @@ This section defines the fields that are used to construct transaction messages.
     * 2: Update
     * 3: Cancel
 
+### Field: Metadex Sell offer sub-action
++ Description: the specific action to be applied to the sell offer by this transaction
++ Size: 8-bit unsigned integer, 1 byte
++ Valid values:
+    * 1: ADD
+    * 2: CANCEL-AT-PRICE
+    * 3: CANCEL-ALL-FOR-CURRENCY-PAIR
+    * 4: CANCEL-EVERYTHING
+
 ### Field: Transaction type
 + Description: the MSC Protocol function to be performed
 + Size: 16-bit unsigned integer, 2 bytes
 + Inter-dependencies: [Transaction version](#field-transaction-version)
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
+    *    3: [Send To Owners](#send-to-owners)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-mastercoins-for-bitcoins)
     *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
@@ -274,10 +326,12 @@ This section defines the fields that are used to construct transaction messages.
     *   51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
     *   52: [Promote a Property](#promote-a-property)
     *   53: [Close a Crowdsale Manually](#close-a-crowdsale-manually)
+    *   54: [Create a Managed Property with Grants and Revocations](#new-property-with-managed-number-of-tokens)
+    *   55: [Grant Property Tokens](#granting-tokens-for-a-managed-property)
+    *   56: [Revoke Property Tokens](#revoking-tokens-for-a-managed-property)
 
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
-    *    3: [Send To All](#send-to-all)
     *   10: [Mark an Address as Savings](#marking-an-address-as-savings)
     *   11: [Mark a Savings Address as Compromised](#marking-a-savings-address-as-compromised)
     *   12: [Mark an Address as Rate-Limited](#marking-an-address-as-rate-limited)
@@ -299,7 +353,6 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values: 0 to 65535
 
 # Transaction Definitions
-The Master Protocol Distributed Exchange transactions are listed below. Transactions 0, 20, 21, 22 and 50 are to be implemented in the first deployment, per this spec. They are listed first. The other transactions will be fully defined and implemented in future releases.
 
 Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the Transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all spec versions starting with 0.4, the first field in each transaction message is the 2 byte version number, with an initial value of 0 and the Transaction type field is a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format associated with that version number.
 
@@ -315,23 +368,59 @@ Transfers are unconditional payments from one Mastercoin address to another addr
 
 Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
 
-The transaction is invalid if any of the following conditions is true:
-* the amount to transfer is zero
+In addition to the validity constraints on the message field datatypes, the transaction is invalid if any of the following conditions is true:
 * the sending address has zero coins in its available balance for the specified currency identifier
 * the amount to transfer exceeds the number owned and available by the sending address
 * the specified currency identifier is non-existent
 * the specified currency identifier is 0 (bitcoin)
 
-A simple send to a non-existent address will destroy the coins in question, just like it would with bitcoin.
+A Simple Send to a non-existent address will destroy the coins in question, just like it would with bitcoin.
 
 [Future: Note that if the transfer comes from an address which has been marked as “Savings”, there is a time window in which the transfer can be undone.]
 
 Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are needed. The data stored is:
 
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 0 | 
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin)|
+|Amount to transfer|[Number of Coins](#field-number-of-coins)|100,000,000 (1.0 coins) |
+
+### Send To Owners
+
+Description: Transaction type 3 transfers coins in the specified currency from the sending address to the current owners of that currency. The current owners are all the addresses, excluding the sender's address, that have a non-zero balance of the specified currency when the transaction message is processed. The Amount to transfer must be divided proportionally among the current owners based upon each owner's current available balance plus reserved amount, excluding the amount owned by the sender.
+
+The sending address must be charged a transfer fee for each address that receives coins as a result of this transaction. The fee is:
+* 0.00000001 Mastercoins for currencies in the MSC ecosystem, and 
+* 0.00000001 Test Mastercoins for currencies in the Test MSC ecosystem.
+
+See [Currency Identifier](#field-currency-identifier), above.
+
+Be aware that some owners of the specified currency might receive zero coins due to rounding in calculating the number of coins for each owner. See the Implementation Note below.
+
+This transaction can not be used to transfer bitcoins.
+
+In addition to the validity constraints on the message field datatypes, the transaction is invalid if any of the following conditions is true:
+* the sending address has zero coins in its available balance for the specified currency identifier
+* the amount to transfer exceeds the number owned and available by the sending address
+* the specified currency identifier is non-existent
+* the specified currency identifier is 0 (bitcoin)
+* the sending address does not have a sufficient available balance to pay the transfer fee
+* the sending address owns all the coins of the specified currency identifier
+
+Implementation Note: It is possible, even likely, that the number of coins calculated to be transferred to an owner's address will have to be rounded to comply with the precision for representing quantities of that coin. To reward the owners of the largest quantities and to try to ensure they receive full distributions, the following method must be used: compute the amount for the largest holder and, if necessary, round that amount up to the nearest unit that can be represented for the currency. Then subtract that rounded amount from the total to be distributed and repeat for the next largest holder until there are no more coins to be distributed. This means that holders of lesser amounts might receive zero coins from the distribution. When there are multiple owners with exactly the same number of coins, compute the distributions to those in alphabetical order by address.
+
+Say you have grown wealthy and wish to gift all 1000 of your own Quantum Miner digital tokens to the other people holding those tokens. The message to do so will use 16 bytes:
+
 1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 0
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
+1. [Transaction type](#field-transaction-type) = 3
+2. [Currency identifier](#field-currency-identifier) = 6 for Quantum Miner Tokens
+3. [Amount to transfer](#field-number-of-coins) = 100,000,000,000 (1000.00000000 Quantum Miner Tokens)
+
+The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. When using currencies other than Mastercoin, a small fee will be deducted (see [fees](#fees) above). The sender is also charged a transfer fee based on the number of addresses that receive any of the 1000 Quantum Miner tokens (as described earlier).
+
+Note to users: please make sure your proposed use case is legal in your jurisdiction!!
 
 ## Distributed Exchange
 
@@ -339,25 +428,28 @@ The Master Protocol allows users to trade coins without trusting a centralized w
 
 Consequently, the messages below are different for mastercoin/bitcoin exchange than they are for exchange between mastercoin and other Master Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/mastercoin exchange as well as the additional anti-spam fees and race conditions inherent in the system.
 
-
 ### Sell Mastercoins for Bitcoins
 
 Description: Transaction type 20 posts the terms of an offer to sell Mastercoins or Test Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for MSC or 2 for Test MSC.
 
-If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, will be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell offer amount not yet accepted at the time of the update.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
 
-An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) for the same currency identifier.
+The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
+
+Note: An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has *any* active offer that accepts Bitcoins. Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins.
 
 Say you want to publish an offer to sell 1.5 Mastercoins for 1000 bitcoins. Doing this takes 34 bytes:
 
-1. [Transaction version](#field-transaction-version) = 1
-1. [Transaction type](#field-transaction-type) = 20 (currency trade offer for bitcoins)
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount for sale](#field-number-of-coins) = 150,000,000 (1.50000000 Mastercoins)
-1. [Amount of bitcoins desired](#field-number-of-coins) = 100,000,000,000 (1000.00000000 bitcoins)
-1. [Time limit in blocks](#field-time-period-in-blocks) = 10 (10 blocks in which to send payment after counter-party accepts these terms)
-1. [Minimum bitcoin transaction fee](#integer-eight-byte) = 10,000,000 (require the buyer to pay a hefty 0.1 BTC transaction fee to the miner, discouraging fake offers).  This field may be zero, however it is suggested that implementations enforce a minimum 0.0001 fee when listing sell offers at the UI layer.
-1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 1 |
+| Transaction type | [Transaction type](#field-transaction-type) | 20| 
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
+|Amount for sale|[Number of Coins](#field-number-of-coins)|150,000,000 (1.5 coins) |
+|Amount of bitcoins desired|[Number of Coins](#field-number-of-coins)|100,000,000,000 (1000.0 coins) |
+|Payment window|[Time Period in Blocks](#field-time-period-in-blocks) | 10  (10 blocks to send payment after counter-party accepts these terms)|
+|Minimum bitcoin transaction fee|[Number of coins](#integer-eight-byte) | 10,000,000 (buyer must pay 0.1 BTC fee to the miner, discouraging fake offers) This field may be zero, however it is suggested that implementations enforce a minimum 0.0001 fee when listing sell offers at the UI layer. |
+|Action|[Sell Offer sub-action](#field-sell-offer-sub-action) | 1 (New offer)|
 
 Note that some trading of Test MSC was done with version 0 of this message which did not have the Action field. Those transactions are treated as Action=3 (Cancel offer) when the Amount for sale is zero. For version 0 of this message and Amount for sale = 0 (Cancel offer), the values in the following fields are not tested for validity:
 * Amount of bitcoins desired
@@ -368,11 +460,11 @@ For version 0 of this message and Amount for sale is non-zero, it is treated as 
 
 #### Change a Coin Sell Offer
 
-An offer to sell coins can be changed by using Action = 2 (Update) until either: there are valid corresponding purchase offers (Transaction type 22) for the whole amount offered, or the sell offer is canceled.
+An offer to sell coins can be changed by using Action = 2 (Update) until either: there are valid corresponding purchase offers (transaction type 22) for the whole amount offered, or the sell offer is canceled. The Currency identifier cannot be changed.
 
-The change will apply to the balance that has not yet been accepted with a purchase offer. The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
+The change will apply to the balance that has not yet been accepted with a purchase offer. The stored unit price must be updated using the updated Amount for sale and Amount of bitcoins desired. The Amount desired value can be discarded after the unit price is updated. The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
 
-The amount reserved from the available balance for this address will be adjusted to reflect the new amount for sale.
+The amount reserved from the available balance for this address will be adjusted to reflect the new amount for sale. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell offer amount not yet accepted at the time of the update.
 
 Say you decide you want to change an offer, e.g. the number of coins you are offering for sale, or change the asking price. Send the transaction with the new values and the values that are not changing and Action = 2 (Update) before the whole amount offered has been accepted. Note that while the portion of an offer which has been accepted cannot be changed, sending an update message still has an effect, in that it affects any coins which have not been accepted, and it affects accepted coins if the buyer fails to send payment. 
 
@@ -396,7 +488,7 @@ Description: Transaction type 22 posts acceptance of an offer to sell Mastercoin
 
 The reference address must point to the seller's address, to identify whose offer you are accepting. The purchaser’s address must be different than the seller’s address.
 
-If you send an offer for more coins than are available by the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address that does not have a matching active Sell Offer, e.g. the Sell offer has been canceled or is all sold out, the Purchase Offer must be invalidated. 
+If you send an offer for more coins than are available at the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address that does not have a matching active Sell Offer, e.g. the Sell offer has been canceled or is all sold out, the Purchase Offer must be invalidated. It is not valid to send a Purchase Offer to an address if the sending address has an active Purchase Offer (not fully paid for and time limit not yet reached) with that address.
 
 Note: Your total expenditure on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
 
@@ -410,36 +502,86 @@ Other Master Protocol messages (for instance if the buyer wants to change his of
 
 Say you see an offer such as the one listed above, and wish to initiate a purchase of those coins. Doing so takes 16 bytes:
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 22 (accept currency trade offer)
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount to be purchased](#field-number-of-coins) = 130,000,000 (1.30000000 Mastercoins)
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 22| 
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
+|Amount to be purchased|[Number of Coins](#field-number-of-coins)|130,000,000 (1.3 coins) |
 
 ### Sell Master Protocol Coins for Another Master Protocol Currency
 
-Description: Transaction type 21 is used to both publish and accept an offer to sell coins in a Master Protocol Currency for coins in another Master Protocol Currency.
+Description: Transaction type 21 is used to both publish and accept an offer to sell coins in one Master Protocol Currency for coins in another Master Protocol Currency.
 
-If the amount offered exceeds the number available to be sold by the sending address, this indicates the user is offering to sell all of them. That amount will be reserved from the available balance for this address much like anfy other exchange platform.
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), the transaction is invalid. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell order. The seller could update the sell order to include these newly acquired coins, see [Change a Transaction Type 21 Coin Sell Order](#change-a-transaction-type-21-coin-sell-order) below.
 
-An address cannot create a new offer while that address has an active sell offer with the same currencies in the same roles. An active sell offer is one that has not been canceled or fully accepted.
+The new sell order's unit price is computed from two of the fields in the transaction message: the "Amount desired" divided by the "Amount for sale". An existing order's original unit price is used to match against new orders. The unit price does not change. The currency id for sale must be different from the currency id desired. Both currency id's must refer to existing currencies.
 
-To accept a sell offer, simply publish the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a price which matches or beats the seller's price. The protocol then finds orders that match and the coins from matching orders are considered transferred at the price specified by the earlier of the two offers. The purchaser’s address must be different than the seller’s address.
+To accept an existing sell order, an address simply publishes the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which is greater than or equal to the existing sell order's unit price. The protocol then finds existing sell orders that qualify (match), possibly including existing sell orders from that same address.
 
-Note that when only some coins are purchased, the rest are still for sale with the same terms.
+A liquidity bonus for the owners of existing sell orders provides an incentive for people to put their coins up for sale at a price which does not get filled instantly, increasing available liquidity on the exchange. The liquidity bonus for the owner of a matching sell order is taken from the amount paid by the new sell order. The liquidity bonus is 0.3% of the amount paid by the new sell order, rounded to the nearest .00000001 for divisible tokens or to the nearest whole number for indivisible tokens. The liquidity bonus percentage and/or calculation may change in the future.
+
+The following table shows examples of the liquidity bonus based on the new order's amount for sale and the existing order's minimum amount desired, for *divisible* coins. This table does not show the new order's minimum amount desired or the existing order's amount for sale, which are not subject to the liquidity bonus.
+
+|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder for Sale** | **Existing Order Remainder Desired** |
+|---:|---:|:---|---:|---:|:---|
+| 100.3 | 100.0 | 100.0 | 0.3 | 0.0 | 0.0 |
+| 100.0 | 100.0 | 99.70089731 | 0.29910269 | 0.0 | 0.29910269 |
+| 125.0 | 100.0 | 100.0 | 0.30 | 24.7 | 0.0 |
+| 50.0 | 100.0 | 49.85044865 | 0.14955135 | 0.0 | 50.14955135 |
+
+The following table shows examples of the liquidity bonus based on the new order's amount for sale and the existing order's minimum amount desired, for *indivisible* coins. This table does not show the new order's minimum amount desired or the existing order's amount for sale, which are not subject to the liquidity bonus.
+
+|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder for Sale** | **Existing Order Remainder Desired** |
+|---:|---:|---:|---:|---:|---:|
+| 1003 | 1000 | 1000 | 3 | 0 | 0 |
+| 1000 | 1000 | 997 | 3 | 0 | 3 |
+| 502 | 502 | 500 | 2 | 0 | 2 |
+| 500 | 1000 | 499 | 1 | 0 | 501 |
+| 500 | 500 | 499 | 1 | 0 | 1 |
+| 100 | 100 | 100 | 0 | 0 | 0 |
+| 125 | 100 | 100 | 0 | 25 | 0 |
+
+The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. This can cause the effective unit price to be higher than the matching sell order's specified unit price, but still never greater than the reciprocal of the new sell order's unit price. 
+
+It is valid for the purchaser’s address to be the same as the seller’s address.
+
+An existing order matches the new order when all of the following conditions are met: 
+
+1. the existing order's Currency id for sale is the same as the new order's Currency id desired
+1. the existing order's Currency id desired is the same as the new order's Currency id for sale
+1. the existing order's unit price is less than or equal to the reciprocal of the new order's unit price
+1. the existing order is still open (not completely sold or canceled)
+
+Existing orders that match are sorted as follows to be applied to the new order:
+
+1. by unit price, ascending (best price for the new order first)
+1. then by transaction block number, ascending chronological order (oldest first)
+1. then by transaction position within the block, ascending order (oldest first)
+
+If there are no matches for the new sell order or the aggregate amount desired in the matching orders is less than the amount for sale in the new sell order, the new sell order must be added to the list of existing sell orders, with the remaining amount for sale at the original unit price. This order is now a candidate for matching against future sell orders. Note that when only some coins from an existing order are purchased, the remaining coins from that order are still for sale at the original unit price.
 
 Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
 
-1. [Transaction version](#field-transaction-version) = 1
-1. [Transaction type](#field-transaction-type) = 21 (currency trade offer for another Master Protocol currency)
-1. [Currency identifier](#field-currency-identifier) = 1 for Mastercoin 
-1. [Amount for sale](#field-number-of-coins) = 250,000,000 (2.50000000 Mastercoins) 
-1. [Currency identifier desired](#field-currency-identifier) = 3 for GoldCoin 
-1. [Amount of GoldCoins desired](#field-number-of-coins) = 5,000,000,000 (50.00000000 GoldCoins)
-1. [Action](#field-sell-offer-sub-action) = 1 (New offer)
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 21| 
+|Currency identifier for sale| [Currency identifier](#field-currency-identifier) |1 for Mastercoin|
+|Amount for sale|[Number of Coins](#field-number-of-coins)|250,000,000 (2.5 coins) |
+|Currency identifier desired| [Currency identifier](#field-currency-identifier) |3 for GoldCoin |
+|Amount desired|[Number of Coins](#field-number-of-coins)|5,000,000,000 (50.0 coins) |
+| Action | [Metadex Sell Offer sub-action](#field-metadex-sell-offer-sub-action) | 1 (ADD new funds for sale) | 
 
-Initially the UI should require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins (and thus exit the Mastercoin ecosystem). This restriction is at the UI level and can be removed if someday more stable Master Protocol currencies become dominant and users no longer need to exit the Mastercoin ecosystem.
+Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Mastercoin ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Master Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin. 
 
-To change or cancel these order, use the action byte as described earlier for the message selling mastercoins for bitcoins. The only difference is that there are no coins "in limbo" (accepted but not purchased) complicating these messages.
+An offer to sell coins can be changed/cancelled by using additional transactions with Action = 2 (CANCEL-AT-PRICE), Action = 3 (CANCEL-ALL-FOR-CURRENCY-PAIR), or Action = 4 (CANCEL-EVERYTHING) variations of the transaction above. Action = 1 (ADD) orders are merged (both in the database and the UI) when their unit prices are exactly the same. CANCEL-AT-PRICE requires that the currency IDs and price exactly match the order to be canceled. CANCEL-ALL-FOR-CURRENCY-PAIR cancels all open orders for a given set of two currencies (one side of the order book). CANCEL-EVERYTHING cancels all open orders for all currencies.
+
+Any time coins are added, whether merged with another order or not, the same matching process is run as for a new order as described above.
+
+With any changes, the amount reserved from the available balance for this address must be adjusted to reflect the new amount for sale. Note that the amount for sale as a result of the update is limited by the available balance at the time of the update plus the existing sell order amount not yet matched at the time of the update.
+
+The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
 
 ## Smart Property
 
@@ -457,6 +599,8 @@ The attributes of an existing property cannot be changed. However, a new propert
 A property can be replaced and appended multiple times, even abandoning and un-abandoning it more than once. Appended properties must not be treated as the same asset in the UI or protocol parsers (the appended properties have independent values). When displaying a property, the UI should provide links to any related properties. Related properties are the property which was replaced or appended by this property (if there is one) as well as any properties from the same issuer which replace or append this property.
  
 The Ecosystem for the property must be the same as the ecosystem for the "Currency identifier desired", i.e. both must be in the Mastercoin ecosystem or both must be in the Test Mastercoin ecosystem.
+
+Currently only new property creation is supported, and the append/replace property types (65/66/129/130) will be made live at block #TBD.
 
 Any time the name of a property is displayed, the ID number of the property must also be displayed with it in the format "NAME (ID)", to avoid name collisions. For instance, "Quantum Miner (8)". This is very important to prevent a malicious user from creating a property to impersonate another property.
 
@@ -477,19 +621,21 @@ In addition to the validity constraints for each message field type, the followi
 * When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
 * "Property Name" must not be blank or null
 
-Say you want to do an initial distribution of 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
+Say you want to create 1,000,000 digital tokens for your company “Quantum Miner”. Doing so will use a varying number of bytes, due to the use of null-terminated strings. This example uses 80 bytes:
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 50
-1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
-1. [Property Type](#field-property-type) = 1 for new indivisible tokens
-1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
-1. [Property Category](#field-string-255-byte-null-terminated) = “Companies\0” (10 bytes)
-1. [Property Subcategory](#field-string-255-byte-null-terminated) = “Bitcoin Mining\0” (15 bytes)
-1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
-1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
-1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
-1. [Number Properties](#field-number-of-coins) = 1,000,000 indivisible tokens
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 50|
+|Ecosystem|[Ecosystem](#field-ecosystem) | 1 (Mastercoin ecosystem)|
+|Property Type|[Property Type](#field-property-type) | 1 (new Indivisible tokens)|
+|Previous Property ID|[Currency identifier](#field-currency-identifier) | 0 (for a new smart property)|
+|Property Category|[String null-terminated](#field-string-255-byte-null-terminated) | “Companies\0” (10 bytes) |
+|Property Subcategory | [String null-terminated](#field-string-255-byte-null-terminated) | “Bitcoin Mining\0” (15 bytes)|
+|Property Name | [String null-terminated](#field-string-255-byte-null-terminated) | “Quantum Miner\0” (14 bytes)|
+|Property URL| [String null-terminated](#field-string-255-byte-null-terminated)  | “tinyurl.com/kwejgoig\0” (21 bytes) |
+|Property Data | [String null-terminated](#field-string-255-byte-null-terminated)  | “\0” (1 byte) |
+| Number Properties | [Number of coins](#field-number-of-coins) | 1,000,000 (indivisible tokens)|
 
 ### New Property Creation via Crowdsale with Variable number of Tokens
 
@@ -543,22 +689,23 @@ In addition to the validity constraints for each message field type, the followi
 
 Say that instead of creating tokens and selling them, you'd rather do a kickstarter-style crowdsale to raise money for your "Quantum Miner" venture, with investors getting tokens for Quantum Miner in proportion to their investment, and the total number of tokens distributed being dependent on the amount of investment received. You want each Mastercoin invested over the next four weeks (ending, for example, at midnight UTC January 1st, 2215) to be worth 100 tokens of Quantum Miner, plus an early-bird bonus of 10%/week for people who invest before the deadline, including partial weeks. You also wish to grant yourself a number of tokens equal to 12% of the tokens distributed to investors as compensation for all your R&D work so far. This grant to yourself creates tokens *in addition to* the tokens distributed to investors. This transaction message will use a varying number of bytes, due to the use of null-terminated strings. This example uses 101 bytes:
 
-1. [Transaction version](#field-transaction-version) = 1
-1. [Transaction type](#field-transaction-type) = 51
-1. [Ecosystem](#field-ecosystem) = 1 for tradable within Mastercoin ecosystem (as opposed to Test Mastercoin)
-1. [Property Type](#field-property-type) = 1 for new indivisible tokens
-1. [Previous Property ID](#field-property-id) = 0 for a new smart property (or the existing property ID if replacing or appending)
-1. [Property Category](#field-string-255-byte-null-terminated) = “Companies\0” (10 bytes)
-1. [Property Subcategory](#field-string-255-byte-null-terminated) = “Bitcoin Mining\0” (15 bytes)
-1. [Property Name](#field-string-255-byte-null-terminated) = “Quantum Miner\0” (14 bytes)
-1. [Property URL](#field-string-255-byte-null-terminated)  = “tinyurl.com/kwejgoig\0” (21 bytes)
-1. [Property Data](#field-string-255-byte-null-terminated)  = “\0” (1 byte)
-1. [Currency Identifier Desired](#field-currency-identifier\*) = 1 for Mastercoin  
-    * Note: starting with version 1 of Transaction type 51, the value 0 (bitcoin) is added to the valid values for the [Currency Identifier Desired](#field-currency-identifier) field
-1. [Number Properties per Unit Invested](#field-number-of-coins) = 100 indivisible tokens
-1. [Deadline](#field-utc-datetime) = January 1st, 2215 00:00:00 UTC (must be in the future)
-1. [Early Bird Bonus %/Week](#field-integer-one-byte) = 10
-1. [Percentage for issuer](#field-integer-one-byte) = 12
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 51|
+|Ecosystem|[Ecosystem](#field-ecosystem) | 1 (Mastercoin ecosystem)|
+|Property Type|[Property Type](#field-property-type) | 1 (new Indivisible tokens)|
+|Previous Property ID|[Currency identifier](#field-currency-identifier) | 0 (for a new smart property)|
+|Property Category|[String null-terminated](#field-string-255-byte-null-terminated) | “Companies\0” (10 bytes) |
+|Property Subcategory | [String null-terminated](#field-string-255-byte-null-terminated) | “Bitcoin Mining\0” (15 bytes)|
+|Property Name | [String null-terminated](#field-string-255-byte-null-terminated) | “Quantum Miner\0” (14 bytes)|
+|Property URL| [String null-terminated](#field-string-255-byte-null-terminated)  | “tinyurl.com/kwejgoig\0” (21 bytes) |
+|Property Data | [String null-terminated](#field-string-255-byte-null-terminated)  | “\0” (1 byte) |
+|Currency Identifier Desired| [Currency identifier](#field-currency-identifier) |1 for Mastercoin |
+| Number Properties per Unit Invested | [Number of Coins](#field-number-of-coins) | 100 indivisible tokens |
+| Deadline | [UTC Datetime](#field-utc-datetime) | January 1st, 2215 00:00:00 UTC (must be in the future) |
+| Early Bird Bonus %/Week | [Integer one-byte](#field-integer-one-byte) | 10 |
+| Percentage for issuer | [Integer one-byte](#field-integer-one-byte) | 12 |
 
 ### Accepting Multiple Currencies in a Crowdsale
 
@@ -586,7 +733,7 @@ For divisible properties, the sending address will be credited with the number o
 
 For indivisible properties, the sending address will be credited with the number of tokens calculated as the corresponding "Number Properties per unit invested" value multiplied by the number of coins (units) specified in the Send message, plus that number of tokens multiplied by the percentage based on the "Early Bird Bonus %/Week" value, rounded down to an integer number of tokens (with no fractional portion). 
 
-The UI should accurately display the number of tokens that will be credited to the sending address.
+The aggregate number of tokens credited in a crowdsale is limited by the maximum allowable number of tokens in a Smart Property (see [Number of coins](#field-number-of-coins)). The UI should accurately display the number of tokens that will be credited to the sending address.
 
 Note these important details:
 
@@ -595,6 +742,7 @@ Note these important details:
 + If the Send transaction is confirmed after the crowdsale is closed or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Send itself will complete.
 + Tokens credited to the sending address and the issuer address are immediately added to the available balance belonging to the respective addresses and can be spent or otherwise used by that address.
 + The funds received are immediately added to the available balance belonging to the crowdsale owner's address and can be spent or otherwise used by that address.
++ When accepting currencies other than Mastercoin, a small fee will be deducted (see [fees](#fees) above) from the coins issued to crowdsale participants. 
 
 ### Promote a property
 
@@ -603,7 +751,7 @@ Say that having created your "Quantum Miner" smart property (which was assigned 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 52
 1. [Ecosystem](#field-ecosystem) = 1 for a property within the Mastercoin ecosystem (as opposed to Test Mastercoin)
-1. [Property ID](#field-property-id) = 8
+1. [Property ID](#field-currency-identifier) = 8
 1. [Number of Mastercoins](#field-number-of-coins) = 300,000,000 (3.00000000 Mastercoins)
 
 This transaction permanently destroys Mastercoins in exchange for favorable placement of this property in the default sort-ordering of properties on every UI. Protocol parsers accumulate all promotions of a property (which can be done by any address which has Mastercoins), with newer promotions being worth more than older promotions. 
@@ -620,11 +768,82 @@ Since crowdsales are generally open-ended, it leaves the potential that raising 
 
 It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
 
-1. [Transaction version](#field-transaction-version) = 0
-1. [Transaction type](#field-transaction-type) = 53
-1. [Property ID](#field-property-id) = 9
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ----: |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 53| 
+| Property ID | [Currency identifier](#field-currency-identifier) | 9 |
 
 Note that attempts to participate in a closed crowdsale will result in no investment in that crowdsale and no tokens from that crowdsale will be credited as a result of these attempts. See [Participating in a Crowdsale](#particpating-in-a-crowdsale) for details.
+
+### New Property with Managed Number of Tokens
+This feature is supported since block number 323230.
+
+Description: Transaction type 54 is used to create a new Smart Property whose token pool is actively managed by the address that creates the property.
+
+Creating a managed smart property does not automatically grant any tokens to the address that broadcasts the transaction.  Instead two additional transaction types exist to actively manage the size of the token pool: [Grant Tokens](#granting-tokens-for-a-managed-property) and [Revoke Tokens](#revoking-tokens-for-a-managed-property).
+
+In addition to the validity constraints for each message field type, the following conditions must be met in order for the transaction to be valid:
+* "Previous Property ID" must be 0 when "Property Type" indicates a new property
+* When "Property Type" indicates a property is being replaced or appended, "Previous Property ID" must be a currency ID created by the address
+* "Property Name" must not be blank or null
+
+Using the “Quantum Miner” details from the fixed token issuance, the transaction fields would be 72 bytes:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+|Transaction version |[Transaction version](#field-transaction-version) | 0 |
+|Transaction type | [Transaction type](#field-transaction-type) | 54|
+|Ecosystem|[Ecosystem](#field-ecosystem) | 1 (Mastercoin ecosystem)|
+|Property Type|[Property Type](#field-property-type) | 1 (new Indivisible tokens)|
+|Previous Property ID|[Currency identifier](#field-currency-identifier) | 0 (for a new smart property)|
+|Property Category|[String null-terminated](#field-string-255-byte-null-terminated) | “Companies\0” (10 bytes) |
+|Property Subcategory | [String null-terminated](#field-string-255-byte-null-terminated) | “Bitcoin Mining\0” (15 bytes)|
+|Property Name | [String null-terminated](#field-string-255-byte-null-terminated) | “Quantum Miner\0” (14 bytes)|
+|Property URL| [String null-terminated](#field-string-255-byte-null-terminated)  | “tinyurl.com/kwejgoig\0” (21 bytes) |
+|Property Data | [String null-terminated](#field-string-255-byte-null-terminated)  | “\0” (1 byte) |
+
+### Granting Tokens for a Managed Property
+This feature is supported since block number 323230.
+
+Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction have no tokens by default.  After issuance, tokens may be added to the balance of a referenced address by broadcasting a this type of transaction.
+
+It is invalid to attempt to grant tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens).
+
+It is invalid to attempt to broadcast a token grant on any property from an address other than the address that originally broadcast the [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction.
+
+It is invalid to attempt to grant tokens on any property that would increase the total number of tokens in circulation for that property to more than the maximum number of coins for a smart property, [see Number of coins](#field-number-of-coins).
+
+Say that you have a smart property whose ID is 8 and you have just reached a fundraising milestone for the project related to that smart property.  If you wanted to grant 1,000 tokens into your address as a result of this milestone so that you could distribute them, it would be 40 bytes:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ----: |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 55| 
+| Property ID | [Currency identifier](#field-currency-identifier) | 8 |
+| Number Properties | [Number of coins](#field-number-of-coins) | 1,000 |
+| Memo (Optional) | [String null-terminated](#field-string-255-byte-null-terminated)  | “First Milestone Reached!” (24 byte) |
+
+### Revoking Tokens for a Managed Property
+This feature is supported since block number 323230.
+
+Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction may have tokens revoked from the balance of the address that originally broadcast the property creation transaction.
+
+It is invalid to attempt to revoke tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens). 
+
+It is invalid to attempt to broadcast a token revoke on any property from an address other than the address that originally broadcast the [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction.
+
+It is invalid to attempt to revoke any amount of tokens in excess of the number owned and available by the address that broadcasts the transaction.
+
+Say that your project is finished and you want to start burning tokens in exchange for the rewards your promised early backers.  If you wanted to revoke 1,000 tokens from your address in exchange for shipping a reward it would be 58 bytes:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ----: |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 56| 
+| Property ID | [Currency identifier](#field-currency-identifier) | 8 |
+| Number Properties | [Number of coins](#field-number-of-coins) | 1,000 |
+| Memo | [String null-terminated](#field-string-255-byte-null-terminated)  | “Redemption of tokens for Bob, Thanks Bob!” (42 byte) |
 
 # Future Transactions
 
@@ -656,6 +875,10 @@ Say you send funds out of a savings wallet. Doing so requires using a transactio
 1. [Amount to transfer](#field-number-of-coins) = 100,000,000 (1.00000000 Mastercoins)
 
 An address marked as savings can only do this "restricted send" transaction type. All other transaction types must be ignored, as they are invalid from a savings address. This transaction type is also used for sending from rate-limited wallets.
+
+Funds sent with "restricted send" cannot be used until the send is complete. For instance, when funds are sent from a savings wallet, they are considered "pending" until the reversibility window is past. During the window, the transfer is not considered complete. The recipient address cannot use the funds in any way, including sending them to someone else, selling them, betting them, etc.
+
+The UI should show the fund transfer as "pending" until the time window for reversing the send is past.
 
 ### Marking a Savings Address as Compromised
 
@@ -835,25 +1058,7 @@ Say you see a bet which you would like to accept. Simply publish the inverse bet
 
 Note that this bet will be matched against only half of the previous example, because while the odds match (2:1 vs. 1:2), the amount of this bet is for less. This bet is only for $50, so would only win $100 if they win, as opposed to the full $200. Once the bets are matched, the first bet still has $100 available for someone else to bet $50 against.
 
-Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner gets 99.5% of the money at stake. The other 0.5% goes to the creator of the data stream. 
-
-
-##Transferring coins (Future)
-
-We are not sure the "send to all" message will be feasible, given that it potentially affects a huge number of balances. Consequently, it is currently in the "future transactions" bucket. It might become feasible if some kind of anti-spam fee is added to make sure this message is used sparingly.
-
-### Send To All
-
-Say you have grown wealthy and wish to gift all 1000 of your own Quantum Miner digital tokens to the other people holding those tokens. Doing so will use 16 bytes:
-
-1. [Transaction version](#field-transaction-version) = 0
-1. Transaction type = 3 for "send to all" (32-bit unsigned integer, 4 bytes)
-2. Currency identifier = 6 for Quantum Miner Tokens (32-bit unsigned integer, 4 bytes)
-3. Amount to transfer = 100,000,000,000 (1000.00000000 Mastercoins) (64-bit unsigned integer, 8 bytes, should not exceed number owned, but if it does, assume user is transferring all of them)
-
-Note that this transaction is very similar to "simple send". The protocol will split up the 1000 Quantum Miner tokens and send them to the other holders of those tokens, according to how many tokens they have. 
-
-This message can be used for giveaways, paying employees, or even paying dividends (please make sure your proposed use case is legal in your jurisdiction!!)
+Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner gets 99.5% of the money at stake. The other 0.5% goes to the creator of the data stream.  When using currencies other than Mastercoin, a small fee will be deducted (see [fees](#fees) above). 
 
 ## Distributed E-Commerce
 
@@ -899,7 +1104,7 @@ If the buyer offers a bad price, has a bad reputation, or has no reputation, the
 1. Transaction type = 62 for Accept buyer offer (32-bit unsigned integer, 4 bytes)
 2. Which buyer = 2 (3rd offer received) (16-bit unsigned integer, 2 bytes) 
 
-Once a buyer has been accepted, the seller may ship the Bible.
+Once a buyer has been accepted, the seller may ship the Bible. When using currencies other than Mastercoin, a small fee will be deducted (see [fees](#fees) above). 
 
 
 ### Leaving Feedback
@@ -996,7 +1201,7 @@ Class A transactions were the first class of Mastercoin transaction and store da
 
 The transaction data is encoded into said fake Bitcoin address which is then used as an output in a single Bitcoin transaction satisfying the following requirements: 
 
-* Has a single or the largest pay-to-pubkey-hash input signed by the sending address
+* Has a single or the largest pay-to-pubkey-hash or pay-to-script-hash (since block height 322000) input with a valid signature to designate the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
 * Has an output for the encoded fake address (the 'data' address)
@@ -1007,8 +1212,10 @@ The transaction data is encoded into said fake Bitcoin address which is then use
 Further:
 
 * Exodus outputs are ignored in decoding
-* Any input not meeting the requirement for type (pay-to-pubkeyhash) will trigger the invalidation of the transaction
-* Only pay-to-pubkey-hash outputs will be considered for the reference address
+* Any input not meeting the requirement for type (pay-to-pubkey-hash or pay-to-script-hash) will trigger the invalidation of the transaction
+* Only pay-to-pubkey-hash and pay-to-script-hash outputs will be considered for the reference address
+* Pay-to-script-hash output addresses will be the opaque script-hash address and not assume any decomposition into addresses which may be used in the redemption of such outputs
+* Pay-to-script-hash is enabled since block height 322000
 
 NOTE: The sequence number for a given address is defined as a 1 -byte integer stored as the first byte of each 'packet'.   Sequence numbers are continuous with 0 following 255 (256=0, 255+1=0). 
 
@@ -1024,9 +1231,9 @@ NOTE: Class A transactions are restricted to the ‘simple send’ transaction t
 
 ## Class B transactions (also known as the ‘multisig’ method) 
 
-Class B transactions attempt to address the UTXO ‘bloat’ issue by storing data in the blockchain by utilizing ‘1-of-n’ multisignature outputs where one of the signatories should be the sender.   
+Class B transactions attempt to address the UTXO ‘bloat’ issue by storing data in the blockchain by utilizing ‘1-of-n’ multisignature outputs where one of the signatories is the sender or another public key address the sender has designated.   
 
-By adopting a ‘1-of-n’ approach (credit Tachikoma @ bitcointalk) we can increase n to the number of packets (public keys) needed to store the transaction data while maintaining the ability of the sender to redeem the output.  
+By adopting a ‘1-of-n’ approach (credit Tachikoma @ bitcointalk) we can increase n to the number of packets (public keys) needed to store the transaction data while maintaining the ability of the sender or their designated party to redeem the output.  
 
 NOTE: The reference client currently supports a maximum value of 3 for n.  As one signatory should be the sender for redemption purposes, there is a current limit of 2 data packets per output.  A number of multisig outputs can be combined to increase the space available for transaction data as required.  On decoding all Mastercoin packets from all multisig outputs are ordered via their sequence number and evaluated as a continuous data stream. 
 
@@ -1056,18 +1263,20 @@ Once the obfuscated Mastercoin packet is prepared, the key identifier (02) is pr
 ![Mastercoin Protocol Layers](images/classb_obfuscated.png) 
 
 These compressed public key 'packets' can then be included in one or multiple OP_CHECKMULTISIG output along with the senders public key.  A single transaction must be constructed satisfying the following requirements: 
-* Has a single or the largest pay-to-pubkey-hash input by sum signed by the sending address
+* Has a single or the largest pay-to-pubkey-hash or pay-to-script-hash (since block height 322000) input with a valid signature to designate the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
-* Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be the sender's public key, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
+* Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be a valid public key address designated by the sender which may be used to reclaim the bitcoin assigned to the output, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
 * Mastercoin 'data packages' appear in order by their sequence number 
 * Additional outputs are permitted 
 
 Further:
 
 * Exodus outputs are ignored in decoding
-* Any input not meeting the requirement for type (pay-to-pubkeyhash) will trigger the invalidation of the transaction
-* Only pay-to-pubkey-hash outputs will be considered for the reference address
+* Any input not meeting the requirement for type (pay-to-pubkey-hash or pay-to-script-hash) will trigger the invalidation of the transaction
+* Only pay-to-pubkey-hash or pay-to-script-hash outputs will be considered for the reference address
+* Pay-to-script-hash output addresses will be the opaque script-hash address and not assume any decomposition into addresses which may be used in the redemption of such outputs
+* Pay-to-script-hash is enabled since block height 322000
 * Only multisig outputs will be considered for the data packets
 * If there are multiple outputs remaining, the first output to the sending address (if such an output exists) will be ignored as change
 * The reference address will be determined by the remaining output with the highest vout index  
