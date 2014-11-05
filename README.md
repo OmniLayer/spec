@@ -338,6 +338,7 @@ This section defines the fields that are used to construct transaction messages.
     *   14: [Remove a Rate Limitation](#removing-a-rate-limitation)
     *   30: [Register a Data Stream](#registering-a-data-stream)
     *   31: [Publish Data](#publishing-data)
+    *   32: [Create a List of Addresses](#create-a-list-of-addresses)
     *   40: [Offer/Accept a Bet](#offering-a-bet)
     *   60: [List Something for Sale](#listing-something-for-sale)
     *   61: [Initiate a Purchase from a Listing](#initiating-a-purchase)
@@ -606,6 +607,8 @@ To help distinguish legitimate companies and ventures from scams, spam, and expe
 
 The "Property Data" field is general-purpose text, but can be used for things like storing the hash of a contract to ensure it is in the block-chain at property creation (i.e. "Proof of Existence").
 
+All property creation transaction types (i.e. 50, 51, 54) can be restricted such that only a specified list of addresses can use the resulting property tokens. This can be useful when the issuer wants to restrict their token to a set of approved people, such as those who have provided identifying documentation in compliance with KYC (know your customer) AML (anti-money-laundering) laws. When creating a property which should be restricted to a set of addresses, simply set the reference address to be the address which created the list of approved addresses. Addresses which are not on the list will not be able to receive or otherwise interact with the token (transactions attempting to do so are invalid). However, addresses which are removed from the list can still send their restricted tokens to another approved address using simple send, but they cannot receive new coins or use the coins in any other way. This prevents tokens from effectively being destroyed when addresses are removed from the approved list. To create a list of addresses, see [Create a List of Addresses](#create-a-list-of-addresses) later in this document.
+
 ### New Property Creation with Fixed number of Tokens
 
 Description: Transaction type 50 is used to create a new Smart Property with a fixed number of tokens.
@@ -846,6 +849,20 @@ Say that your project is finished and you want to start burning tokens in exchan
 # Future Transactions
 
 The transactions below are still subject to revision and therefore are not included in deployments based on this version of the spec. 
+
+## Creating a List of Addresses
+
+The Master Protocol allows the creation of a list of addresses which can then be referenced by other transactions. For instance, some tokens may be restricted to only be used by a set of approved addresses, such as addresses of people who have provided identifying documentation in compliance with KYC (know your customer) AML (anti-money-laundering) laws. See the introduction to [Smart Property](#smart-property) above for details on how to restrict a token to a set of addresses.
+
+To create a list of addresses, publish the following notification from the address which will maintain the list:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 32| 
+
+That transaction effectively starts the list, and provides a handle to refer to the list (the address which published this message). From this point forward, any time the address sends Mastercoins to any other address, in any amount, using the [Simple Send](#transfer-coins-simple-send) transaction, the recipient address is added to the list. If the address is already in the list, it is removed (simple send of MSC acts like a toggle). Other transaction types and other currencies do NOT change the list, although it is recommended to only use this address for list management, for the sake of simplicity.
+
 
 ## Transactions to Limit Funds (Theft Prevention)
 
