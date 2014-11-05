@@ -246,9 +246,9 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values: 0 to 4,294,967,295
 
 ### Field: Bitcoin Address
-+ Description: the 20 bytes needed to uniquely identify a bitcoin address (checksum and version number removed)
-+ Size: 20 bytes, binary data
-+ Valid values: any 20 bytes (output of RIPEMD-160 hash step of creating a bitcoin address)
++ Description: the 21 bytes needed to uniquely identify a bitcoin address (checksum removed)
++ Size: 21 bytes, binary data
++ Valid values: any 21 bytes (version + output of RIPEMD-160 hash step of creating a bitcoin address)
 
 ### Field: Number of coins
 + Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
