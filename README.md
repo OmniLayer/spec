@@ -245,6 +245,11 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 32-bit unsigned integer, 4 bytes
 + Valid values: 0 to 4,294,967,295
 
+### Field: Bitcoin Address
++ Description: the 20 bytes needed to uniquely identify a bitcoin address (checksum and version number removed)
++ Size: 20 bytes, binary data
++ Valid values: any 20 bytes (output of RIPEMD-160 hash step of creating a bitcoin address)
+
 ### Field: Number of coins
 + Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
     * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
@@ -339,6 +344,7 @@ This section defines the fields that are used to construct transaction messages.
     *   30: [Register a Data Stream](#registering-a-data-stream)
     *   31: [Publish Data](#publishing-data)
     *   32: [Create a List of Addresses](#create-a-list-of-addresses)
+    *   33: [Removing Addresses from a List](#removing-addresses-from-a-list)
     *   40: [Offer/Accept a Bet](#offering-a-bet)
     *   60: [List Something for Sale](#listing-something-for-sale)
     *   61: [Initiate a Purchase from a Listing](#initiating-a-purchase)
@@ -856,19 +862,40 @@ The transactions below are still subject to revision and therefore are not inclu
 
 The Master Protocol allows the creation of a list of addresses which can then be referenced by other transactions. For instance, some tokens may be restricted to only be used by a set of approved addresses, such as addresses of people who have provided identifying documentation in compliance with KYC (know your customer) AML (anti-money-laundering) laws. See the introduction to [Smart Property](#smart-property) above for details on how to restrict a token to a set of addresses.
 
-To create a list of addresses, publish the following notification from the address which will maintain the list:
+To create or append a list of addresses, publish the following notification from the address which will maintain the list:
 
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ---- |
 | Transaction version |[Transaction version](#field-transaction-version) | 0 |
 | Transaction type | [Transaction type](#field-transaction-type) | 32| 
+| Number of addresses |  [Integer one-byte](#field-integer-one-byte)  | 4| 
+| Address 1 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BEE | 
+| Address 2 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BED | 
+| Address 3 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BEC | 
+| Address 4 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BEB | 
 
-That transaction effectively starts the list, and provides a handle to refer to the list (the address which published this message). From this point forward, any time the address sends Mastercoins to any other address, in any amount, using the [Simple Send](#transfer-coins-simple-send) transaction, the recipient address is added to the list. If the address is already in the list, it is removed (simple send of MSC acts like a toggle). Other transaction types and other currencies do NOT change the list, although it is recommended to only use this address for list management, for the sake of simplicity.
+That transaction effectively starts the list (or appends it), and provides a handle to refer to the list (the address which published this message). Note that this transaction could be massive if a lot of addresses are added, and may require large fees in bitcoins. Additionally, 0.00000001 MSC (smallest unit of MSC) are burned for each address added, so the address maintaining the list must have enough MSC and BTC on hand to cover these fees.
+
+
+## Removing Addresses from a List
+
+To remove addresses from a list, publish the following notification from the address which maintains the list:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 33| 
+| Number of addresses |  [Integer one-byte](#field-integer-one-byte)  |2| 
+| Address 1 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BEE | 
+| Address 2 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BED | 
+
+Any referenced addresses are removed from the list.  Note that as with the previous transaction type, this transaction could be massive if a lot of addresses are removed, and may require large fees in bitcoins. Additionally, 0.00000001 MSC (smallest unit of MSC) are burned for each address removed, so the address maintaining the list must have enough MSC and BTC on hand to cover these fees.
+
 
 
 ## Transactions to Limit Funds (Theft Prevention)
 
-The Master Protocol defines some transactions which effectively lock funds from being spent quickly, making theft of a "savings" wallet much more difficult, even if that wallet is online.
+The Master Protocol defines some transactions which effectively lock funds from being spent quickly, making theft of a "savings" wallet much more difficult, even if that wallet is online. 
 
 ### Marking an Address as “Savings”
 
