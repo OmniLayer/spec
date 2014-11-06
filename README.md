@@ -895,7 +895,7 @@ Any referenced addresses are removed from the list.  Note that as with the previ
 
 ## Transactions to Limit Funds (Theft Prevention)
 
-The Master Protocol defines some transactions which effectively lock funds from being spent quickly, making theft of a "savings" wallet much more difficult, even if that wallet is online. 
+The Master Protocol defines some transactions which effectively lock funds from being spent quickly, making theft of a "savings" wallet much more difficult, even if that wallet is online.
 
 ### Marking an Address as “Savings”
 
