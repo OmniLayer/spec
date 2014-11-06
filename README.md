@@ -544,6 +544,8 @@ The following table shows examples of the liquidity bonus based on the new order
 
 The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. This can cause the effective unit price to be higher than the matching sell order's specified unit price, but still never greater than the reciprocal of the new sell order's unit price. 
 
+Note on rounding: always round the smaller quantity down first, then the larger quantity should be rounded down an equivalent amount if possible. If a match occurs where one side of the match rounds down to zero (which can happen in various scenarios where an order is filled at multiple prices), the other side should round down to zero as well. Similarly, if one side of the match rounds down from 2.9 indivisible units to 2, the other side of the trade should round down as far as possible while still remaining above the appropriate unit price for 2 tokens. This is to prevent various scenarios where one side could get bit by rounding errors during the matching process.
+
 It is valid for the purchaser’s address to be the same as the seller’s address.
 
 An existing order matches the new order when all of the following conditions are met: 
