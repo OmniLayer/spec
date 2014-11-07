@@ -554,6 +554,8 @@ Notes on rounding, with me (the new order) purchasing from Bob (the existing ord
     * If the resulting adjusted unit price is unacceptable to me, the orders did not really match (no representable fill can be made)
     * Example: if those 8 tokens would cost me 15.1 indivisible tokens, I must pay 16 tokens, or NO SALE 
 
+Note: After a partial fill, the unit price for an order does not change, (this is to avoid orders moving around in the order book). For example, if the initial price was 23 for 100, the price will remain at that ratio regardless of any partial fills.
+	
 It is valid for the purchaser’s address to be the same as the seller’s address.
 
 An existing order matches the new order when all of the following conditions are met: 
