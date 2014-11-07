@@ -542,9 +542,16 @@ The following table shows examples of the liquidity bonus based on the new order
 | 100 | 100 | 100 | 0 | 0 | 0 |
 | 125 | 100 | 100 | 0 | 25 | 0 |
 
-The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. Note: Indivisible coins are transferred in whole units only, rounded down, see [Smart Property](#smart-property) below. This can cause the effective unit price to be higher than the matching sell order's specified unit price, but still never greater than the reciprocal of the new sell order's unit price. 
+The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. 
 
-Note on rounding: always round the smaller quantity down first, then the larger quantity should be rounded down an equivalent amount if possible. If a match occurs where one side of the match rounds down to zero (which can happen in various scenarios where an order is filled at multiple prices), the other side should round down to zero as well. Similarly, if one side of the match rounds down from 2.9 indivisible units to 2, the other side of the trade should round down as far as possible while still remaining above the appropriate unit price for 2 tokens. This is to prevent various scenarios where one side could get bit by rounding errors during the matching process.
+Notes on rounding, with me (the new order) purchasing from Bob (the existing order):
+1. First determine how many representable (indivisible) tokens I can purchase from Bob (using Bob's unit price)
+    * This implies rounding down, since rounding up is impossible (would require more money than I have)
+	* Example: if Bob has 9 indivisible tokens for sale, and I can afford 8.9 of them, round down to 8
+1. If the amount I would have to pay to buy Bob's tokens at his price is fractional, always round UP the amount I have to pay
+    * This will always be acceptable to Bob. Rounding in the other direction will always be impossible (would violate Bob's required price)
+	* If the resulting adjusted unit price is unacceptable to me, the orders did not really match (no representable fill can be made)
+	* Example: if those 8 tokens would cost me 15.1 indivisible tokens, I must pay 16 tokens, or NO SALE 
 
 It is valid for the purchaser’s address to be the same as the seller’s address.
 
