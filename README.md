@@ -545,13 +545,14 @@ The following table shows examples of the liquidity bonus based on the new order
 The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. 
 
 Notes on rounding, with me (the new order) purchasing from Bob (the existing order):
+
 1. First determine how many representable (indivisible) tokens I can purchase from Bob (using Bob's unit price)
     * This implies rounding down, since rounding up is impossible (would require more money than I have)
-	* Example: if Bob has 9 indivisible tokens for sale, and I can afford 8.9 of them, round down to 8
+    * Example: if Bob has 9 indivisible tokens for sale, and I can afford 8.9 of them, round down to 8
 1. If the amount I would have to pay to buy Bob's tokens at his price is fractional, always round UP the amount I have to pay
     * This will always be acceptable to Bob. Rounding in the other direction will always be impossible (would violate Bob's required price)
-	* If the resulting adjusted unit price is unacceptable to me, the orders did not really match (no representable fill can be made)
-	* Example: if those 8 tokens would cost me 15.1 indivisible tokens, I must pay 16 tokens, or NO SALE 
+    * If the resulting adjusted unit price is unacceptable to me, the orders did not really match (no representable fill can be made)
+    * Example: if those 8 tokens would cost me 15.1 indivisible tokens, I must pay 16 tokens, or NO SALE 
 
 It is valid for the purchaser’s address to be the same as the seller’s address.
 
