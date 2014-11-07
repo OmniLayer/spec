@@ -245,6 +245,11 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 32-bit unsigned integer, 4 bytes
 + Valid values: 0 to 4,294,967,295
 
+### Field: Bitcoin Address
++ Description: the 21 bytes needed to uniquely identify a bitcoin address (checksum removed)
++ Size: 21 bytes, binary data
++ Valid values: any 21 bytes (version + output of RIPEMD-160 hash step of creating a bitcoin address)
+
 ### Field: Number of coins
 + Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
     * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
@@ -338,6 +343,8 @@ This section defines the fields that are used to construct transaction messages.
     *   14: [Remove a Rate Limitation](#removing-a-rate-limitation)
     *   30: [Register a Data Stream](#registering-a-data-stream)
     *   31: [Publish Data](#publishing-data)
+    *   32: [Create a List of Addresses](#create-a-list-of-addresses)
+    *   33: [Removing Addresses from a List](#removing-addresses-from-a-list)
     *   40: [Offer/Accept a Bet](#offering-a-bet)
     *   60: [List Something for Sale](#listing-something-for-sale)
     *   61: [Initiate a Purchase from a Listing](#initiating-a-purchase)
@@ -608,6 +615,8 @@ To help distinguish legitimate companies and ventures from scams, spam, and expe
 
 The "Property Data" field is general-purpose text, but can be used for things like storing the hash of a contract to ensure it is in the block-chain at property creation (i.e. "Proof of Existence").
 
+All property creation transaction types (i.e. 50, 51, 54) can be restricted such that only a specified list of addresses can use the resulting property tokens. This can be useful when the issuer wants to restrict their token to a set of approved people, such as those who have provided identifying documentation in compliance with KYC (know your customer) AML (anti-money-laundering) laws. When creating a property which should be restricted to a set of addresses, simply set the reference address to be the address which created the list of approved addresses. Addresses which are not on the list will not be able to receive or otherwise interact with the token (transactions attempting to do so are invalid). However, addresses which are removed from the list can still send their restricted tokens to another approved address using simple send, but they cannot receive new coins or use the coins in any other way. This prevents tokens from effectively being destroyed when addresses are removed from the approved list. To create a list of addresses, see [Create a List of Addresses](#create-a-list-of-addresses) later in this document.
+
 ### New Property Creation with Fixed number of Tokens
 
 Description: Transaction type 50 is used to create a new Smart Property with a fixed number of tokens.
@@ -848,6 +857,41 @@ Say that your project is finished and you want to start burning tokens in exchan
 # Future Transactions
 
 The transactions below are still subject to revision and therefore are not included in deployments based on this version of the spec. 
+
+## Creating a List of Addresses
+
+The Master Protocol allows the creation of a list of addresses which can then be referenced by other transactions. For instance, some tokens may be restricted to only be used by a set of approved addresses, such as addresses of people who have provided identifying documentation in compliance with KYC (know your customer) AML (anti-money-laundering) laws. See the introduction to [Smart Property](#smart-property) above for details on how to restrict a token to a set of addresses.
+
+To create or append a list of addresses, publish the following notification from the address which will maintain the list:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 32| 
+| Number of addresses |  [Integer one-byte](#field-integer-one-byte)  | 4| 
+| Address 1 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BEE | 
+| Address 2 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BED | 
+| Address 3 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BEC | 
+| Address 4 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BEB | 
+
+That transaction effectively starts the list (or appends it), and provides a handle to refer to the list (the address which published this message). Note that this transaction could be massive if a lot of addresses are added, and may require large fees in bitcoins. Additionally, 0.00000001 MSC (smallest unit of MSC) are burned for each address added, so the address maintaining the list must have enough MSC and BTC on hand to cover these fees.
+
+
+## Removing Addresses from a List
+
+To remove addresses from a list, publish the following notification from the address which maintains the list:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 33| 
+| Number of addresses |  [Integer one-byte](#field-integer-one-byte)  |2| 
+| Address 1 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BEE | 
+| Address 2 | [Bitcoin Address](#field-bitcoin-address) | 010966776006953D5567439E5E39F86A0D273BED | 
+
+Any referenced addresses are removed from the list.  Note that as with the previous transaction type, this transaction could be massive if a lot of addresses are removed, and may require large fees in bitcoins. Additionally, 0.00000001 MSC (smallest unit of MSC) are burned for each address removed, so the address maintaining the list must have enough MSC and BTC on hand to cover these fees.
+
+
 
 ## Transactions to Limit Funds (Theft Prevention)
 
