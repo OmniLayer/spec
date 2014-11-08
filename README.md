@@ -542,7 +542,7 @@ The following table shows examples of the liquidity bonus based on the new order
 | 100 | 100 | 100 | 0 | 0 | 0 |
 | 125 | 100 | 100 | 0 | 25 | 0 |
 
-The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. In other words, every order is a "sell" order (complete when all tokens are sold), and there are no "buy" orders (complete when all tokens are purchased). If a new order gets a more favourable price than they requested, they| will receive more coins, not spend fewer coins.
+The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. In other words, every order is a "sell" order (complete when all tokens are sold), and there are no "buy" orders (complete when all tokens are purchased). If a new order gets a more favourable price than they requested, they will receive more coins, not spend fewer coins.
 
 Notes on rounding, with me (the new order) purchasing from Bob (the existing order):
 
