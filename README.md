@@ -542,7 +542,7 @@ The following table shows examples of the liquidity bonus based on the new order
 | 100 | 100 | 100 | 0 | 0 | 0 |
 | 125 | 100 | 100 | 0 | 25 | 0 |
 
-The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. 
+The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. In other words, every order is a "sell" order (complete when all tokens are sold), and there are no "buy" orders (complete when all tokens are purchased). If a new order gets a more favourable price than they requested, they| will receive more coins, not spend fewer coins.
 
 Notes on rounding, with me (the new order) purchasing from Bob (the existing order):
 
@@ -550,8 +550,8 @@ Notes on rounding, with me (the new order) purchasing from Bob (the existing ord
     * This implies rounding down, since rounding up is impossible (would require more money than I have)
     * Example: if Bob has 9 indivisible tokens for sale, and I can afford 8.9 of them, round down to 8
 1. If the amount I would have to pay to buy Bob's tokens at his price is fractional, always round UP the amount I have to pay
-    * This will always be acceptable to Bob. Rounding in the other direction will always be impossible (would violate Bob's required price)
-    * If the resulting adjusted unit price is unacceptable to me, the orders did not really match (no representable fill can be made)
+    * This will always be better for Bob. Rounding in the other direction will always be impossible (would violate Bob's required price)
+    * If the resulting adjusted unit price is higher than my price, the orders did not really match (no representable fill can be made)
     * Example: if those 8 tokens would cost me 15.1 indivisible tokens, I must pay 16 tokens, or NO SALE 
 
 Note: After a partial fill, the unit price for an order does not change, (this is to avoid orders moving around in the order book). For example, if the initial price was 23 for 100, the price will remain at that ratio regardless of any partial fills.
