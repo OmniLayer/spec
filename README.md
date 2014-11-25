@@ -334,6 +334,7 @@ This section defines the fields that are used to construct transaction messages.
     *   54: [Create a Managed Property with Grants and Revocations](#new-property-with-managed-number-of-tokens)
     *   55: [Grant Property Tokens](#granting-tokens-for-a-managed-property)
     *   56: [Revoke Property Tokens](#revoking-tokens-for-a-managed-property)
+    *   70: [Change Property Issuer on Record](#change-issuer-on-record-for-a-property)
 
 + To be added in future releases:
     *    2: [Restricted Send](#restricted-send)
@@ -785,7 +786,7 @@ In the Test Mastercoin ecosystem, test MSC are destroyed instead of real MSC.
 
 ### Close a Crowdsale Manually
 
-Since crowdsales are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the crowdsale to an unacceptable level.  To prevent this, the address that created the crowdsale can issue a command to close the crowdsale manually.  This action does not cause the early bird bonus percentage to be recalculated for existing purchases.
+Since crowdsales are generally open-ended, it leaves the potential that raising far more funds than intended could dilute the value of tokens sold early in the crowdsale to an unacceptable level.  To prevent this, the Issuer on Record address for the property can issue a command to close the crowdsale manually.  This action does not cause the early bird bonus percentage to be recalculated for existing purchases.
 
 It is invalid to attempt to close a crowdsale that is not active. Closing an active crowdsale requires 8 bytes. For example, to close the crowdsale that was assigned Property ID 9, the transaction message is:
 
@@ -831,7 +832,7 @@ Description: Properties issued with a [Property with Managed Number of Tokens](#
 
 It is invalid to attempt to grant tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens).
 
-It is invalid to attempt to broadcast a token grant on any property from an address other than the address that originally broadcast the [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction.
+It is invalid to attempt to broadcast a token grant on any property from an address other than the Issuer on Record address for the property.
 
 It is invalid to attempt to grant tokens on any property that would increase the total number of tokens in circulation for that property to more than the maximum number of coins for a smart property, [see Number of coins](#field-number-of-coins).
 
@@ -865,6 +866,30 @@ Say that your project is finished and you want to start burning tokens in exchan
 | Property ID | [Currency identifier](#field-currency-identifier) | 8 |
 | Number Properties | [Number of coins](#field-number-of-coins) | 1,000 |
 | Memo | [String null-terminated](#field-string-255-byte-null-terminated)  | “Redemption of tokens for Bob, Thanks Bob!” (42 byte) |
+
+## Smart Property Administration
+
+The Master Protocol provides support for a limited number of administrative tasks regarding Smart Properties. Administrative actions are permitted only by the Issuer on Record (issuer) which is implicitly recognized as the address which originally broadcast the transaction that reserved the currency ID of the Smart Property in question until explicitly changed.  The transactions which create an implicit Issuer on Record are:
+* 50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
+* 51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
+* 54: [Create a Managed Property with Grants and Revocations](#new-property-with-managed-number-of-tokens)
+
+### Change Issuer on Record for a Smart Property
+
+Description: Issuers on Record may broadcast a transaction which will explicitly change the Issuer on Record for future transactions involving a Smart Property.  For future transactions the Issuer on Record will be the reference address used in this transaction.
+
+It is invalid to attempt to broadcast a Change of Issuer on Record on a given property from an address other than the address that is the currently recognized Issuer on Record.
+
+It is invalid to attempt to broadcast a Change of Issuer on Record without specifying a Reference Address in the transaction.
+
+Say that you wanted to transfer the Issuer on Record status to another address on a property for which you control the current Issuer on Record address.  The transaction would be 8 bytes:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ----: |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 70| 
+| Property ID | [Currency identifier](#field-currency-identifier) | 13 |
+
 
 # Future Transactions
 
