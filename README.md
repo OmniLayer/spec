@@ -595,7 +595,25 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 
 Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Mastercoin ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Master Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin. 
 
-An offer to sell coins can be changed/cancelled by using additional transactions with Action = 2 (CANCEL-AT-PRICE), Action = 3 (CANCEL-ALL-FOR-CURRENCY-PAIR), or Action = 4 (CANCEL-EVERYTHING) variations of the transaction above. Action = 1 (ADD) orders are merged (both in the database and the UI) when their unit prices are exactly the same. CANCEL-AT-PRICE requires that the currency IDs and price exactly match the order to be canceled. CANCEL-ALL-FOR-CURRENCY-PAIR cancels all open orders for a given set of two currencies (one side of the order book). CANCEL-EVERYTHING cancels all open orders for all currencies.
+An offer to sell coins can be changed or cancelled by publishing additional transactions with [Metadex Sell offer sub-action](#field-metadex-sell-offer-sub-action) variations:
+
+* [Action](#field-metadex-sell-offer-sub-action) = 1 (ADD) orders are merged (both in the database and the UI) when their unit prices are exactly the same.
+
+* [Action](#field-metadex-sell-offer-sub-action) = 2 (CANCEL-AT-PRICE) cancells open orders for a given set of currencies at a given price. It is required that the [currency identifiers](#field-currency-identifier) and price exactly match the order to be canceled.
+
+* [Action](#field-metadex-sell-offer-sub-action) = 3 (CANCEL-ALL-FOR-CURRENCY-PAIR) cancels all open orders for a given set of two currencies (one side of the order book).
+
+* [Action](#field-metadex-sell-offer-sub-action) = 4 (CANCEL-EVERYTHING) can be used to cancel all open orders for all currencies within one ecosystem, if [Currency identifier for sale](#field-currency-identifier) and [Currency identifier desired](#field-currency-identifier) are within the same ecosystem, otherwise all open orders for all currencies of both ecosystems are cancelled.
+ 
+When using [Action](#field-metadex-sell-offer-sub-action) = 3 (CANCEL-ALL-FOR-CURRENCY-PAIR) the validity of the following fields is not tested:
+* [Amount for sale](#field-number-of-coins)
+* [Amount desired](#field-number-of-coins)
+
+When using [Action](#field-metadex-sell-offer-sub-action) = 4 (CANCEL-EVERYTHING) the validity of the following fields is not tested:
+* [Currency identifier for sale](#field-currency-identifier)
+* [Amount for sale](#field-number-of-coins)
+* [Currency identifier desired](#field-currency-identifier)
+* [Amount desired](#field-number-of-coins)
 
 Any time coins are added, whether merged with another order or not, the same matching process is run as for a new order as described above.
 
