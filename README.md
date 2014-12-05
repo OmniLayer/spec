@@ -144,41 +144,6 @@ The most important thing is that reorgs ARE detected. If an implementation does 
 
 Also, in many cases a user may wish to do something with Mastercoins recently sent to them or otherwise affected by a recent transaction. Where possible, Mastercoin-aware wallets should re-use bitcoins from the previous transactions in subsequent transactions which are dependent on the earlier transactions. In this way, if the earlier transaction is invalidated (by a reorg), the dependent transaction will also be invalidated.
 
-## Fees
-
-There are two broad categories of transactions which have no fees (other than fees charged by the bitcoin protocol layer):
-
-1. All tokens in the MSC protocol can be sent (using simple send) with no fees. 
-2. Any transaction which directly uses Mastercoin also has no fees.
-
-Here are some examples of transactions which have no fee:
-
-* Sending MaidsafeCoin using simple send 
-* Buying and selling MaidsafeCoin using Mastercoin on the distributed exchange 
-* Placing a bet denominated in Mastercoin
-* Paying Mastercoin to all Mastercoin holders (pay to owners)
-* Paying Mastercoin to purchase a physical good on the distributed e-commerce platform
-
-Transactions which do not meet this criteria pay a flat 0.1% fee, deducted from whatever currency or property is being used (rounded to the nearest representable amount).
-
-Here are some examples of transactions which would pay a 0.1% fee:
-
-* Buying and selling MaidsafeCoins with USDCoins on the distributed exchange
-* Placing a bet denominated in USDCoins
-* Paying MaidsafeCoin to all MaidsafeCoin holders (pay to owners)
-* Paying USDCoin to purchase a physical good on the distributed e-commerce platform
-
-Fees are used to automatically purchase and destroy Mastercoin on the distributed exchange. In some cases, fees may round down to zero, or round up as high as 0.2%. For example, there is never a fee as long as the number of traded units is less than 500 (0.00000500 for divisible currencies), because 0.1% of 499 rounds to zero, while 0.1% of 500 rounds up to 1. Similarly, 0.1% of 1499 rounds down to 1, and so on.
-
-Here's an example:
-
-Peter bets against Paul about what the price of Gold will do over the next 3 days. The bet is denominated in USDCoin, and is worth $10,000. When the bet is settled, 0.1% of the bet amount is deducted ($10). That $10 is automatically applied to purchase Mastercoin on the Mastercoin/USDCoin distributed exchange, using a "market" order. If at least 0.00000001 MSC is not available for purchase for $10, a limit order is created for 0.00000001 MSC for $10.  Once the order has been filled, the Mastercoins are destroyed, gone forever.
-
-Notice at no point does Peter or Paul have to own any Mastercoins, yet their bet automatically results in the purchase and destruction of Mastercoins, which benefits everyone who owns Mastercoins.
-
-When a transaction has other percentage-of-total calculations (for instance, the distributed exchange liquidity bonus), those calculations are based on the total before any fees are deducted. For instance, the 0.3% liquidity bonus and 0.1% fee would be calculated from the same total - they do not affect each other.
-
-You can read more about this fee structure on our blog: http://blog.mastercoin.org/2014/06/11/mastercoin-is-for-burning/
 
 ## Unlocking features
 
@@ -186,11 +151,6 @@ Not all features described in this document are active by default. Each feature 
 
 + Mastercoin/bitcoin distributed exchange features are unlocked as of block #290630
 + Smart property features are unlocked as of block #297110
-+ Savings wallets and rate-limited wallets are unlocked as of block # (TBD)
-+ Data feeds and simple betting are unlocked as of block # (TBD)
-+ Contract-for-difference bets are unlocked as of block # (TBD)
-+ Distributed e-commerce features are unlocked as of block # (TBD)
-+ Escrow-backed currencies are unlocked as of block # (TBD)
 + Managed Token-pool Smart Property features are unlocked as of block #323230
 + Pay-to-script-hash address support is unlocked as of block #322000
 
@@ -242,11 +202,6 @@ This section defines the fields that are used to construct transaction messages.
 + Size: 16-bit unsigned integer, 2 bytes
 + Valid values: 0 to 65535
 
-### Field: Listing identifier (future)
-+ Description: the unique identifier assigned to each sale listing an a per address basis
-+ Size: 32-bit unsigned integer, 4 bytes
-+ Valid values: 0 to 4,294,967,295
-
 ### Field: Number of coins
 + Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
     * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
@@ -264,18 +219,6 @@ This section defines the fields that are used to construct transaction messages.
 + Valid values:
     * 1: New Indivisible tokens
     * 2: New Divisible currency
-    * 65: Indivisible tokens when replacing a previous property
-    * 66: Divisible currency when replacing a previous property
-    * 129: Indivisible tokens when appending a previous property
-    * 130: Divisible currency when appending a previous property
-
-### Field: Response sub-action (future)
-+ Description: the seller's response to a buyer's offer to purchase
-+ Size: 8-bit unsigned integer, 1 byte
-+ Valid values:
-    * 1: Accept
-    * 2: Reject
-    * 3: Contact
 
 ### Field: String 255 byte null-terminated
 + Description: a variable length string terminated with a \0 byte
@@ -313,31 +256,15 @@ This section defines the fields that are used to construct transaction messages.
     *    0: [Simple Send](#transfer-coins-simple-send)
     *    3: [Send To Owners](#send-to-owners)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-mastercoins-for-bitcoins)
-    *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
     *   50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
     *   51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
-    *   52: [Promote a Property](#promote-a-property)
     *   53: [Close a Crowdsale Manually](#close-a-crowdsale-manually)
     *   54: [Create a Managed Property with Grants and Revocations](#new-property-with-managed-number-of-tokens)
     *   55: [Grant Property Tokens](#granting-tokens-for-a-managed-property)
     *   56: [Revoke Property Tokens](#revoking-tokens-for-a-managed-property)
     *   70: [Change Property Issuer on Record](#change-issuer-on-record-for-a-property)
 
-+ To be added in future releases:
-    *    2: [Restricted Send](#restricted-send)
-    *   10: [Mark an Address as Savings](#marking-an-address-as-savings)
-    *   11: [Mark a Savings Address as Compromised](#marking-a-savings-address-as-compromised)
-    *   12: [Mark an Address as Rate-Limited](#marking-an-address-as-rate-limited)
-    *   14: [Remove a Rate Limitation](#removing-a-rate-limitation)
-    *   30: [Register a Data Stream](#registering-a-data-stream)
-    *   31: [Publish Data](#publishing-data)
-    *   40: [Offer/Accept a Bet](#offering-a-bet)
-    *   60: [List Something for Sale](#listing-something-for-sale)
-    *   61: [Initiate a Purchase from a Listing](#initiating-a-purchase)
-    *   62: [Respond to a Buyer Offer](#accepting-a-buyer)
-    *   63: [Release Funds and Leave Feedback](#leaving-feedback)
-    * 100: [Create a New Child Currency](#new-currency-creation)
 
 ### Field: Transaction version
 + Description: the version of the transaction definition, monotonically increasing independently for each transaction type
@@ -527,8 +454,6 @@ Say you want to create 1,000,000 digital tokens for your company “Quantum Mine
 
 Description: Transaction type 51 is used to initiate a crowdsale which creates a new Smart Property with a variable number of tokens, determined by the number of tokens purchased and issued during the the crowdsale.
 
-Effective with version 1 of Transaction type 51 and block #(TBD), a single crowdsale is able to accept multiple currencies, including bitcoins (currency id 0), for purchases of a Smart Property in a single crowdsale. See [Accepting Multiple Currencies in a Crowdsale](#accepting-multiple-currencies-in-a-crowdsale) below.
-
 The crowdsale is active until any of the following conditions occurs, which causes the crowdsale to be closed permanently:
 * there is a block with a blocktime greater than or equal to the crowdsale's "Deadline" value 
 * the crowdsale is [manually closed](#close-a-crowdsale-manually)
@@ -619,7 +544,6 @@ Note these important details:
 + If the Send transaction is confirmed after the crowdsale is closed or if for any other reason no crowdsale is active, no purchase will be made and no tokens will be credited to the sending address, but the Send itself will complete.
 + Tokens credited to the sending address and the issuer address are immediately added to the available balance belonging to the respective addresses and can be spent or otherwise used by that address.
 + The funds received are immediately added to the available balance belonging to the crowdsale owner's address and can be spent or otherwise used by that address.
-+ When accepting currencies other than Mastercoin, a small fee will be deducted (see [fees](#fees) above) from the coins issued to crowdsale participants. 
 
 
 
