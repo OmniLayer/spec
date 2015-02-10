@@ -40,9 +40,9 @@ Assets definitions use [JSON](http://www.json.org) format with UTF-8 encoding. W
 	"format": "* dollars",
 	"format_1": "1 dollar",
 	
-	"mastercoin_id": "123456",
-	"coinprism_sources": ["2MyvmsxoCxsnzPapDnK7ZcMxWjU3hqLZkpX"],
-	"coincolors_id": "f5d8ee39a430901c91a5917b9f2dc19d6d1a0e9cea205b009ca73dd04470b9a6"
+	"meta_id": "123456",
+	"meta_source": "mastercoin|coloredcoin|futureproof",
+	"source_data": ["2MyvmsxoCxsnzPapDnK7ZcMxWjU3hqLZkpX"]
 }
 ```
 
