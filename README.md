@@ -191,6 +191,7 @@ Not all features described in this document are active by default. Each feature 
 + Escrow-backed currencies are unlocked as of block # (TBD)
 + Managed Token-pool Smart Property features are unlocked as of block #323230
 + Pay-to-script-hash address support is unlocked as of block #322000
++ Send To Owners transaction type is unlocked as of block #342650
 
 ## Transaction versioning
 
