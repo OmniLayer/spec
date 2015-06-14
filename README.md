@@ -1,8 +1,8 @@
 
-The Master Protocol / Mastercoin Complete Specification
+Omni Protocol Specification (formerly Mastercoin)
 =======================================================
 
-Version 0.4.5.11 Smart Property Transaction 21 Edition
+Version 0.5 (in progress) - Omni Protocol rename version
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -64,16 +64,24 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.9 released 13 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
 1. Version 0.4.5.10 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to owners", and that we don't encourage illegal behavior!
 1. Version 0.4.5.11 released 8 Aug 2014 (completed tx21 description)
+1. Version 0.5 (in progress) released DD MMM 2015 (rename to Omni Protocol)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
-# Master Protocol / Mastercoin Terminology
+# Omni Protocol Terminology
+
+* The term "Omni Protocol" refers to the protocol defined by this specification.
+* The term "Omni Layer" referes to the Omni Protocol, its Omni Core implementation, and the entire Omni ecosystem.
+* The term "Mastercoins" applies to the digital tokens that access the features of the "Omni Protocol" clients.
+* The term "MSC" is used as the abbreviation for "Mastercoins".
+
+# Historical Master Protocol / Mastercoin Terminology
+
+This terminology is deprecated and the specification will shortly be updated to use the appropriate, new Omni terminology where appropriate.
 
 * The term M.A.S.T.E.R. is an acronym for "Metadata Archival by Standard Transaction Embedding Records" 
 * The term "Master Protocol" applies to the specification and the clients that implement its features.
 * The term "MSC Protocol" is used as the abbreviation for "Master Protocol". 
-* The term "Mastercoins" applies to the digital tokens that access the features of the "Master Protocol" clients.
-* The term "MSC" is used as the abbreviation for "Mastercoins".
 
 # Master Protocol Design
 
