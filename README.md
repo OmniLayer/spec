@@ -352,9 +352,7 @@ This section defines the fields that are used to construct transaction messages.
     *   12: [Mark an Address as Rate-Limited](#marking-an-address-as-rate-limited)
     *   14: [Remove a Rate Limitation](#removing-a-rate-limitation)
     *   30: [Register a Data Stream](#registering-a-data-stream)
-
     *   31: [Publish Data](#publishing-data)
-
     *   32: [Create a List of Addresses](#create-a-list-of-addresses)
     *   33: [Removing Addresses from a List](#removing-addresses-from-a-list)
     *   40: [Offer/Accept a Bet](#offering-a-bet)
@@ -926,11 +924,7 @@ Say that you wanted to transfer the Issuer on Record status to another address o
 
 The transactions below are still subject to revision and therefore are not included in deployments based on this version of the spec. 
 
-
-
 ## Creating a List of Addresses
-
-
 
 The Omni Protocol allows the creation of a list of addresses which can then be referenced by other transactions. For instance, some tokens may be restricted to only be used by a set of approved addresses, such as addresses of people who have provided identifying documentation in compliance with KYC (know your customer) AML (anti-money-laundering) laws. See the introduction to [Smart Property](#smart-property) above for details on how to restrict a token to a set of addresses.
 
