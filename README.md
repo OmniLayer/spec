@@ -2,7 +2,7 @@
 Omni Protocol Specification (formerly Mastercoin)
 =======================================================
 
-Version 0.5 (in progress) - Omni Protocol rename version
+Version 0.5 - Omni Protocol rename version
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -48,7 +48,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 1. Version 0.1 (previously 0.5) released 6 Jan 2012 (No packet definitions, overly-complicated currency stabilization)
 1. Version 0.1.9 (previously 0.7) released 29 Jul 2013 (Preview of 0.2, but without revealing the Exodus Address)
-1. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the fundraiser)
+1. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the crowdsale)
 1. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
 1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Send To Owners" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Omni Protocol data).
 1. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
@@ -64,7 +64,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.9 released 13 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
 1. Version 0.4.5.10 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to owners", and that we don't encourage illegal behavior!
 1. Version 0.4.5.11 released 8 Aug 2014 (completed tx21 description)
-1. Version 0.5 (in progress) released DD MMM 2015 (rename to Omni Protocol)
+1. Version 0.5 released 28 Jun 2015 (rename to Omni Protocol)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
@@ -807,7 +807,7 @@ Say that having created your "Quantum Miner" smart property (which was assigned 
 
 This transaction permanently destroys Mastercoins in exchange for favorable placement of this property in the default sort-ordering of properties on every UI. Protocol parsers accumulate all promotions of a property (which can be done by any address which has Mastercoins), with newer promotions being worth more than older promotions. 
 
-To accomplish this time-weighting, a promotion is worth (# Mastercoins spent) * 3^(years since exodus), where "years since exodus" is the number of years (including partial years) since the Mastercoin fundraiser ended on September 1st 2013, and thus new promotions are always worth 3x as much as year-old promotions and 9x as much as two-year-old promotions if the same number of Mastercoins were spent on each.
+To accomplish this time-weighting, a promotion is worth (# Mastercoins spent) * 3^(years since exodus), where "years since exodus" is the number of years (including partial years) since the Mastercoin crowdsale ended on September 1st 2013, and thus new promotions are always worth 3x as much as year-old promotions and 9x as much as two-year-old promotions if the same number of Mastercoins were spent on each.
 
 UIs will probably also choose to offer other sort orderings, such as by transaction volume, removing the need to continually promote a property once it is well-established. Categories and subcategories should be similarly sorted, using the sum of the promotions they contain by default with other sorting available such as the sum of the transaction volumes. UI designers should expect the number of spammy properties, categories, and sub-categories to be quite large, so intelligent sorting will be important.
 
