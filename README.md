@@ -1,8 +1,8 @@
 
-The Master Protocol / Mastercoin Complete Specification
+Omni Protocol Specification (formerly Mastercoin)
 =======================================================
 
-Version 0.4.5.11 Smart Property Transaction 21 Edition
+Version 0.5 - Omni Protocol rename version
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
@@ -39,7 +39,7 @@ Our claims are built on the following assumptions:
 
 The proposed protocol layers can be visualized as follows, with arrows representing users exchanging between currencies:
 
-![Mastercoin Protocol Layers](images/layers.png) 
+![Omni Protocol Layers](images/layers.png) 
 
 
 Note that all transfers of value are still stored in the normal bitcoin block chain, but higher layers of the protocol assign additional meaning to some transactions.
@@ -48,9 +48,9 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 
 1. Version 0.1 (previously 0.5) released 6 Jan 2012 (No packet definitions, overly-complicated currency stabilization)
 1. Version 0.1.9 (previously 0.7) released 29 Jul 2013 (Preview of 0.2, but without revealing the Exodus Address)
-1. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the fund-raiser)
+1. Version 0.2 (previously 1.0) released 31 Jul 2013 (Version used during the crowdsale)
 1. Version 0.3 (previously 1.1) released 9 Sep 2013 (Smart Property + improvements for easier parsing & better escrow fund health)
-1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Send To Owners" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Mastercoin data).
+1. Version 0.3.5 (previously 1.2) released 11 Nov 2013 (Added "Send To Owners" message, spending limits for savings wallets, contract-for-difference bets, and distributed e-commerce messages. Also added Zathras' new appendix (description of class B and class C methods of storing Omni Protocol data).
 1. Version 0.4 released 15 Feb 2014 (defined transaction message fields in a separate section, specified 5 transactions for initial deployment, added transaction version, New/Update/Cancel for sell offers, corrected dust threshold value) 
 1. Version 0.4.5 released 20 Feb 2014 (added smart property crowdsale, other improvements to future features)
 1. Version 0.4.5.1 released 3 Mar 2014 (clarified Sell MSC for Bitcoins behavior) 
@@ -64,24 +64,32 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 1. Version 0.4.5.9 released 13 Jun 2014 (Transaction type 51 version 1 - accept multiple currencies, including bitcoins, in crowdsales)
 1. Version 0.4.5.10 cleaned up "dividends" language to make sure it is clear there are lots of use cases for "send to owners", and that we don't encourage illegal behavior!
 1. Version 0.4.5.11 released 8 Aug 2014 (completed tx21 description)
+1. Version 0.5 released 28 Jun 2015 (rename to Omni Protocol)
 
 * Pre-github versions of this document (prior to version 0.3.5 / previously 1.2) can be found at https://sites.google.com/site/2ndbtcwpaper/
 
-# Master Protocol / Mastercoin Terminology
+# Omni Protocol Terminology
+
+* The term "Omni Protocol" refers to the protocol defined by this specification.
+* The term "Omni Layer" referes to the Omni Protocol, its Omni Core implementation, and the entire Omni ecosystem.
+* The term "Mastercoins" applies to the digital tokens that access the features of the "Omni Protocol" clients.
+* The term "MSC" is used as the abbreviation for "Mastercoins".
+
+# Historical Master Protocol / Mastercoin Terminology
+
+This terminology is deprecated and the specification will shortly be updated to use the appropriate, new Omni terminology where appropriate.
 
 * The term M.A.S.T.E.R. is an acronym for "Metadata Archival by Standard Transaction Embedding Records" 
 * The term "Master Protocol" applies to the specification and the clients that implement its features.
 * The term "MSC Protocol" is used as the abbreviation for "Master Protocol". 
-* The term "Mastercoins" applies to the digital tokens that access the features of the "Master Protocol" clients.
-* The term "MSC" is used as the abbreviation for "Mastercoins".
 
-# Master Protocol Design
+# Omni Protocol Design
 
-The “Master Protocol” layer between the existing Bitcoin Protocol and users’ currencies is intended to be a base upon which anyone can build their own currency. The software implementing the Master Protocol will contain simple tools which will allow anyone to design and release their own currency with their own rules without doing any software development.
+The “Omni Protocol” layer between the existing Bitcoin Protocol and users’ currencies is intended to be a base upon which anyone can build their own currency. The software implementing the Omni Protocol will contain simple tools which will allow anyone to design and release their own currency with their own rules without doing any software development.
 
 ## Initial Token Distribution via the “Exodus Address”
 
-Perhaps you have heard of the “Genesis Block” which launched the Bitcoin protocol. The Master Protocol has a similar starting point in the block chain, called the “Exodus Address” - the bitcoin address from which the first Mastercoins were generated during the month of August 2013. The Exodus Address is: **[1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P](https://blockchain.info/address/1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P)**  
+Perhaps you have heard of the “Genesis Block” which launched the Bitcoin protocol. The Omni Protocol has a similar starting point in the block chain, called the “Exodus Address” - the bitcoin address from which the first Mastercoins were generated during the month of August 2013. The Exodus Address is: **[1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P](https://blockchain.info/address/1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P)**  
 
 Initial distribution of Mastercoins was essentially a kickstarter style period to provide funding to pay developers to write the software which fully implements the protocol. The distribution was very simple, and proceeded as follows:
 
@@ -91,30 +99,30 @@ Initial distribution of Mastercoins was essentially a kickstarter style period t
 
 In the event that a purchase had multiple inputs, the input address contributing the most funds was recognized as owning the Mastercoins.
 
-Note that anyone who purchased Mastercoins also received the same number of “Test Mastercoins” which are being used for testing new features before they are available for use in the Mastercoin protocol.
+Note that anyone who purchased Mastercoins also received the same number of “Test Mastercoins” which are being used for testing new features before they are available for use in the Omni Protocol.
 
-Initially, the only valid Mastercoin transaction was a “simple send” (defined later in this document), but the additional features described in this document are being implemented, and can be used once they are fully tested.
+Initially, the only valid Omni transaction was a “simple send” (defined later in this document), but the additional features described in this document are being implemented, and can be used once they are fully tested.
 
 ## Development Mastercoins (Dev MSC, previously "Reward Mastercoins")
 
-1. Generation Rate: For every 10 Mastercoins sold during the Exodus period, 1 additional “Dev MSC” was also generated, which are being awarded to the Exodus Address slowly over the years following the exodus period (these Dev MSC are interoperable and fungible with regular MSC). These Development Mastercoins will ensure that developers have a continuing incentive to maintain, improve and add features to the Master Protocol implementations desired by users. The Distribution of these Dev MSC is structured so that developers receive 50% of the Dev MSC by one year after the initial Exodus Address period closed (date the Exodus Address closed - August 31st 2013, although transactions up till block 255365 were still accepted to account for slower propegation of transactions still sent on the 31st of August), 75% by a year later, 87.5% by a year later, and so on:
+1. Generation Rate: For every 10 Mastercoins sold during the Exodus period, 1 additional “Dev MSC” was also generated, which are being awarded to the Exodus Address slowly over the years following the exodus period (these Dev MSC are interoperable and fungible with regular MSC). These Development Mastercoins will ensure that developers have a continuing incentive to maintain, improve and add features to the Omni Protocol implementations desired by users. The Distribution of these Dev MSC is structured so that developers receive 50% of the Dev MSC by one year after the initial Exodus Address period closed (date the Exodus Address closed - August 31st 2013, although transactions up till block 255365 were still accepted to account for slower propegation of transactions still sent on the 31st of August), 75% by a year later, 87.5% by a year later, and so on:
 ![Dev MSC](images/reward-mastercoin-formula.png)
-2. As dev MSC vest, 50% of them are sent out as bonuses to people who won Mastercoin bounties, in proportion to how much bounty money they won (bitcoins). The other 50% are used for expenses such as retention bonuses. Eventually, the Mastercoin Foundation will turn over all remaining funds to a distributed bounty system, with the Master Protocol paying its own bounties via a proof-of-stake voting system, and the Mastercoin Foundation will no longer need to administer any funds for the project.
+2. As dev MSC vest, 50% of them are sent out as bonuses to people who won Mastercoin bounties, in proportion to how much bounty money they won (bitcoins). The other 50% are used for expenses such as retention bonuses. Eventually, the Mastercoin Foundation will turn over all remaining funds to a distributed bounty system, with the Omni Protocol paying its own bounties via a proof-of-stake voting system, and the Mastercoin Foundation will no longer need to administer any funds for the project.
 
 
 Technical notes: 
 
-* Any Mastercoin implementation implementing Exodus balance must recalculate the Development Mastercoin amount on each new block found and use the block timestamp for y.
+* Any Omni Protocol implementation implementing Exodus balance must recalculate the Development Mastercoin amount on each new block found and use the block timestamp for y.
 * When calculating the years since the Mastercoin sale we assume a year is 31556926 seconds.
 * 1377993874 is the Unix timestamp used to define the end-date of Exodus and thus the start date for the Development Mastercoins vesting.
 * Current implementations do not have Test MSC which vest alongside dev MSC, but such coins may be recognized at some point in the future if it is deemed desireable 
 
 
-## Embedding Master Protocol Data in the Block Chain
+## Embedding Omni Protocol Data in the Block Chain
 
-Bitcoin has some little-known advanced features (such as scripting) which many people imagine will enable it to perform fancy new tricks someday. The Master Protocol uses exactly NONE of those advanced features, because support for them is not guaranteed in the future, and the Master Protocol doesn't need them to embed data in the block chain.
+Bitcoin has some little-known advanced features (such as scripting) which many people imagine will enable it to perform fancy new tricks someday. The Omni Protocol uses exactly NONE of those advanced features, because support for them is not guaranteed in the future, and the Omni Protocol doesn't need them to embed data in the block chain.
 
-The Master Protocol was originally specified to embed data in the block chain using fake bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which embeds data in a bitcoin multi-signature transaction (Class B). Once bitcoin miners start supporting the new OP_RETURN opcode as part of version 0.9 of the Bitcoin reference client, Master Protocol will be able to use that opcode to make the Master Protocol data completely prune-able (Class C) see description here by Gavin Andresen here: https://bitcoinfoundation.org/blog/?p=290 
+The Omni Protocol was originally specified to embed data in the block chain using fake bitcoin addresses (Class A), but we've since come up with a more blockchain friendly method which embeds data in a bitcoin multi-signature transaction (Class B). Once bitcoin miners start supporting the new OP_RETURN opcode as part of version 0.9 of the Bitcoin reference client, Omni Protocol will be able to use that opcode to make the Omni Protocol data completely prune-able (Class C) see description here by Gavin Andresen here: https://bitcoinfoundation.org/blog/?p=290 
 
 Class C transactions are most preferred due to the Provably Prune-able Outputs avoiding issues of "bloat" and "pollution" of the block chain.
 
@@ -122,23 +130,23 @@ The technical details for both Class A and Class B transactions can be found in 
 
 ## Special Considerations to Avoid Invalid Transactions
 
-Not every bitcoin wallet lets you choose which address bitcoins come from when you make a payment, and Mastercoin transactions must all come from the address which holds the Mastercoins being used. If a bitcoin wallet contains bitcoins stored in multiple addresses, the user (or Master Protocol software) must first ensure that the address which is going to send the Mastercoin transaction has sufficient balance in bitcoins to create the transaction. Then, the Mastercoin-related transaction can be sent successfully from that address. 
+Not every bitcoin wallet lets you choose which address bitcoins come from when you make a payment, and Omni transactions must all come from the address which holds the Mastercoins being used. If a bitcoin wallet contains bitcoins stored in multiple addresses, the user (or Omni Protocol software) must first ensure that the address which is going to send the Omni transaction has sufficient balance in bitcoins to create the transaction. Then, the Omni-related transaction can be sent successfully from that address. 
 
-Wallets which do not allow you to consolidate to one address and send from that address (such as online web wallet providers) will not work for Mastercoin unless they are modified to do so. For this reason, **attempting to purchase Mastercoins from an online web wallet will likely result in the permanent loss of those Mastercoins.**
+Wallets which do not allow you to consolidate to one address and send from that address (such as online web wallet providers) will not work for Omni unless they are modified to do so. For this reason, **attempting to purchase Mastercoins from an online web wallet will likely result in the permanent loss of those Mastercoins.**
 
-Other than for these hosted wallets, a bitcoin address can also be treated as a Mastercoin address, capable of storing and using any Master Protocol currency.
+Other than for these hosted wallets, a bitcoin address can also be treated as an Omni address, capable of storing and using any Omni Protocol currency.
 
 ## Best Practices for Handling Blockchain Reorganizations
 
 Occasionally the bitcoin blockchain experiences a "reorg", when the current longest chain is replaced by another longer chain. Sometimes this results in recent transactions changing their order, or which transactions are included. 
 
-The Master Protocol depends heavily on the order in which transactions appear in the blockchain. Even transactions in the same block can have different meaning or validity depending on the order in which they are recorded. Consequently, wallets and other blockchain parsers which also parse Master Protocol transactions need to detect these reorganizations and reparse the affected blocks, changing Master Protocol balances according to the the new ordering of transactions.
+The Omni Protocol depends heavily on the order in which transactions appear in the blockchain. Even transactions in the same block can have different meaning or validity depending on the order in which they are recorded. Consequently, wallets and other blockchain parsers which also parse Omni Protocol transactions need to detect these reorganizations and reparse the affected blocks, changing Omni Protocol balances according to the the new ordering of transactions.
 
-Initially, a reorganization could trigger a "naive" reparse, starting from the beginning and parsing all transactions in the history of the Master Protocol. Eventually, parsers should become more sophisticated and should keep checkpoints with all relevant Master Protocol Data written to disk at block milestones, so that they can start from the most recent unaffected checkpoint when a reorg event is detected.
+Initially, a reorganization could trigger a "naive" reparse, starting from the beginning and parsing all transactions in the history of the Omni Protocol. Eventually, parsers should become more sophisticated and should keep checkpoints with all relevant Omni Protocol Data written to disk at block milestones, so that they can start from the most recent unaffected checkpoint when a reorg event is detected.
 
-The most important thing is that reorgs ARE detected. If an implementation does not contain code to react to reorgs, it could lose consensus with the other implementations, effectively forking the Master Protocol until the problem is noticed and the affected implementation is manually reset.
+The most important thing is that reorgs ARE detected. If an implementation does not contain code to react to reorgs, it could lose consensus with the other implementations, effectively forking the Omni Protocol until the problem is noticed and the affected implementation is manually reset.
 
-Also, in many cases a user may wish to do something with Mastercoins recently sent to them or otherwise affected by a recent transaction. Where possible, Mastercoin-aware wallets should re-use bitcoins from the previous transactions in subsequent transactions which are dependent on the earlier transactions. In this way, if the earlier transaction is invalidated (by a reorg), the dependent transaction will also be invalidated.
+Also, in many cases a user may wish to do something with Mastercoins recently sent to them or otherwise affected by a recent transaction. Where possible, Omni-aware wallets should re-use bitcoins from the previous transactions in subsequent transactions which are dependent on the earlier transactions. In this way, if the earlier transaction is invalidated (by a reorg), the dependent transaction will also be invalidated.
 
 ## Fees
 
@@ -180,7 +188,7 @@ You can read more about this fee structure on our blog: http://blog.mastercoin.o
 
 ## Unlocking features
 
-Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Mastercoin transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
+Not all features described in this document are active by default. Each feature will be unlocked on a certain block once it's deemed stable. Only Test Omni transactions will be allowed if a feature is not unlocked yet. All other messages will be invalidated. The only exception to this rule is the Simple Send message, this has been enabled since Exodus.
 
 + Mastercoin/bitcoin distributed exchange features are unlocked as of block #290630
 + Smart property features are unlocked as of block #297110
@@ -195,9 +203,9 @@ Not all features described in this document are active by default. Each feature 
 
 ## Transaction versioning
 
-Occasionally it seems prudent to change the format or interpretation of a Master Protocol message in order to improve the feature or fix a bug. To that end, each message has a version number. All Master Protocol implementations are expected to keep pace with changes of this nature, but in the event one falls behind, it must treat addresses which broadcast messages using version numbers it does not recognize as "black holes". That is, any funds or properties which enter the control of that address are considered lost and unspendable, since that address is using a newer version of the Master Protocol. In the event that the out-dated implementation is upgraded to recognize the new message formats, the blockchain can be re-parsed, and nothing will be lost.
+Occasionally it seems prudent to change the format or interpretation of a Omni Protocol message in order to improve the feature or fix a bug. To that end, each message has a version number. All Omni Protocol implementations are expected to keep pace with changes of this nature, but in the event one falls behind, it must treat addresses which broadcast messages using version numbers it does not recognize as "black holes". That is, any funds or properties which enter the control of that address are considered lost and unspendable, since that address is using a newer version of the Omni Protocol. In the event that the out-dated implementation is upgraded to recognize the new message formats, the blockchain can be re-parsed, and nothing will be lost.
 
-This approach allows old versions of the Master Protocol to continue operating using the transactions they recognize without trying to parse messages of unknown meaning.
+This approach allows old versions of the Omni Protocol to continue operating using the transactions they recognize without trying to parse messages of unknown meaning.
 
 Generally, an out-dated parsing engine should either be upgraded to rejoin consensus, or retired by the owner. Implementations which are not in consensus can be used to attempt to defraud people
 
@@ -253,8 +261,8 @@ This section defines the fields that are used to construct transaction messages.
 
 ### Field: Number of coins
 + Description: Specifies the number of coins or tokens affected by the transaction this field appears in, as follows:
-    * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Master Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
-    * for indivisible coins or tokens, the value in this field is the integer number of Master Protocol coins or tokens (e.g. 1 represents 1 indivisible token)
+    * for divisible coins or tokens, the value in this field is to be divided by 100,000,000 (e.g. 1 represents 0.00000001 MSC, 100,000,000 represents 1.0 MSC), which allows for the number of Omni Protocol coins or tokens to be specified with the same precision as bitcoins (eight decimal places)
+    * for indivisible coins or tokens, the value in this field is the integer number of Omni Protocol coins or tokens (e.g. 1 represents 1 indivisible token)
 + Size: 64-bit signed integer, 8 bytes (same as Bitcoin Core)
 + Inter-dependencies: [Property type](#field-property-type)
 + Valid values: 1 to 9,223,372,036,854,775,807 which represents
@@ -262,7 +270,7 @@ This section defines the fields that are used to construct transaction messages.
     * 1 to 9,223,372,036,854,775,807 indivisible coins or tokens
 
 ### Field: Property type
-+ Description: Specifies if the Master Protocol coin or token to be created will be divisible or indivisible, and if that coin or token will replace or append an existing [Smart Property](#smart-property)
++ Description: Specifies if the Omni Protocol coin or token to be created will be divisible or indivisible, and if that coin or token will replace or append an existing [Smart Property](#smart-property)
 + Size: 16-bit unsigned integer, 2 bytes
 + Inter-dependencies: [Number of coins](#field-number-of-coins)
 + Valid values:
@@ -326,7 +334,7 @@ This section defines the fields that are used to construct transaction messages.
     *    0: [Simple Send](#transfer-coins-simple-send)
     *    3: [Send To Owners](#send-to-owners)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-mastercoins-for-bitcoins)
-    *   21: [Offer/Accept Master Protocol Coins for Another Master Protocol Currency (currency trade offer)](#sell-master-protocol-coins-for-another-master-protocol-currency)
+    *   21: [Offer/Accept Omni Protocol Coins for Another Omni Protocol Currency (currency trade offer)](#sell-omni-protocol-coins-for-another-omni-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
     *   50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
     *   51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
@@ -365,17 +373,17 @@ This section defines the fields that are used to construct transaction messages.
 
 Each transaction definition has its own version number to enable support for changes to each transaction definition. Up thru version 0.3.5 of this spec, the Transaction type field was a 4 byte integer. Since there were only 17 transactions identified, the upper 3 bytes of the field had a value of 0. For all spec versions starting with 0.4, the first field in each transaction message is the 2 byte version number, with an initial value of 0 and the Transaction type field is a 2 byte integer. So, each client must examine the first two bytes of the transaction message to determine how to parse the remainder of the message. If the value is 0, then the message is in the format specified in version 0.3.5 of this spec. If the value is at least 1, then the message is in the format associated with that version number.
 
-Master Protocol transactions are not reversible except as explicitly indicated by this spec.
+Omni Protocol transactions are not reversible except as explicitly indicated by this spec.
 
-Any Mastercoin transaction from any address that attempts to transfer, reserve, commit coins, or put coins in escrow while that address's available balance for that currency identifier is 0 will be invalidated. 
+Any Omni transaction from any address that attempts to transfer, reserve, commit coins, or put coins in escrow while that address's available balance for that currency identifier is 0 will be invalidated. 
 
 ## Transferring coins
 
-Transfers are unconditional payments from one Mastercoin address to another address, set of addresses, or proportionally to owners of a specific property.
+Transfers are unconditional payments from one Omni address to another address, set of addresses, or proportionally to owners of a specific property.
 
 ### Transfer Coins (Simple Send)
 
-Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-mastercoin-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
+Description: Transaction type 0 transfers coins in the specified currency from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-omni-protocol-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
 
 In addition to the validity constraints on the message field datatypes, the transaction is invalid if any of the following conditions is true:
 * the sending address has zero coins in its available balance for the specified currency identifier
@@ -433,9 +441,9 @@ Note to users: please make sure your proposed use case is legal in your jurisdic
 
 ## Distributed Exchange
 
-The Master Protocol allows users to trade coins without trusting a centralized website. When trading Mastercoins for bitcoins, this can be rather cumbersome, since it isn't possible to automatically match bids with asks, since we can't force the bidder to send bitcoins when a matching ask is found. When trading Mastercoins for other Master Protocol currencies, bids and asks are matched automatically.
+The Omni Protocol allows users to trade coins without trusting a centralized website. When trading Mastercoins for bitcoins, this can be rather cumbersome, since it isn't possible to automatically match bids with asks, since we can't force the bidder to send bitcoins when a matching ask is found. When trading Mastercoins for other Omni Protocol currencies, bids and asks are matched automatically.
 
-Consequently, the messages below are different for mastercoin/bitcoin exchange than they are for exchange between mastercoin and other Master Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/mastercoin exchange as well as the additional anti-spam fees and race conditions inherent in the system.
+Consequently, the messages below are different for mastercoin/bitcoin exchange than they are for exchange between mastercoin and other Omni Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/mastercoin exchange as well as the additional anti-spam fees and race conditions inherent in the system.
 
 ### Sell Mastercoins for Bitcoins
 
@@ -505,9 +513,9 @@ You must send the appropriate amount of bitcoins before the time limit expires t
 
 Please note that the buyer is allowed to send multiple bitcoin payments between the Purchase Offer and expiration block which are accumulated and used to adjust the Purchase Offer accordingly. The buyer's Mastercoin available balance is credited with the purchased coins when each bitcoin payment is processed.
 
-In order to make parsing Master Protocol transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but should be at least as high as the amount which is considered as dust threshold by a majority of Bitcoin nodes so that propagation of the transaction within the network and confirmation by a miner is not delayed.
+In order to make parsing Omni Protocol transactions easier, you must also include an output to the Exodus Address when sending the bitcoins to complete a purchase of Mastercoins. The output can be for any amount, but should be at least as high as the amount which is considered as dust threshold by a majority of Bitcoin nodes so that propagation of the transaction within the network and confirmation by a miner is not delayed.
 
-Other Master Protocol messages (for instance if the buyer wants to change his offer) are not counted towards the actual purchase, even though bitcoins are sent to the selling address as part of encoding the messages. 
+Other Omni Protocol messages (for instance if the buyer wants to change his offer) are not counted towards the actual purchase, even though bitcoins are sent to the selling address as part of encoding the messages. 
 
 Say you see an offer such as the one listed above, and wish to initiate a purchase of those coins. Doing so takes 16 bytes:
 
@@ -518,9 +526,9 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 |Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
 |Amount to be purchased|[Number of Coins](#field-number-of-coins)|130,000,000 (1.3 coins) |
 
-### Sell Master Protocol Coins for Another Master Protocol Currency
+### Sell Omni Protocol Coins for Another Omni Protocol Currency
 
-Description: Transaction type 21 is used to both publish and accept an offer to sell coins in one Master Protocol Currency for coins in another Master Protocol Currency.
+Description: Transaction type 21 is used to both publish and accept an offer to sell coins in one Omni Protocol Currency for coins in another Omni Protocol Currency.
 
 If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), the transaction is invalid. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell order. The seller could update the sell order to include these newly acquired coins, see [Change a Transaction Type 21 Coin Sell Order](#change-a-transaction-type-21-coin-sell-order) below.
 
@@ -582,7 +590,7 @@ Existing orders that match are sorted as follows to be applied to the new order:
 
 If there are no matches for the new sell order or the aggregate amount desired in the matching orders is less than the amount for sale in the new sell order, the new sell order must be added to the list of existing sell orders, with the remaining amount for sale at the original unit price. This order is now a candidate for matching against future sell orders. Note that when only some coins from an existing order are purchased, the remaining coins from that order are still for sale at the original unit price.
 
-Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins which each represent one ounce of gold, derived from Mastercoins and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
+Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (hypothetical Omni Protocol coins which each represent one ounce of gold and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
 
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ---- |
@@ -594,7 +602,7 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (coins
 |Amount desired|[Number of Coins](#field-number-of-coins)|5,000,000,000 (50.0 coins) |
 | Action | [Metadex Sell Offer sub-action](#field-metadex-sell-offer-sub-action) | 1 (ADD new funds for sale) | 
 
-Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Mastercoin ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Master Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin. 
+Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Omni ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Omni Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin. 
 
 An offer to sell coins can be changed or cancelled by publishing additional transactions with [Metadex Sell offer sub-action](#field-metadex-sell-offer-sub-action) variations:
 
@@ -624,7 +632,7 @@ The UI must indicate if the update was successful and how many coins were purcha
 
 ## Smart Property
 
-The Master Protocol supports the creation of property tokens to be used for titles, deeds, user-backed currencies, and even investments in a company. Property tokens can be bought, sold, transferred, and used for betting, just as Master Protocol currencies are.
+The Omni Protocol supports the creation of property tokens to be used for titles, deeds, user-backed currencies, and even investments in a company. Property tokens can be bought, sold, transferred, and used for betting, just as Omni Protocol currencies are.
 
 Properties are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2. Additional properties and currencies therefore start at ID #3. Properties issued and traded using real MSC are kept completely distinct from those issued and traded using Test MSC, so the ID numbering systems for the two [ecosystems](#field-ecosystem) are independent. Test Mastercoin properties have the most significant bit set to distinguish them from real properties, and they cannot be traded against real Mastercoins nor otherwise interact with non-test properties. Test MSC property IDs  also start numbering from 3, but with the most significant bit set. In sandbox environments using only Test MSC, these IDs can be displayed without the MSB set, for easier reading.
 
@@ -643,9 +651,11 @@ Currently only new property creation is supported, and the append/replace proper
 
 Any time the name of a property is displayed, the ID number of the property must also be displayed with it in the format "NAME (ID)", to avoid name collisions. For instance, "Quantum Miner (8)". This is very important to prevent a malicious user from creating a property to impersonate another property.
 
-To help distinguish legitimate companies and ventures from scams, spam, and experiments, the Master Protocol allows users to spend Mastercoins for the purpose of promoting a smart property. When UI clients display smart properties, the default ordering should be based on how many Mastercoins have been spent for promoting the property, adjusted for how long ago the Mastercoins were spent. Details on promoting a smart property by spending Mastercoins and how that affects sort ordering can be found below.  
+To help distinguish legitimate companies and ventures from scams, spam, and experiments, the Omni Protocol allows users to spend Mastercoins for the purpose of promoting a smart property. When UI clients display smart properties, the default ordering should be based on how many Mastercoins have been spent for promoting the property, adjusted for how long ago the Mastercoins were spent. Details on promoting a smart property by spending Mastercoins and how that affects sort ordering can be found below.  
 
 The "Property Data" field is general-purpose text, but can be used for things like storing the hash of a contract to ensure it is in the block-chain at property creation (i.e. "Proof of Existence").
+
+
 
 All property creation transaction types (i.e. 50, 51, 54) can be restricted such that only a specified list of addresses can use the resulting property tokens. This can be useful when the issuer wants to restrict their token to a set of approved people, such as those who have provided identifying documentation in compliance with KYC (know your customer) AML (anti-money-laundering) laws. When creating a property which should be restricted to a set of addresses, simply set the reference address to be the address which created the list of approved addresses. Addresses which are not on the list will not be able to receive or otherwise interact with the token (transactions attempting to do so are invalid). However, addresses which are removed from the list can still send their restricted tokens to another approved address using simple send, but they cannot receive new coins or use the coins in any other way. This prevents tokens from effectively being destroyed when addresses are removed from the approved list. To create a list of addresses, see [Create a List of Addresses](#create-a-list-of-addresses) later in this document.
 
@@ -797,7 +807,7 @@ Say that having created your "Quantum Miner" smart property (which was assigned 
 
 This transaction permanently destroys Mastercoins in exchange for favorable placement of this property in the default sort-ordering of properties on every UI. Protocol parsers accumulate all promotions of a property (which can be done by any address which has Mastercoins), with newer promotions being worth more than older promotions. 
 
-To accomplish this time-weighting, a promotion is worth (# Mastercoins spent) * 3^(years since exodus), where "years since exodus" is the number of years (including partial years) since the Mastercoin fund-raiser ended on September 1st 2013, and thus new promotions are always worth 3x as much as year-old promotions and 9x as much as two-year-old promotions if the same number of Mastercoins were spent on each.
+To accomplish this time-weighting, a promotion is worth (# Mastercoins spent) * 3^(years since exodus), where "years since exodus" is the number of years (including partial years) since the Mastercoin crowdsale ended on September 1st 2013, and thus new promotions are always worth 3x as much as year-old promotions and 9x as much as two-year-old promotions if the same number of Mastercoins were spent on each.
 
 UIs will probably also choose to offer other sort orderings, such as by transaction volume, removing the need to continually promote a property once it is well-established. Categories and subcategories should be similarly sorted, using the sum of the promotions they contain by default with other sorting available such as the sum of the transaction volumes. UI designers should expect the number of spammy properties, categories, and sub-categories to be quite large, so intelligent sorting will be important.
 
@@ -888,7 +898,7 @@ Say that your project is finished and you want to start burning tokens in exchan
 
 ## Smart Property Administration
 
-The Master Protocol provides support for a limited number of administrative tasks regarding Smart Properties. Administrative actions are permitted only by the Issuer on Record (issuer) which is implicitly recognized as the address which originally broadcast the transaction that reserved the currency ID of the Smart Property in question until explicitly changed.  The transactions which create an implicit Issuer on Record are:
+The Omni Protocol provides support for a limited number of administrative tasks regarding Smart Properties. Administrative actions are permitted only by the Issuer on Record (issuer) which is implicitly recognized as the address which originally broadcast the transaction that reserved the currency ID of the Smart Property in question until explicitly changed.  The transactions which create an implicit Issuer on Record are:
 * 50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
 * 51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
 * 54: [Create a Managed Property with Grants and Revocations](#new-property-with-managed-number-of-tokens)
@@ -916,7 +926,7 @@ The transactions below are still subject to revision and therefore are not inclu
 
 ## Creating a List of Addresses
 
-The Master Protocol allows the creation of a list of addresses which can then be referenced by other transactions. For instance, some tokens may be restricted to only be used by a set of approved addresses, such as addresses of people who have provided identifying documentation in compliance with KYC (know your customer) AML (anti-money-laundering) laws. See the introduction to [Smart Property](#smart-property) above for details on how to restrict a token to a set of addresses.
+The Omni Protocol allows the creation of a list of addresses which can then be referenced by other transactions. For instance, some tokens may be restricted to only be used by a set of approved addresses, such as addresses of people who have provided identifying documentation in compliance with KYC (know your customer) AML (anti-money-laundering) laws. See the introduction to [Smart Property](#smart-property) above for details on how to restrict a token to a set of addresses.
 
 To create or append a list of addresses, publish the following notification from the address which will maintain the list:
 
@@ -951,7 +961,7 @@ Any referenced addresses are removed from the list.  Note that as with the previ
 
 ## Transactions to Limit Funds (Theft Prevention)
 
-The Master Protocol defines some transactions which effectively lock funds from being spent quickly, making theft of a "savings" wallet much more difficult, even if that wallet is online.
+The Omni Protocol defines some transactions which effectively lock funds from being spent quickly, making theft of a "savings" wallet much more difficult, even if that wallet is online.
 
 ### Marking an Address as “Savings”
 
@@ -959,7 +969,7 @@ The Master Protocol defines some transactions which effectively lock funds from 
 1. [Transaction type](#field-transaction-type) = 10
 1. [Reversibility period](#field-time-period-in-seconds) = 2,592,000 (30 days) 
 
-Marking an address as savings is PERMANENT and cannot be undone. If an address is marked as savings, the reversibility rules affect not only Mastercoins, but any Master Protocol child currency stored at that address.
+Marking an address as savings is PERMANENT and cannot be undone. If an address is marked as savings, the reversibility rules affect not only Mastercoins, but any Omni Protocol child currency stored at that address.
 
 When marking an address as savings, the reference payment points to a “guardian” address authorized to reverse fraudulent transactions. The guardian address should preferably be from an unused offline or paper wallet. The sending address is the address to be marked as savings.
 
@@ -987,7 +997,7 @@ Say you notice that the address you marked as savings has been compromised, and 
 1. [Transaction version](#field-transaction-version) = 0
 1. [Transaction type](#field-transaction-type) = 11 for marking a compromised savings address
 
-This transaction must be sent from the guardian address. The reference payment must be to the compromised savings address. Funds from any pending transactions and any remaining funds will then be transferred to the guardian address, both Mastercoins and any other Master Protocol currencies.
+This transaction must be sent from the guardian address. The reference payment must be to the compromised savings address. Funds from any pending transactions and any remaining funds will then be transferred to the guardian address, both Mastercoins and any other Omni Protocol currencies.
 
 #### Advantages of the Savings/Guardian Model
 
@@ -995,7 +1005,7 @@ The savings/guardian model is intended to allow the user to take extreme precaut
 
 This model also facilitates estate planning. You simply give your heir(s) a paper copy to the private key of your savings address, but you keep the guardian address key to yourself. If you die, your heirs can simply transfer the funds out of your savings (they will have to wait for the reversibility period to pass), but they can't steal from you while you are alive since you are the only one with the key to the guardian address and can reverse their transaction if they try.
 
-It should be obvious that anyone parsing Mastercoin transactions for payment must check that the payment is not reversible before completing the transaction!
+It should be obvious that anyone parsing Omni transactions for payment must check that the payment is not reversible before completing the transaction!
 
 
 ### Marking an Address as Rate-Limited
@@ -1028,7 +1038,7 @@ This transaction must be sent from the guardian address in charge of the rate li
 
 ## Data Streams and Betting
 
-The Master Protocol allows users to publish data onto the bitcoin block-chain, which other users can then bet on.
+The Omni Protocol allows users to publish data onto the bitcoin block-chain, which other users can then bet on.
 
 ### Registering a Data Stream
 (AKA Data Feed)
@@ -1065,7 +1075,7 @@ Say you decide you would like publish that today's gold price is 15 Mastercoins 
 
 ### Offering a Bet
 
-Say you want to use USDCoins (another hypothetical currency derived from Mastercoin, each USDCoin being worth one U.S. Dollar) to bet $200 that the gold ticker will not rise above 20 Mastercoins/Ounce in the next 30 days at 2:1 odds. For the sake of example, we will assume that USDCoins have currency identifier 5. Creating this bet takes 36 bytes:
+Say you want to use USDCoins (another hypothetical Omni Protocol currency, each USDCoin being worth one U.S. Dollar) to bet $200 that the gold ticker will not rise above 20 Mastercoins/Ounce in the next 30 days at 2:1 odds. For the sake of example, we will assume that USDCoins have currency identifier 5. Creating this bet takes 36 bytes:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. Transaction type = 40 for creating a bet offer (32-bit unsigned integer, 4 bytes)
@@ -1142,7 +1152,7 @@ CFD bets store "leverage" in place of the data used by "bet threshold" in other 
 
 ### Accepting a Bet
 
-Say you see a bet which you would like to accept. Simply publish the inverse bet with matching odds and the same end date, and the Master Protocol will match them automatically (that is, everyone parsing Mastercoin data will mark both bets as accepted). Here is what a bet matching our last example would look like:
+Say you see a bet which you would like to accept. Simply publish the inverse bet with matching odds and the same end date, and the Omni Protocol will match them automatically (that is, everyone parsing Omni data will mark both bets as accepted). Here is what a bet matching our last example would look like:
 
 1. [Transaction version](#field-transaction-version) = 0
 1. Transaction type = 40 for creating a bet offer (32-bit unsigned integer, 4 bytes)
@@ -1162,7 +1172,7 @@ Once GoldCoins reach a value of 20 or the bet deadline passes, the bet winner ge
 
 ## Distributed E-Commerce
 
-The Master Protocol allows for the buying and selling of physical goods in a sort of distributed classified ads system, with purchase money held in escrow by the protocol. Some might call this a "distributed e-bay", while the cynical might call it a "distributed silk road". Due to the potential for black-market uses of this feature, we encourage our users to know and follow the laws of their respective jurisdictions.
+The Omni Protocol allows for the buying and selling of physical goods in a sort of distributed classified ads system, with purchase money held in escrow by the protocol. Some might call this a "distributed e-bay", while the cynical might call it a "distributed silk road". Due to the potential for black-market uses of this feature, we encourage our users to know and follow the laws of their respective jurisdictions.
 
 ### Listing Something for Sale
 
@@ -1229,13 +1239,13 @@ In order to avoid people gaming the reputation system, some coins must be destro
 
 ## Escrow-Backed User Currencies (experimental proposed feature)
 
-The most important and also the most controversial feature (at least the escrow backed part) of the Master Protocol is the built-in support for users to create their own currencies out of existing Mastercoins. For the purposes of demonstrating how user currencies will work, we will use an example currency called “GoldCoins”, which are intended to track the value of one ounce of gold, and which may be stored, transferred, bought, and sold similarly to Mastercoins.
+The most important and also the most controversial feature (at least the escrow backed part) of the Omni Protocol is the built-in support for users to create their own currencies out of existing Mastercoins. For the purposes of demonstrating how user currencies will work, we will use an example currency called “GoldCoins”, which are intended to track the value of one ounce of gold, and which may be stored, transferred, bought, and sold similarly to Mastercoins.
 
 ### Stability Concept
 
 So how do we drive the value of these GoldCoins to their target value, when demand for them may surge and decline? The price of GoldCoins is decided by the balance of supply and demand. Since we can’t control the demand for GoldCoins, we must control the supply. The key to accomplishing this is to use an escrow fund which holds Mastercoins, as shown below:
 
-![Mastercoin Protocol Layers](images/stability.png) 
+![Omni Protocol Layers](images/stability.png) 
 
 The escrow fund operates like a battery on the power grid, charging when there is excess energy then discharging where there isn't enough. When there are too few GoldCoins (GoldCoin price is too high), the escrow fund releases new GoldCoins, and the escrow-battery “charges” by holding Mastercoins in escrow. When there are too many GoldCoins (GoldCoin price is too low), the escrow fund purchases some of the excess GoldCoins, thereby “discharging” the escrow-battery as it releases the stored Mastercoins.
 
@@ -1254,9 +1264,9 @@ Say you want to create the GoldCoin currency described above, using the Gold dat
 1. Sale/Transfer Penalty = 100,000 for 0.1% (32-bit unsigned integer, 4 bytes, any time GoldCoins are sold or transferred, 0.1% are destroyed, which improves the health of the escrow fund)
 
 
-As with properties, currencies are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2, so if GoldCoin is the first Master Protocol currency, it will get a currency identifier of 3. 
+As with properties, currencies are awarded currency identifiers in the order in which they are created. Mastercoin is currency identifier 1 (bitcoin is 0), and Test Mastercoins have currency identifier 2, so if GoldCoin is the first Omni Protocol currency, it will get a currency identifier of 3. 
 
-The currency held in escrow is the parent currency of the data stream. In this example it is Mastercoins, but it could also be any currency derived from Mastercoins. For instance, GoldCoins could later be held in escrow to support a currency whose data stream uses GoldCoins as a parent currency.
+The currency held in escrow is the parent currency of the data stream. In this example it is Mastercoins, but it could also be any Omni Protocol currency. For instance, GoldCoins could later be held in escrow to support a currency whose data stream uses GoldCoins as a parent currency.
 
 The escrow fund delay of 4 days means that the price of GoldCoins must be too high (or too low) for 4 days in a row before the escrow fund will take any action.
 
@@ -1284,20 +1294,20 @@ Escrow funds should generally be tuned to act slowly. This will allow arbitrage 
 
 
 
-# Appendix A – Storing Mastercoin data in the blockchain 
+# Appendix A – Storing Omni Protocol data in the blockchain 
 By Zathras, Copyright © 2013 The Mastercoin Foundation 
 
-The following appendix serves to detail the different approaches to storing Mastercoin transaction data in the Bitcoin blockchain along with their validity requirements and use cases. 
+The following appendix serves to detail the different approaches to storing Omni transaction data in the Bitcoin blockchain along with their validity requirements and use cases. 
 
-This appendix will not discuss the varying types of Mastercoin transaction or what the transaction data contains (these are defined in the main body of the Mastercoin specification) and will focus solely on transaction data storage.
+This appendix will not discuss the varying types of Omni Protocol transactions or what the transaction data contains (these are defined in the main body of the Omni Protocol Specification) and will focus solely on transaction data storage.
  
-For the purposes of a simplified overview, parties wishing to develop Mastercoin software should support the decoding of both Class A and Class B transactions, but only need support encoding of Class B transactions. 
+For the purposes of a simplified overview, parties wishing to develop Omni software should support the decoding of both Class A and Class B transactions, but only need support encoding of Class B transactions. 
 
 Note that for all transaction classes, we have some unused "padding" bytes at the end of most messages. Those bytes are undefined (they are ignored, so they can have any value).
 
 ## Class A transactions (also known as the ‘original’ method) 
 
-Class A transactions were the first class of Mastercoin transaction and store data in the blockchain by utilizing fake Bitcoin addresses to encode transaction data. 
+Class A transactions were the first class of Omni Protocol transaction and store data in the blockchain by utilizing fake Bitcoin addresses to encode transaction data. 
 
 The transaction data is encoded into said fake Bitcoin address which is then used as an output in a single Bitcoin transaction satisfying the following requirements: 
 
@@ -1327,7 +1337,7 @@ As the UTXO set is designed to be memory resident it is thus in the interests of
 
 Class B transactions were developed to address this issue by using provably redeemable outputs.  Class A transactions are thus considered deprecated and are supported for backwards compatibility only.    
 
-NOTE: Class A transactions are restricted to the ‘simple send’ transaction type only.  All other Mastercoin transaction types are supported by Class B transactions only.  Client implementations should utilize Class B for all transaction types, including ‘simple send’. 
+NOTE: Class A transactions are restricted to the ‘simple send’ transaction type only.  All other Omni transaction types are supported by Class B transactions only.  Client implementations should utilize Class B for all transaction types, including ‘simple send’. 
 
 ## Class B transactions (also known as the ‘multisig’ method) 
 
@@ -1335,39 +1345,39 @@ Class B transactions attempt to address the UTXO ‘bloat’ issue by storing da
 
 By adopting a ‘1-of-n’ approach (credit Tachikoma @ bitcointalk) we can increase n to the number of packets (public keys) needed to store the transaction data while maintaining the ability of the sender or their designated party to redeem the output.  
 
-NOTE: The reference client currently supports a maximum value of 3 for n.  As one signatory should be the sender for redemption purposes, there is a current limit of 2 data packets per output.  A number of multisig outputs can be combined to increase the space available for transaction data as required.  On decoding all Mastercoin packets from all multisig outputs are ordered via their sequence number and evaluated as a continuous data stream. 
+NOTE: The reference client currently supports a maximum value of 3 for n.  As one signatory should be the sender for redemption purposes, there is a current limit of 2 data packets per output.  A number of multisig outputs can be combined to increase the space available for transaction data as required.  On decoding all Omni Protocol packets from all multisig outputs are ordered via their sequence number and evaluated as a continuous data stream. 
 
 Transaction data is encoded into one or a number of compressed public keys which are obfuscated and then should have their last byte manipulated to form a valid ECDSA point.  These compressed public keys then can be included as signatories in a multisig output ordered by their sequence number. 
 
-The size of a Mastercoin packet in a compressed public key is thus 31 bytes (33 bytes minus the first and last bytes for the key identifier (02) and ECDSA manipulation byte).   The Mastercoin packet reserves the first byte for the sequence number, providing a total of 30 bytes per packet for Mastercoin transaction data.  The range of sequence numbers in a Class B transaction is 1 to 255, providing for a total 7,650 bytes maximum actual transaction data storage per Mastercoin Class B transaction. 
+The size of an Omni Protocol packet in a compressed public key is thus 31 bytes (33 bytes minus the first and last bytes for the key identifier (02) and ECDSA manipulation byte).   The Omni Protocol packet reserves the first byte for the sequence number, providing a total of 30 bytes per packet for Omni Protocol transaction data.  The range of sequence numbers in a Class B transaction is 1 to 255, providing for a total 7,650 bytes maximum actual transaction data storage per Omni Class B transaction. 
 
 Sequence numbers are again used to order the packets (again first byte of the packet), however as we no longer need to use sequence numbers to identify the recipient (reference) address we are able to start the sequence at one (we do not start the sequence at zero due to our need for a positive sequence number in obfuscation). 
 
-Obfuscation is performed by SHA256 hashing the sender's address S times (where S is the sequence number) and taking the first 31 bytes of the resulting hash and XORing with the 31 byte Mastercoin  packet.  Multiple SHA256 passes are performed against an uppercase hex representation of the previous hash.  
+Obfuscation is performed by SHA256 hashing the sender's address S times (where S is the sequence number) and taking the first 31 bytes of the resulting hash and XORing with the 31 byte Omni packet.  Multiple SHA256 passes are performed against an uppercase hex representation of the previous hash.  
                 
-EXAMPLE:  The following provides example output for an obfuscated Mastercoin packet (where and XX is the last byte reserved for ECDSA point validity manipulation):
+EXAMPLE:  The following provides example output for an obfuscated Omni packet (where and XX is the last byte reserved for ECDSA point validity manipulation):
 <table>
 <tr>
     <td>REFERENCE ADDRESS</td><td>{1CdighsfdfRcj4ytQSskZgQXbUEamuMUNF }</td> 
 </tr><tr>
     <td>SHA256 HASH (S TIMES) OF ADDRESS</td><td>{1D9A3DE5C2E22BF89A1E41E6FEDAB54582F8A0C3AE14394A59366293DD130C }59</td>
 </tr><tr>
-    <td>CLEARTEXT MASTERCOIN PACKET</td><td>02{ 0100000000000000010000000002faf0800000000000000000000000000000 }XX </td>
+    <td>CLEARTEXT OMNI PACKET</td><td>02{ 0100000000000000010000000002faf0800000000000000000000000000000 }XX </td>
 </tr><tr>
-    <td>OBFUSCATED MASTERCOIN PACKET</td><td>02{ 1C9A3DE5C2E22BF89B1E41E6FED84FB502F8A0C3AE14394A59366293DD130C }XX </td>
+    <td>OBFUSCATED OMNI PACKET</td><td>02{ 1C9A3DE5C2E22BF89B1E41E6FED84FB502F8A0C3AE14394A59366293DD130C }XX </td>
 </tr>
 </table>
 
-Once the obfuscated Mastercoin packet is prepared, the key identifier (02) is prefixed and a random byte compressed public key is then run across a check to ensure the key is a valid ECDSA point.  If the key fails this check, the last byte is simply rotated with a different random byte and tested again until the key forms a valid ECDSA point. 
+Once the obfuscated Omni packet is prepared, the key identifier (02) is prefixed and a random byte compressed public key is then run across a check to ensure the key is a valid ECDSA point.  If the key fails this check, the last byte is simply rotated with a different random byte and tested again until the key forms a valid ECDSA point. 
 
-![Mastercoin Protocol Layers](images/classb_obfuscated.png) 
+![Omni Protocol Layers](images/classb_obfuscated.png) 
 
 These compressed public key 'packets' can then be included in one or multiple OP_CHECKMULTISIG output along with the senders public key.  A single transaction must be constructed satisfying the following requirements: 
 * Has a single or the largest pay-to-pubkey-hash or pay-to-script-hash (since block height 322000) input with a valid signature to designate the sending address
 * Has an output for the recipient address (the 'reference' address)
 * Has an output for the exodus address
-* Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be a valid public key address designated by the sender which may be used to reclaim the bitcoin assigned to the output, the second must be Mastercoin 'data package n' and the third may be 'data package n+1'
-* Mastercoin 'data packages' appear in order by their sequence number 
+* Has one or more n-of-m OP_CHECKMULTISIG outputs each containing at least two public keys whereby the first should be a valid public key address designated by the sender which may be used to reclaim the bitcoin assigned to the output, the second must be Omni 'data package n' and the third may be 'data package n+1'
+* Omni 'data packages' appear in order by their sequence number 
 * Additional outputs are permitted 
 
 Further:
@@ -1385,11 +1395,11 @@ Further:
 
 # Appendix B – Regulatory and Legal Compliance - Know Your Jurisdiction
 
-It should be clear by now that the Master Protocol can be used for activities that may be regulated or even prohibited in certain jurisdictions. Anyone working on an implementation of the Master Protocol should be very careful to warn users to know and understand the regulatory environment of their jurisdiction and country of residence in order to not break any laws. It is up to the user to know the laws of their country, and not (for instance) engage in sports betting in a jurisdiction / country where sports betting is not a legal activity.
+It should be clear by now that the Omni Protocol can be used for activities that may be regulated or even prohibited in certain jurisdictions. Anyone working on an implementation of the Omni Protocol should be very careful to warn users to know and understand the regulatory environment of their jurisdiction and country of residence in order to not break any laws. It is up to the user to know the laws of their country, and not (for instance) engage in sports betting in a jurisdiction / country where sports betting is not a legal activity.
 
 Also, the contributors to this open source specification are not securities experts, and offer no advice or counsel on how to properly comply with securities or other regulations. This protocol is presented as a open source tool on which others can implement clients and build innovative services for the benefit of others. 
 
-That said, stable distributed currencies / smart property and the other features of this protocol will be incredibly useful in a huge number of legal applications, and even modest success of this protocol could allow early adopters (and even those who simply hold bitcoins) to greatly benefit. The Master Protocol and Mastercoins, are just neutral tools, capable of being used for good or for evil. We urge our early adopters to consider how they may use Mastercoin for good, and if they gain from its adoption, to use those funds for good. It will take a lot of work to make the good, outshine bad actors.
+That said, stable distributed currencies / smart property and the other features of this protocol will be incredibly useful in a huge number of legal applications, and even modest success of this protocol could allow early adopters (and even those who simply hold bitcoins) to greatly benefit. The Omni Protocol and Mastercoins, are just neutral tools, capable of being used for good or for evil. We urge our early adopters to consider how they may use Omni for good, and if they gain from its adoption, to use those funds for good. It will take a lot of work to make the good, outshine bad actors.
 
 
 
@@ -1403,7 +1413,7 @@ Anyone who puts their rent money or life savings into an experiment of this type
 
 # Appendix D - Webservice verification API
 
-One of the large differences between Mastercoin and Bitcoin is that there is no reference implementation available for Mastercoin which you can use to test your own implementation. The official spec, the document you hopefully just read, is open for interpretation. This makes it very difficult to make sure every implementation processes transactions the same. In order to make it easier to compare implementations and spot discrepancies every webbased Mastercoin service should ideally implement the following API calls.
+One of the large differences between Omni and Bitcoin is that there is no reference implementation available for Omni which you can use to test your own implementation. The official spec, the document you hopefully just read, is open for interpretation. This makes it very difficult to make sure every implementation processes transactions the same. In order to make it easier to compare implementations and spot discrepancies every web-based Omni service should ideally implement the following API calls.
 
 **GET /mastercoin_verify/addresses?currency_id=#currency_id#**
 
@@ -1437,13 +1447,13 @@ User B has a valid Purchase Offer to buy 5 MSC from User A. He sends out a trans
 
 
 
-# Appendix E - Understanding the cost of Master protocol messages
+# Appendix E - Understanding the cost of Omni protocol messages
 
 [See this issue](https://github.com/mastercoin-MSC/spec/issues/192) for discussion on optimizing this cost.
 
-The Master Protocol is at its core a layer of functionality on top of Bitcoin, utilizing the Bitcoin network for cryptographically secured data storage.  As such inherent to this approach are Bitcoin transaction fees.
+The Omni Protocol is at its core a layer of functionality on top of Bitcoin, utilizing the Bitcoin network for cryptographically secured data storage.  As such inherent to this approach are Bitcoin transaction fees.
 
-In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Master Protocol message.  
+In addition to transaction fees however there are costs associated with the outputs used to store transaction data for the various classes of transaction and these must be considered to reach a total cost to the end user for broadcasting a given Omni Protocol message.  
 
 Each output should carry a value higher than the dust threshold (0.00005460 as of Q2 2014) in order for the transaction to be relayed by the majority of nodes and considered for inclusion within a block.  Class B multisig outputs are significantly larger and thus command a higher minimum output value.  For the purposes of this appendix default minimum values of 0.00006 and 0.00012 respectively will be used.
 
@@ -1465,9 +1475,9 @@ Total perceived cost ~$0.18 per transaction.
   
 Total perceived cost ~$0.22 per transaction.  
 
-Each multisig output in a Class B transaction may contain two Master Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
+Each multisig output in a Class B transaction may contain two Omni Protocol packets of 30 bytes each.  Thus we can infer (again at 650 USD per BTC) that for every 60 bytes, we increase perceived transaction cost by ~$0.08.
   
-The term 'perceived' cost has been applied as the Master Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
+The term 'perceived' cost has been applied as the Omni Protocol transaction model does not 'burn' (destroy) these outputs, but rather they are redeemable by the various participants of the transaction (with the exception of the Class A data address, hence its deprecation).  
 
 In a class A transaction (note class A allows simple send only):
 * The foundation (by controlling the Exodus address) may redeem the Exodus output  
@@ -1478,8 +1488,8 @@ In a class B transaction:
 * The reference address may redeem the Reference output
 * The sending address may redeem the Multisig output(s)
 
-As we can see from the above, the true cost of a Master Protocol message may be less than that of the perceived cost (as for example the sender may recover some of the cost).  A challenge for communication strategy will be providing awareness on this topic in a clear and simple fashion to the community.
+As we can see from the above, the true cost of a Omni Protocol message may be less than that of the perceived cost (as for example the sender may recover some of the cost).  A challenge for communication strategy will be providing awareness on this topic in a clear and simple fashion to the community.
 
 A further consideration relates to how multisig outputs are presented in the bitcoin reference client.  It is technically accurate to state that any of the addresses within a Class B multisig output can redeem, however only one of these addresses (the sending address) actually has a known private key.  The bitcoin reference client however of course has no way of knowing this and so does not include unspent multisig outputs in the displayed balance.  
 
-It is envisaged that in future Master Protocol clients will 'clean up' periodically by redeeming and consolidating unspent multisig outputs.
+It is envisaged that in future Omni Protocol clients will 'clean up' periodically by redeeming and consolidating unspent multisig outputs.
