@@ -71,7 +71,7 @@ Note that all transfers of value are still stored in the normal bitcoin block ch
 # Omni Protocol Terminology
 
 * The term "Omni Protocol" refers to the protocol defined by this specification.
-* The term "Omni Layer" referes to the Omni Protocol, its Omni Core implementation, and the entire Omni ecosystem.
+* The term "Omni Layer" refers to the Omni Protocol, its Omni Core implementation, Omniwallet and other wallets, and other apps and organizations in the Omni community.
 * The term "Mastercoins" applies to the digital tokens that access the features of the "Omni Protocol" clients.
 * The term "MSC" is used as the abbreviation for "Mastercoins".
 
