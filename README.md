@@ -333,6 +333,7 @@ This section defines the fields that are used to construct transaction messages.
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
     *    3: [Send To Owners](#send-to-owners)
+    *    4: [Send All](#transfer-all-coins-send-all)
     *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-mastercoins-for-bitcoins)
     *   21: [Offer/Accept Omni Protocol Coins for Another Omni Protocol Currency (currency trade offer)](#sell-omni-protocol-coins-for-another-omni-protocol-currency)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
@@ -404,6 +405,23 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 |Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin)|
 |Amount to transfer|[Number of Coins](#field-number-of-coins)|100,000,000 (1.0 coins) |
 
+### Transfer All Coins (Send All)
+
+Description: Transaction type 4 transfers all coins from the sending address to the reference address, defined in [Appendix A](#appendix-a-storing-omni-protocol-data-in-the-blockchain). This transaction can not be used to transfer bitcoins.
+
+In addition to the validity constraints on the message field datatypes, the transaction is invalid if any of the following conditions is true:
+* the sending address has zero coins in all omni currencies
+
+A Send All to a non-existent address will destroy the coins in question, just like it would with bitcoin.
+
+The data stored is:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 0 | 
+
+
 ### Send To Owners
 
 Description: Transaction type 3 transfers coins in the specified currency from the sending address to the current owners of that currency. The current owners are all the addresses, excluding the sender's address, that have a non-zero balance of the specified currency when the transaction message is processed. The Amount to transfer must be divided proportionally among the current owners based upon each owner's current available balance plus reserved amount, excluding the amount owned by the sender.
@@ -444,6 +462,8 @@ Note to users: please make sure your proposed use case is legal in your jurisdic
 The Omni Protocol allows users to trade coins without trusting a centralized website. When trading Mastercoins for bitcoins, this can be rather cumbersome, since it isn't possible to automatically match bids with asks, since we can't force the bidder to send bitcoins when a matching ask is found. When trading Mastercoins for other Omni Protocol currencies, bids and asks are matched automatically.
 
 Consequently, the messages below are different for mastercoin/bitcoin exchange than they are for exchange between mastercoin and other Omni Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/mastercoin exchange as well as the additional anti-spam fees and race conditions inherent in the system.
+
+
 
 ### Sell Mastercoins for Bitcoins
 
