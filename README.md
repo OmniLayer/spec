@@ -534,7 +534,7 @@ Distributed token exchange
 
 The distributed token exchange, the "OmniDEx", supports trading of Omni Protocol tokens with automated order matching.
 
-For all transaction types that involve 2 Omni Protocol currencies, the currencies must be in the same ecosystem. Amounts must be greater than zero.
+For all transaction types that involve two Omni Protocol currencies, the currencies must be in the same ecosystem. Amounts must be greater than zero.
 
 ### Create an Order to Sell Omni Protocol Coins for Another Omni Protocol Currency
 
@@ -590,9 +590,9 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (hypot
 
 Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Omni ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Omni Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin. 
 
-### Cancel all my open orders of a currency pair at a specified price
+### Cancel all open orders of a currency pair at a specified price
 
-Description: Transaction type 26 cancels open orders for a given set of currencies at a given price. It is required that the token identifiers and price exactly match the order to be canceled.
+Description: Transaction type 26 cancels open orders, submitted by the address, for a given set of currencies at a given price. It is required that the token identifiers and price exactly match the order to be canceled.
 
 | **Field**                  | **Type**        | **Example**                        |
 | -------------------------- | --------------- | ---------------------------------- |
@@ -603,9 +603,9 @@ Description: Transaction type 26 cancels open orders for a given set of currenci
 | Tokens desired in exchange | [Currency identifier](#field-currency-identifier) | 1 (Omni)                      |
 | Amount desired in exchange | [Number of Coins](#field-number-of-coins)   | 500000000 (5.0 divisible tokens)   |
 
-#### Cancel all my orders of a currency pair
+#### Cancel all orders of a currency pair
 
-Description: Transaction type 27 cancels all open orders, submitted by the address, for a given pair of two currencies (one side of the order book).
+Description: Transaction type 27 cancels all open orders, submitted by the address, for a given pair of two currencies (one side of the order book) belonging to the address submitting the transaction.
 
 | **Field**                  | **Type**        | **Example**                        |
 | -------------------------- | --------------- | ---------------------------------- |
@@ -614,9 +614,9 @@ Description: Transaction type 27 cancels all open orders, submitted by the addre
 | Tokens listed for sale     | [Currency identifier](#field-currency-identifier) | 3 (Gold Coins)            |
 | Tokens desired in exchange | [Currency identifier](#field-currency-identifier) | 1 (Omni)                      |
 
-The Tokens listed for sale and the Tokens desired in exchange must be existing smart property id's, in the same ecosystem, in order for the transaction to be valid. The transaction is valid even if the address has no open orders for the given pair of currencies.
+The Tokens listed for sale and the Tokens desired in exchange must refer to existing smart properties, in the same ecosystem, in order for the transaction to be valid. The transaction is not valid if the address has no open orders for the given pair of currencies.
 
-#### Cancel all my orders in an ecosystem
+#### Cancel all orders in an ecosystem
 
 Description: Transaction type 28 is used to cancel all open orders, submitted by the address, for all currencies in the specified ecosystem.
 
