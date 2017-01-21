@@ -7,7 +7,7 @@ Version 0.5 - Omni Protocol rename version
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT gmail DOT com)
 * Maran Hidskes (https://github.com/maran)
 * David Johnston (https://github.com/DavidJohnstonCEO)
-* Ron Gross (https://github.com/ripper234?source=c)
+* Ron Gross (https://github.com/ripper234)
 * Marv Schneider (https://github.com/marv-engine)
 
 With input by Peter Todd (https://github.com/petertodd)
