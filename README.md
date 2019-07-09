@@ -878,11 +878,11 @@ Say that you have a smart property whose ID is 8 and you have just reached a fun
 ### Revoking Tokens for a Managed Property
 This feature is supported since block number 323230.
 
-Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction may have tokens revoked from the balance of the address that originally broadcast the property creation transaction.
+Description: Properties issued with a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction may have tokens voluntarily revoked from the balance of any address that has a positive token balance.
 
 It is invalid to attempt to revoke tokens on any property that was not broadcast as a [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens). 
 
-It is invalid to attempt to broadcast a token revoke on any property from an address other than the address that originally broadcast the [Property with Managed Number of Tokens](#new-property-with-managed-number-of-tokens) transaction.
+It is invalid to attempt to broadcast a token revoke on any property for an address other than the address that broadcasts the revoke transaction.
 
 It is invalid to attempt to revoke any amount of tokens in excess of the number owned and available by the address that broadcasts the transaction.
 
