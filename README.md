@@ -406,7 +406,7 @@ Say you want to transfer 1 Mastercoin to another address. Only 16 bytes are need
 
 ### Send To Owners
 
-Description: Transaction type 3 transfers coins in the specified currency from the sending address to the current owners of that currency. The current owners are all the addresses, excluding the sender's address, that have a non-zero balance of the specified currency when the transaction message is processed. The Amount to transfer must be divided proportionally among the current owners based upon each owner's current available balance plus reserved amount, excluding the amount owned by the sender.
+Description: Transaction type 3 transfers coins in the specified currency from the sending address to the current owners of that currency. The current owners are all the addresses, excluding the sender's address, that have a non-zero balance of the specified currency when the transaction message is processed. The Amount to transfer must be divided proportionally among the current owners based upon each owner's current available balance plus reserved amount, excluding the amount owned by the sender. If there are no owners of the property excluding the sending address, the transaction is invalid.
 
 The sending address must be charged a transfer fee for each address that receives coins as a result of this transaction. The fee is:
 * 0.00000001 Mastercoins for currencies in the MSC ecosystem, and 
