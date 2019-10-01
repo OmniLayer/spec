@@ -148,7 +148,7 @@ The most important thing is that reorgs ARE detected. If an implementation does 
 
 Also, in many cases a user may wish to do something with Mastercoins recently sent to them or otherwise affected by a recent transaction. Where possible, Omni-aware wallets should re-use bitcoins from the previous transactions in subsequent transactions which are dependent on the earlier transactions. In this way, if the earlier transaction is invalidated (by a reorg), the dependent transaction will also be invalidated.
 
-## Fees [NEEDS TO BE UPDATED FOR DEx FEES]
+## Fees [??? NEEDS TO BE UPDATED FOR DEx FEES]
 
 There are two broad categories of transactions which have no fees (other than fees charged by the bitcoin protocol layer):
 
