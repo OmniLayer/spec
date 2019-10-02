@@ -8,7 +8,7 @@ Version 0.5 - Omni Protocol rename version
 * Maran Hidskes (https://github.com/maran)
 * David Johnston (https://github.com/DavidJohnstonCEO)
 * Ron Gross (https://github.com/ripper234?source=c)
-* Marv Schneider (https://github.com/marv-engine)
+* Marv Schneider (https://github.com/marvgmail)
 
 With input by Peter Todd (https://github.com/petertodd)
 
@@ -447,16 +447,20 @@ Note to users: please make sure your proposed use case is legal in your jurisdic
 
 ## Distributed Exchange
 
-The Omni Protocol allows users to trade coins without trusting a centralized website. When trading Omni Protocol-based tokens for bitcoins, this can be cumbersome, because it isn't possible to automatically match bids with asks, since we can't force the bidder to send bitcoins when a matching ask is found. When trading Omni Tokens for other Omni Protocol currencies, bids and asks are matched automatically.
+The Omni Protocol allows users to trade coins without trusting a centralized website. When trading Omni Protocol-based tokens for bitcoins, there is an extra step in the process because it isn't possible to automatically match bids with asks, since we can't force the bidder to send bitcoins when a matching ask is found. When trading Omni Tokens for other Omni Protocol currencies, bids and asks are matched automatically.
 
-Consequently, the messages below are different for Omni Protocol currencies/bitcoin exchange than they are for exchange between Omni Token and other Omni Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/Omni Token exchange as well as the additional anti-spam fees and race conditions inherent in the system.
+Consequently, the messages below are different for Omni Protocol currencies/bitcoin exchange than they are for exchange between Omni Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/Omni Token exchange as well as the additional anti-spam fees and race conditions inherent in the system.
+
+The Omni Protocol currency/bitcoin exchange can be thought of more as a marketplace where purchasers select the specific sell offer they want to accept, rather than relying on the exchange to automatically match ask and bid offers.
 
 
 ### Sell Mastercoins for Bitcoins [??? ORIGINAL - WILL THIS BE SUPPORTED FOR FUTURE SUBMISSIONS OR JUST TO PROCESS PREVIOUS TX'S ALREADY IN THE BLOCKCHAIN?]
 
 Description: Transaction type 20 posts the terms of an offer to sell Mastercoins or Test Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for MSC or 2 for Test MSC.
 
-If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
+ The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
+ 
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), the transaction is invalid.
 
 The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
 
@@ -541,9 +545,11 @@ If the amount offered for sale exceeds the sending address's available balance (
 
 The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
 
-Note: An address can create multiple simultaneous Sell Omni Protocol Currencies for Bitcoins offers. These offers can be for the same or different Omni Protocol Currencies. Each offer is independent of any others. [??? WE NEED A GOOD WAY, IMMUNE TO RE-ORGS, TO UNIQUELY IDENTIFY A SELL OFFER]
+Note: An address can create multiple simultaneous Sell Omni Protocol Currencies for Bitcoins offers. These offers can be for the same or different Omni Protocol Currencies. Each offer is independent of any others, even if the unit price is the same [??? WITHIN WHAT DELTA?]. [??? WE NEED A SPACE EFFICIENT WAY, IMMUNE TO RE-ORGS, TO UNIQUELY IDENTIFY A SELL OFFER]
 
 Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins.
+
+[??? NEED DETAILS HERE ABOUT OMNI TOKEN FEE PAID BY SELLER TO STAKED OMNI TOKEN HOLDERS]
 
 Say you want to publish an offer to sell 1000 Omni Tokens for 1.5 bitcoins. Doing this takes 34 bytes:
 
@@ -591,12 +597,11 @@ Note that while the portion of an offer which has been accepted cannot be cancel
 
 Description: Transaction type 23 posts acceptance of an offer to sell Omni Protocol Currencies for bitcoins. All or some of the coins offered can be purchased with this transaction.
 
-The reference address must point to the seller's address, to identify whose offer you are accepting. The purchaser’s address must be different than the seller’s address.
+The reference address must point to the seller's address, to identify whose offer you are accepting. The purchaser’s address must be different than the seller’s address. [??? MIGHT NOT NEED THIS IF WE USE OTHER ITEMS TO IDENTIFY THE SELL OFFER BEING ACCEPTED]
 
 If you send a Purchase Offer for more coins than are available at the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address that does not have a matching active Sell Offer, e.g. the specified Sell offer has been canceled or is all sold out, the Purchase Offer must be invalidated. It is not valid to send a Purchase Offer to an address if the sending address has an active Purchase Offer (not fully paid for and time limit not yet reached) with that address for the specified Omni Protocol currency and current unit price. [WITHIN WHAT MARGIN OF ERROR???]
 
 [???] Note: Your total expenditure on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
-
 
 Say you see an offer such as the one listed above, and wish to initiate a purchase of those coins. Doing so takes NN bytes:
 
