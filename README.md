@@ -334,14 +334,16 @@ This section defines the fields that are used to construct transaction messages.
     *    0: [Simple Send](#transfer-coins-simple-send)
     *    3: [Send To Owners](#send-to-owners)
     *   20: [Sell Coins for Bitcoins (currency sell offer)](#sell-mastercoins-for-bitcoins)
-    *   21: [Sell Omni Protocol Coins for Bitcoins (currency sell offer)](#sell-omni-protocol-coins-for-bitcoins)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
-    *   23: [Purchase Omni Protocol Coins with Bitcoins (accept currency sell offer)](#purchase-omni-protocol-coins-with-bitcoins)
-    *   24: [Pay_for Omni Protocol Coins with Bitcoins (pay currency sell offer)](#pay-for-omni-protocol-coins-with-bitcoins)
     *   25: [Create an Order to Sell Omni Protocol Coins for Another Omni Protocol Currency](#create-an-order-to-sell-omni-protocol-coins-for-another-omni-protocol-currency)
     *   26: [Cancel all my orders of a currency pair at a specified price](#cancel-all-my-orders-of-a-currency-pair-at-a-specified-price)
     *   27: [Cancel all my orders of a currency pair](#cancel-all-my-orders-of-a-currency-pair)
     *   28: [Cancel all my orders in an ecosystem](#cancel-all-my-orders-in-an-ecosystem)
+    *   30: [Sell an Omni Protocol Currency for Bitcoins](#sell-an-omni-protocol-currency-for-bitcoins)
+    *   31: [Change an Omni Protocol Currency for Bitcoins Sell Offer](#change-an-omni-protocol-currency-for-bitcoins-sell-offer)
+    *   32: [Cancel an Omni Protocol Currency for Bitcoins Sell Offer](#cancel-an-omni-protocol-currency-for-bitcoins-sell-offer)
+    *   33: [Purchase an Omni Protocol Currency with Bitcoins](#purchase-an-omni-protocol-currency-with-bitcoins)
+    *   34: [Pay for an Omni Protocol Currency Purchase](#pay-for-an-omni-protocol-currency-purchase)
     *   50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
     *   51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
     *   52: [Promote a Property](#promote-a-property)
@@ -537,9 +539,9 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 |Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
 |Amount to be purchased|[Number of Coins](#field-number-of-coins)|130,000,000 (1.3 coins) |
 
-### Sell Omni Protocol Currencies for Bitcoins [NEW]
+### Sell an Omni Protocol Currency for Bitcoins
 
-Description: Transaction type 21 posts the terms of an offer to sell Omni Protocol currencies, including Omni Token coins or Test Omni Token coins for bitcoins. A new sell offer is created with Action = 1 (New). Any Omni Protocol currency, production or test, can be offered for sale using transaction type 21.
+Description: Transaction type 30 posts the terms of a new offer to sell Omni Protocol currencies, including Omni Token coins or Test Omni Token coins for bitcoins. A new sell offer is created. Any Omni Protocol currency, production or test, can be offered for sale using transaction type 30.
 
 If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is processed by OmniCore. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 Omni Token coins and it creates a "Sell Order" for 100 Omni Token coins, then the address's available balance is now 0 Omni Tokens, reserving 100 Omni Tokens.) After a valid sell offer is processed by OmniCore, any coins of that currency received by the address are added to its then current available balance, and are not included in the amount for sale by the sell offer. The seller can update the sell offer to include newly acquired coins, see [Change an Omni Protocol Coin Sell Offer](#change-an-omni-protocol-coin-sell-offer) below.
 
@@ -562,30 +564,39 @@ Say you want to publish an offer to sell 1000 Omni Tokens for 1.5 bitcoins. Doin
 |Amount of bitcoins desired|[Number of Coins](#field-number-of-coins)|150,000,000 (1.5 coins) |
 |Payment window|[Time Period in Blocks](#field-time-period-in-blocks) | 20  (20 blocks to send bitcoin payment(s) after valid Purchase Omni Protocol Currencies with Bitcoins transaction is processed)|
 |Minimum bitcoin transaction fee|[Number of coins](#field-number-of-coins) | 1,000,000 (buyer must pay 0.01 BTC fee to the miner, discouraging fake offers)|
-Action|[Sell Offer sub-action](#field-sell-offer-sub-action) | 1 (New offer)|
 
-#### Change a Currency Sell Offer
+### Change an Omni Protocol Currency for Bitcoins Sell Offer
 
-An offer to sell coins can be changed by using Action = 2 (Update) until either: there are valid corresponding purchase offers (transaction type 23) for the whole amount offered, or the sell offer is canceled. The Currency identifier cannot be changed.
+Description: Transaction type 31 is used to change the terms of an existing offer from the sending address to sell Omni Protocol currencies, including Omni Token coins or Test Omni Token coins, for bitcoins. The existing sell offer is updated to have to specified new attributes. [??? NEED TO DECIDE HOW TO UNIQUELY IDENTIFY A SINGLE OP CURRENCY SELL OFFER]
+
+An offer to sell coins can be changed until either: there are valid corresponding purchase offers (transaction type 31) for the whole amount offered, or the sell offer is canceled. The Currency identifier cannot be changed.
 
 The change will apply to the balance that has not yet been accepted with a purchase offer. The stored unit price must be updated using the updated Amount for sale and Amount of bitcoins desired. The Amount desired value can be discarded after the unit price is updated. The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
 
 The amount reserved from the available balance for this address will be adjusted to reflect the new amount for sale. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell offer amount not yet accepted at the time of the update.
 
-Say you decide you want to change an offer, e.g. the number of Omni Protocol currency coins you are offering for sale, or change the asking price. Send the transaction with the new values and the values that are not changing and Action = 2 (Update) so it is processed by OmniCore as valid before the whole amount offered has been accepted. Note that while the portion of an offer which has been accepted cannot be changed, sending an update message still has an effect, in that it affects any coins which have not been accepted, and it affects accepted coins if the buyer fails to send payment. 
+Say you decide you want to change an offer, e.g. the number of Omni Protocol currency coins you are offering for sale, or change the asking price. Send the transaction with the new values and the values that are not changing so it is processed by OmniCore as valid before the whole amount offered has been accepted. Note that while the portion of an offer which has been accepted cannot be changed, sending an update message still has an effect, in that it affects any coins which have not been accepted, and it affects accepted coins if the buyer fails to send payment. 
 
-#### Cancel a Currency Sell Offer
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 31 | 
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Omni Token) |
+|New amount for sale|[Number of Coins](#field-number-of-coins)|100,000,000,000 (1000 coins) |
+|New amount of bitcoins desired|[Number of Coins](#field-number-of-coins)|150,000,000 (1.5 coins) |
+|New payment window|[Time Period in Blocks](#field-time-period-in-blocks) | 20  (20 blocks to send bitcoin payment(s) after valid Purchase Omni Protocol Currencies with Bitcoins transaction is processed)|
+|New minimum bitcoin transaction fee|[Number of coins](#field-number-of-coins) | 1,000,000 (buyer must pay 0.01 BTC fee to the miner, discouraging fake offers)|
 
-A currency sell offer can be canceled by using Action = 3 (Cancel) until the offer has been fully accepted by valid purchase offers ([Purchase Omni Protocol Currencies with Bitcoins](#purchase-omni-protocol-currencies-with-bitcoins)). When a sell offer is canceled, the associated coins are no longer reserved.
 
-When canceling a sell offer, the values in the following fields are not tested for validity:
-* Amount for sale
-* Amount of bitcoins desired
-* Time limit in blocks
+### Cancel an Omni Protocol Currency for Bitcoins Sell Offer
+
+Description: Transaction type 32 is used to cancel an existing offer from the sending address to sell Omni Protocol currencies, including Omni Token coins or Test Omni Token coins, for bitcoins. [??? NEED TO DECIDE HOW TO UNIQUELY IDENTIFY A SINGLE OP CURRENCY SELL OFFER]
+
+An Omni Protocol currency sell offer can be canceled until the offer has been fully accepted by valid purchase offers ([Purchase Omni Protocol Currencies with Bitcoins](#purchase-omni-protocol-currencies-with-bitcoins)). When a sell offer is canceled, the associated Omni Protocol coins are no longer reserved.
 
 The cancel will apply to the amount that has not yet been accepted. The UI must indicate if the cancellation was successful and how many coins were not sold.
 
-If you want to cancel an offer, use Action = 3 (Cancel) and send the transaction so it is processed as valid by OmniCore before the full amount for sale has been purchased with one or more Purchase Omni Protocol Currencies with Bitcoins transactions. [??? NEED TO DECIDE HOW TO UNIQUELY IDENTIFY A SINGLE OP CURRENCY SELL OFFER]
+If you want to cancel an offer, send the transaction so it is processed as valid by OmniCore before the full amount for sale has been purchased with one or more Purchase Omni Protocol Currencies with Bitcoins transactions. [??? NEED TO DECIDE HOW TO UNIQUELY IDENTIFY A SINGLE OP CURRENCY SELL OFFER]
 
 If an address has more than one active Sell Omni Protocol Currencies for Bitcoins offers, multiple offers can be cancelled with one transaction as follows:
 * specify the Omni Protocol Currency to cancel all the sender's active offers to sell that currency
@@ -593,9 +604,9 @@ If an address has more than one active Sell Omni Protocol Currencies for Bitcoin
 
 Note that while the portion of an offer which has been accepted cannot be canceled, sending the cancel message still has an effect, in that it cancels any portion of the offer which has not been accepted, and it prevents accepted coins from being relisted if a purchaser fails to send payment. The payment window behavior continues unchanged for any portion of the sell offer which has aleady been accepted.
 
-### Purchase Omni Protocol Currencies with Bitcoins
+### Purchase an Omni Protocol Currency with Bitcoins
 
-Description: Transaction type 23 posts acceptance of an offer to sell Omni Protocol Currencies for bitcoins. All or some of the coins offered can be purchased with this transaction.
+Description: Transaction type 33 posts acceptance of an offer to sell an Omni Protocol Currency for bitcoins. All or some of the coins offered can be purchased with this transaction.
 
 The reference address must point to the seller's address, to identify whose offer you are accepting. The purchaser’s address must be different than the seller’s address. [??? MIGHT NOT NEED THIS IF WE USE OTHER ITEMS TO IDENTIFY THE SELL OFFER BEING ACCEPTED]
 
@@ -608,17 +619,17 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 | **Field** | **Type** | **Example** |
 | ---- | ---- | ---- |
 | Transaction version |[Transaction version](#field-transaction-version) | 0 |
-| Transaction type | [Transaction type](#field-transaction-type) | 23 | 
+| Transaction type | [Transaction type](#field-transaction-type) | 33 | 
 | Currency identifier | [Currency identifier](#field-currency-identifier) |1 (Omni Token) |
 | Current unit price | [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
 | Amount to be purchased |[Number of Coins](#field-number-of-coins)|130,000,000 (1.3 coins) |
 
 ### Pay for an Omni Protocol Currency Purchase
 
-Description: Transaction type 24 is used to send bitcoins to complete an Omni Protocol currency purchase.
+Description: Transaction type 34 is used to send bitcoins to complete an Omni Protocol currency purchase.
 [??? NEED TO DECIDE HOW TO UNIQUELY IDENTIFY A SINGLE OP CURRENCY SELL OFFER]
 
-You must send the appropriate amount of bitcoins before the specified time limit expires to complete the purchase. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards once the time limit expires. The remaining coins will be added back to those available in the Sell Offer if it’s still active. If you send more than the correct amount of bitcoins, the extra bitcoins will go to the seller and you will receive nothing in return (unless the seller chooses to return any of the extra bitcoins to you). If you do not send complete payment before the time limit expires, the Omni Protocol coins not paid for will be added back to those still for sale in the Sell Offer if it’s still active. If the Sell Offer is no longer active, the coins not paid for will be returned to the seller's available balance of that currency.
+You must send the appropriate amount of bitcoins to complete the purchase so that OmniCore processes your valid transaction before the associated time limit expires. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards once the time limit expires. The remaining coins will be added back to those available in the Sell Offer if it’s still active. If you send more than the correct amount of bitcoins, the extra bitcoins will go to the seller and you will receive nothing in return for the extra bitcoins (the seller could choose to return any of the extra bitcoins to you). If you do not send complete payment before the time limit expires, the Omni Protocol coins not paid for will be added back to those still for sale in the Sell Offer if it’s still active. If the Sell Offer is no longer active, the coins not paid for will be returned to the seller's available balance of that currency.
 
 Please note that the buyer is allowed to send multiple bitcoin payments between the Purchase Offer and expiration block which are accumulated and used to adjust the Purchase Offer accordingly. The buyer's Omni Protocol currency available balance is credited with the purchased coins when each bitcoin payment is processed as valid by OmniCore.
 
