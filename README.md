@@ -336,9 +336,9 @@ This section defines the fields that are used to construct transaction messages.
     *   20: [Sell Coins for Bitcoins (currency sell offer)](#sell-mastercoins-for-bitcoins)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
     *   25: [Create an Order to Sell Omni Protocol Coins for Another Omni Protocol Currency](#create-an-order-to-sell-omni-protocol-coins-for-another-omni-protocol-currency)
-    *   26: [Cancel all my orders of a currency pair at a specified price](#cancel-all-my-orders-of-a-currency-pair-at-a-specified-price)
-    *   27: [Cancel all my orders of a currency pair](#cancel-all-my-orders-of-a-currency-pair)
-    *   28: [Cancel all my orders in an ecosystem](#cancel-all-my-orders-in-an-ecosystem)
+    *   26: [Cancel all orders of a currency pair at a specified price](#cancel-all-orders-of-a-currency-pair-at-a-specified-price)
+    *   27: [Cancel all orders of a currency pair](#cancel-all-orders-of-a-currency-pair)
+    *   28: [Cancel all orders in an ecosystem](#cancel-all-orders-in-an-ecosystem)
     *   30: [Sell an Omni Protocol Currency for Bitcoins](#sell-an-omni-protocol-currency-for-bitcoins)
     *   31: [Change an Omni Protocol Currency for Bitcoins Sell Offer](#change-an-omni-protocol-currency-for-bitcoins-sell-offer)
     *   32: [Cancel an Omni Protocol Currency for Bitcoins Sell Offer](#cancel-an-omni-protocol-currency-for-bitcoins-sell-offer)
@@ -707,7 +707,7 @@ Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (hypot
 
 Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Omni ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Omni Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin. 
 
-### Cancel all open orders of a currency pair at a specified price
+### Cancel all orders of a currency pair at a specified price
 
 Description: Transaction type 26 cancels open orders, submitted by the address, for a given set of currencies at a given price. It is required that the token identifiers and price exactly match the order to be canceled.
 
