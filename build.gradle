@@ -1,0 +1,32 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+plugins {
+    id 'org.asciidoctor.jvm.convert' version '2.3.0'
+    id 'org.asciidoctor.jvm.pdf' version '2.3.0'
+}
+
+repositories {
+    jcenter()
+}
+
+asciidoctor {
+  sourceDir file("$projectDir")
+  sources {
+    include 'README.adoc'
+  }
+  outputDir  file('build/doc')
+}
+
+asciidoctorPdf {
+  sourceDir file("$projectDir")
+  sources {
+    include 'README.adoc'
+  }
+  outputDir  file('build/doc')
+}
+
+task renderOmniSpecification(dependsOn: [asciidoctor, asciidoctorPdf])

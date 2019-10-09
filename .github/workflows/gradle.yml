@@ -1,0 +1,21 @@
+name: Documentation Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Asciidoctor Gradle
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Build with Gradle
+      run: gradle renderOmniSpecification --info --stacktrace
+    - name: Upload build directory as artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: omni-spec-documentation-archive
+        path: build/doc
