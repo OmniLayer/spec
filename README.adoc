@@ -1,8 +1,10 @@
-== _Please note, the specification is currently not complete, partially outdated and does not entirely reflect the behavior of Omni Layer’s reference client https://github.com/OmniLayer/omnicore[Omni Core]._
 
-== Omni Protocol Specification (formerly Mastercoin)
-
-Version 0.5 - Omni Protocol rename version
+= Omni Protocol Specification
+Omni Team
+v0.5, June 30, 2015: Omni Protocol rename version
+:numbered:
+:toc:
+:toclevels: 1
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT
 gmail DOT com)
@@ -14,6 +16,8 @@ gmail DOT com)
 With input by Peter Todd (https://github.com/petertodd)
 
 == Summary
+
+NOTE: The specification is currently not complete, partially outdated and does not entirely reflect the behavior of Omni Layer’s reference client https://github.com/OmniLayer/omnicore[Omni Core].
 
 We claim that the existing bitcoin network can be used as a protocol
 layer, on top of which new currency layers with new rules can be built
@@ -3066,4 +3070,4 @@ the displayed balance.
 It is envisaged that in future Omni Protocol clients will '`clean up`'
 periodically by redeeming and consolidating unspent multisig outputs.
 
-=== _Please note, the specification is currently not complete, partially outdated and does not entirely reflect the behavior of Omni Layer’s reference client https://github.com/OmniLayer/omnicore[Omni Core]._
+NOTE: The specification is currently not complete, partially outdated and does not entirely reflect the behavior of Omni Layer’s reference client https://github.com/OmniLayer/omnicore[Omni Core].
