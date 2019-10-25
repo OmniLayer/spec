@@ -9,7 +9,7 @@ Version 0.5 - Omni Protocol rename version
 * Maran Hidskes (https://github.com/maran)
 * David Johnston (https://github.com/DavidJohnstonCEO)
 * Ron Gross (https://github.com/ripper234)
-* Marv Schneider (https://github.com/marv-engine)
+* Marv Schneider (https://github.com/marvgmail)
 
 With input by Peter Todd (https://github.com/petertodd)
 
@@ -149,7 +149,7 @@ The most important thing is that reorgs ARE detected. If an implementation does 
 
 Also, in many cases a user may wish to do something with Mastercoins recently sent to them or otherwise affected by a recent transaction. Where possible, Omni-aware wallets should re-use bitcoins from the previous transactions in subsequent transactions which are dependent on the earlier transactions. In this way, if the earlier transaction is invalidated (by a reorg), the dependent transaction will also be invalidated.
 
-## Fees
+## Fees [??? NEEDS TO BE UPDATED FOR DEx FEES]
 
 There are two broad categories of transactions which have no fees (other than fees charged by the bitcoin protocol layer):
 
@@ -334,9 +334,17 @@ This section defines the fields that are used to construct transaction messages.
 + Current Valid values:
     *    0: [Simple Send](#transfer-coins-simple-send)
     *    3: [Send To Owners](#send-to-owners)
-    *   20: [Sell Coins for Bitcoins (currency trade offer)](#sell-mastercoins-for-bitcoins)
-    *   21: [Offer/Accept Omni Protocol Coins for Another Omni Protocol Currency (currency trade offer)](#sell-omni-protocol-coins-for-another-omni-protocol-currency)
+    *   20: [Sell Coins for Bitcoins (currency sell offer)](#sell-mastercoins-for-bitcoins)
     *   22: [Purchase Coins with Bitcoins (accept currency trade offer)](#purchase-mastercoins-with-bitcoins)
+    *   25: [Create an Order to Sell Omni Protocol Coins for Another Omni Protocol Currency](#create-an-order-to-sell-omni-protocol-coins-for-another-omni-protocol-currency)
+    *   26: [Cancel all orders of a currency pair at a specified price](#cancel-all-orders-of-a-currency-pair-at-a-specified-price)
+    *   27: [Cancel all orders of a currency pair](#cancel-all-orders-of-a-currency-pair)
+    *   28: [Cancel all orders in an ecosystem](#cancel-all-orders-in-an-ecosystem)
+    *   30: [Sell an Omni Protocol Currency for Bitcoins](#sell-an-omni-protocol-currency-for-bitcoins)
+    *   31: [Change an Omni Protocol Currency for Bitcoins Sell Offer](#change-an-omni-protocol-currency-for-bitcoins-sell-offer)
+    *   32: [Cancel an Omni Protocol Currency for Bitcoins Sell Offer](#cancel-an-omni-protocol-currency-for-bitcoins-sell-offer)
+    *   33: [Purchase an Omni Protocol Currency with Bitcoins](#purchase-an-omni-protocol-currency-with-bitcoins)
+    *   34: [Pay for an Omni Protocol Currency Purchase](#pay-for-an-omni-protocol-currency-purchase)
     *   50: [Create a Property with fixed number of tokens](#new-property-creation-with-fixed-number-of-tokens)
     *   51: [Create a Property via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens)
     *   52: [Promote a Property](#promote-a-property)
@@ -441,17 +449,23 @@ The protocol will split up the 1000 Quantum Miner tokens and send them to the ot
 Note to users: please make sure your proposed use case is legal in your jurisdiction!!
 
 ## Distributed Exchange
+[??? SHOULD DEX 1.0 BE CALLED A MARKETPLACE RATHER THAN AN EXCHANGE BECAUSE A BUYER ACCEPTS A PARTICULAR SELL OFFER. THERE'S NO AUTOMATED MATCHING OF ASKS & BIDS]
 
-The Omni Protocol allows users to trade coins without trusting a centralized website. When trading Mastercoins for bitcoins, this can be rather cumbersome, since it isn't possible to automatically match bids with asks, since we can't force the bidder to send bitcoins when a matching ask is found. When trading Mastercoins for other Omni Protocol currencies, bids and asks are matched automatically.
+The Omni Protocol allows users to trade coins without trusting a centralized website. When trading Omni Protocol-based tokens for bitcoins, there is an extra step in the process because it isn't possible to automatically match bids with asks, since we can't force the bidder to send bitcoins when a matching ask is found. When trading Omni Tokens for other Omni Protocol currencies, bids and asks are matched automatically.
 
-Consequently, the messages below are different for mastercoin/bitcoin exchange than they are for exchange between mastercoin and other Omni Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/mastercoin exchange as well as the additional anti-spam fees and race conditions inherent in the system.
+Consequently, the messages below are different for Omni Protocol currencies/bitcoin exchange than they are for exchange between Omni Protocol currencies, and the resulting UI must also be different, reflecting both the one-sided nature of bitcoin/Omni Token exchange as well as the additional anti-spam fees and race conditions inherent in the system.
 
-### Sell Mastercoins for Bitcoins
+The Omni Protocol currency/bitcoin exchange can be thought of more as a marketplace where purchasers select the specific sell offer they want to accept, rather than relying on the exchange to automatically match ask and bid offers.
+
+
+### Sell Mastercoins for Bitcoins [??? ORIGINAL - WILL THIS BE SUPPORTED FOR FUTURE SUBMISSIONS OR JUST TO PROCESS PREVIOUS TX'S ALREADY IN THE BLOCKCHAIN?]
 
 Description: Transaction type 20 posts the terms of an offer to sell Mastercoins or Test Mastercoins for bitcoins. A new sell offer is created with Action = 1 (New). Valid currency identifier values for this transaction are 1 for MSC or 2 for Test MSC.
 
 If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), this indicates the user is offering to sell all coins that are available at the time this sell offer is published. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
 
+The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell offer is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell offer. The seller could update the sell offer to include these newly acquired coins, see [Change a Coin Sell Offer](#change-a-coin-sell-offer) below.
+ 
 The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
 
 Note: An address cannot create a new Sell Mastercoins for Bitcoins offer while that address has *any* active offer that accepts Bitcoins. Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins.
@@ -527,40 +541,147 @@ Say you see an offer such as the one listed above, and wish to initiate a purcha
 |Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
 |Amount to be purchased|[Number of Coins](#field-number-of-coins)|130,000,000 (1.3 coins) |
 
-### Sell Omni Protocol Coins for Another Omni Protocol Currency
+### Sell an Omni Protocol Currency for Bitcoins
 
-Description: Transaction type 21 is used to both publish and accept an offer to sell coins in one Omni Protocol Currency for coins in another Omni Protocol Currency.
+Description: Transaction type 30 posts the terms of a new offer to sell an Omni Protocol currency, including Omni Token coins or Test Omni Token coins, for bitcoins. A new sell offer is created. Any Omni Protocol currency, in the Omni Protocol production or test environment, can be offered for sale using transaction type 30.
+ 
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), the transaction is invalid.
 
-If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), the transaction is invalid. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for at least 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell order. The seller could update the sell order to include these newly acquired coins, see [Change a Transaction Type 21 Coin Sell Order](#change-a-transaction-type-21-coin-sell-order) below.
+The unit price of the sell offer is computed from two of the fields in the transaction message: the "Amount for sale" divided by the "Amount of bitcoins desired". The sell offer is invalid if the computed unit price is 0. Once the unit price is computed, the "Amount of bitcoins desired" value can be discarded.
 
-The new sell order's unit price is computed from two of the fields in the transaction message: the "Amount desired" divided by the "Amount for sale". An existing order's original unit price is used to match against new orders. The unit price does not change. The currency id for sale must be different from the currency id desired. Both currency id's must refer to existing currencies.
+The sell offer is assigned a unique id for the life of the offer (i.e. until it is cancelled or fully accepted and paid for), even if the terms of the offer are changed in the future. The id must be different than the id's for all other sell offers that are active at the time OmniCore processes the sell offer, otherwise the sell offer is not valid.
+
+The id is the hash of the following data items, in the order listed:
+[??? NEED ADDITIONAL INFO ABOUT THE HASH]
+
+| **Item** | **Type** |
+| ---- | ---- | ---- |
+|Seller's address| [Bitcoin address](#field-bitcoin-address) |
+|Currency identifier| [Currency identifier](#field-currency-identifier) |
+|Amount for sale|[Number of Coins](#field-number-of-coins)|
+|Amount of bitcoins desired|[Number of Coins](#field-number-of-coins)|
+|Payment window|[Time Period in Blocks](#field-time-period-in-blocks) |
+|Minimum bitcoin transaction fee|[Number of coins](#field-number-of-coins) |
+|Computed unit price|[Number of Coins](#field-number-of-coins)|
+
+Note: An address can create multiple simultaneous Sell Omni Protocol Currencies for Bitcoins offers for different Omni Protocol Currencies. Each offer is independent of any others; the unique id is used to specify a sell offer.
+
+Currently, this includes an active Sell Mastercoins for Bitcoins offer (one that has not been canceled or fully accepted and full payment received) and an active [New Property Creation via Crowdsale with Variable number of Tokens](#new-property-creation-via-crowdsale-with-variable-number-of-tokens) that accepts Bitcoins. [??? NEED TO CLEAN THIS UP]
+
+[??? NEED DETAILS HERE ABOUT OMNI TOKEN FEE PAID BY SELLER TO STAKED OMNI TOKEN HOLDERS]
+
+Say you want to create an offer to sell 1000 Omni Tokens for 1.5 bitcoins. Doing this takes 34 bytes:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 30 | 
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Omni Token) |
+|Amount for sale|[Number of Coins](#field-number-of-coins)|100,000,000,000 (1000 coins) |
+|Amount of bitcoins desired|[Number of Coins](#field-number-of-coins)|150,000,000 (1.5 coins) |
+|Payment window|[Time Period in Blocks](#field-time-period-in-blocks) | 20  (20 blocks to send bitcoin payment(s) after valid Purchase Omni Protocol Currencies with Bitcoins transaction is processed)|
+|Minimum bitcoin transaction fee|[Number of coins](#field-number-of-coins) | 1,000,000 (buyer must pay 0.01 BTC fee to the miner, discouraging fake offers)|
+
+### Change an Omni Protocol Currency for Bitcoins Sell Offer
+
+Description: Transaction type 31 is used to change the terms of an existing offer from the sending address to sell Omni Protocol currencies, including Omni Token coins or Test Omni Token coins, for bitcoins. The existing sell offer is updated to have to specified new attributes.
+
+An offer to sell coins can be changed until either: there are valid corresponding purchase offers (transaction type 31) for the whole amount offered, or the sell offer is canceled. The Currency identifier cannot be changed.
+
+The change will apply to the balance that has not yet been accepted with a purchase offer. The stored unit price must be updated using the updated Amount for sale and Amount of bitcoins desired. The Amount desired value can be discarded after the unit price is updated. The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
+
+The amount reserved from the available balance for this address will be adjusted to reflect the new amount for sale. Note that the amount reserved as a result of the update is based on the available balance at the time of the update plus the existing sell offer amount not yet accepted at the time of the update.
+
+Say you decide you want to change an offer, e.g. the number of Omni Protocol currency coins you are offering for sale, or change the asking price. Send the transaction with the new values and the values that are not changing so it is processed by OmniCore as valid before the whole amount offered has been accepted. Note that while the portion of an offer which has been accepted cannot be changed, sending an update message still has an effect, in that it affects any coins which have not been accepted, and it affects accepted coins if the buyer fails to send payment. 
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 31 | 
+| Sell offer identifier | ??? |
+|Currency identifier| [Currency identifier](#field-currency-identifier) |1 (Omni Token) |
+|New amount for sale|[Number of Coins](#field-number-of-coins)|100,000,000,000 (1000 coins) |
+|New amount of bitcoins desired|[Number of Coins](#field-number-of-coins)|150,000,000 (1.5 coins) |
+|New payment window|[Time Period in Blocks](#field-time-period-in-blocks) | 20  (20 blocks to send bitcoin payment(s) after valid Purchase Omni Protocol Currencies with Bitcoins transaction is processed)|
+|New minimum bitcoin transaction fee|[Number of coins](#field-number-of-coins) | 1,000,000 (buyer must pay 0.01 BTC fee to the miner, discouraging prank offer acceptances)|
+
+
+### Cancel an Omni Protocol Currency for Bitcoins Sell Offer
+
+Description: Transaction type 32 is used to cancel an existing offer from the sending address to sell Omni Protocol currencies, including Omni Token coins or Test Omni Token coins, for bitcoins.
+
+An Omni Protocol currency sell offer can be canceled until the offer has been fully accepted by valid purchase offers ([Purchase Omni Protocol Currencies with Bitcoins](#purchase-omni-protocol-currencies-with-bitcoins)). When a sell offer is canceled, the associated Omni Protocol coins for sale are no longer reserved.
+
+The cancel will apply to the amount that has not yet been accepted. The UI must indicate if the cancellation was successful and how many coins were not sold.
+
+If you want to cancel an offer, send the transaction so it is processed as valid by OmniCore before the full amount for sale has been purchased with one or more Purchase Omni Protocol Currencies with Bitcoins transactions.
+
+If an address has more than one active Sell Omni Protocol Currencies for Bitcoins offers, multiple offers can be cancelled with one transaction as follows:
+* specify the Omni Protocol Currency to cancel all the sender's active offers to sell that currency
+* use 0 as the only sell offer identifier to cancel ALL the active offers from the sender's address
+
+Note that while the portion of an offer which has been accepted cannot be canceled, sending the cancel message still has an effect, in that it cancels any portion of the offer which has not been accepted, and it prevents accepted coins from being relisted for sale if a purchaser fails to send payment. The payment window behavior continues unchanged for any portion of the sell offer which has aleady been accepted.
+
+### Purchase an Omni Protocol Currency with Bitcoins
+
+Description: Transaction type 33 posts acceptance of an offer to sell an Omni Protocol Currency for bitcoins. All or some of the coins offered can be purchased with this transaction.
+
+The reference address must point to the seller's address, to identify whose offer you are accepting. The purchaser’s address must be different than the seller’s address. [??? MIGHT NOT NEED THIS IF WE USE OTHER ITEMS TO IDENTIFY THE SELL OFFER BEING ACCEPTED]
+
+If you send a Purchase Offer for more coins than are available at the time your transaction gets added to a block, your amount bought will be automatically adjusted to the amount still available. When a Purchase Offer is sent to an address that does not have a matching active Sell Offer, e.g. the specified Sell offer has been canceled or is all sold out, the Purchase Offer must be invalidated. It is not valid to send a Purchase Offer to an address if the sending address has an active Purchase Offer (not fully paid for and time limit not yet reached) with that address for the specified Omni Protocol currency and current unit price. [WITHIN WHAT MARGIN OF ERROR???]
+
+[???] Note: Your total expenditure on bitcoin transaction fees while accepting the purchase must meet the minimum fee specified in the Sell Offer in order for the transaction to be valid.
+
+Say you see an offer such as the one listed above, and wish to initiate a purchase of those coins. Doing so takes NN bytes:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 33 | 
+| Currency identifier | [Currency identifier](#field-currency-identifier) |1 (Omni Token) |
+| Current unit price | [Currency identifier](#field-currency-identifier) |1 (Mastercoin) |
+| Amount to be purchased |[Number of Coins](#field-number-of-coins)|130,000,000 (1.3 coins) |
+
+### Pay for an Omni Protocol Currency Purchase
+
+Description: Transaction type 34 is used to send bitcoins to complete an Omni Protocol currency purchase.
+[??? NEED TO DECIDE HOW TO UNIQUELY IDENTIFY A SINGLE OP CURRENCY SELL OFFER]
+
+You must send the appropriate amount of bitcoins to complete the purchase so that OmniCore processes your valid transaction before the associated time limit expires. Note that you must send the bitcoins from the same address which initiated the purchase. If you send less than the correct amount of bitcoins, your purchase will be adjusted downwards once the time limit expires. The remaining coins will be added back to those available in the Sell Offer if it’s still active. If you send more than the correct amount of bitcoins, the extra bitcoins will go to the seller and you will receive nothing in return for the extra bitcoins (the seller could choose to return any of the extra bitcoins to you). If you do not send complete payment before the time limit expires, the Omni Protocol coins not paid for will be added back to those still for sale in the Sell Offer if it’s still active. If the Sell Offer is no longer active, the coins not paid for will be returned to the seller's available balance of that currency.
+
+Please note that the buyer is allowed to send multiple bitcoin payments between the Purchase Offer and expiration block which are accumulated and used to adjust the Purchase Offer accordingly. The buyer's Omni Protocol currency available balance is credited with the purchased coins when each bitcoin payment is processed as valid by OmniCore.
+
+Other Omni Protocol messages (for instance if the buyer wants to change his offer) are not counted towards the actual purchase, even though bitcoins are sent to the selling address as part of encoding the messages. 
+
+Say you have purchased an offer such as the one listed above, and wish to complete the purchase of those coins. An address may have multiple active sell offers, at different unit prices, for the same Omni Protocol currency. And, an address may have purchased coins from multiple sell offers from a single address, so transaction type 24 has to include a specification of which accepted sell offer is being paid for.
+
+The transaction to pay for a purchase takes NN bytes:
+
+| **Field** | **Type** | **Example** |
+| ---- | ---- | ---- |
+| Transaction version |[Transaction version](#field-transaction-version) | 0 |
+| Transaction type | [Transaction type](#field-transaction-type) | 24 | 
+| Currency identifier | [Currency identifier](#field-currency-identifier) |1 (Omni Token) |
+| Current unit price | [Number of Coins](#field-number-of-coins) |1 (bitcoin) |
+
+Distributed token exchange
+--------------------------
+
+The distributed token exchange, the "OmniDEx", supports trading of Omni Protocol tokens with automated order matching.
+
+For all transaction types that involve two Omni Protocol currencies, the currencies must be in the same ecosystem. Amounts must be greater than zero.
+
+### Create an Order to Sell Omni Protocol Coins for Another Omni Protocol Currency
+
+Description: Transaction type 25 is used to create a sell order, to both create and accept offers to sell coins in one Omni Protocol Currency for coins in another Omni Protocol Currency.
+
+If the amount offered for sale exceeds the sending address's available balance (the amount not reserved, committed or in escrow), the transaction is invalid. The amount offered for sale, up to the amount available, must be reserved from the available balance for this address much like any other exchange platform. (For instance: If an address owns 100 MSC and it creates a "Sell Order" for 100 MSC, then the address's available balance is now 0 MSC, reserving 100 MSC.) After the sell order is published, any coins received by the address are added to its then current available balance, and are not included in the amount for sale by this sell order.
+
+The new sell order's unit price is computed from two of the fields in the transaction message: the "Amount desired in exchange" divided by the "Amount to list for sale". An existing order's original unit price is used to match against new orders. The unit price does not change. The Tokens to list for sale must be different from the Tokens desired in exchange. Both currency id's must refer to existing currencies, in the same ecosystem. The amount for sale and the amount desired must be greater than 0. 
 
 To accept an existing sell order, an address simply publishes the same message type with an inverse offer (e.g. selling Goldcoins for Mastercoins in the example below) at a unit price which is greater than or equal to the existing sell order's unit price. The protocol then finds existing sell orders that qualify (match), possibly including existing sell orders from that same address.
 
-A liquidity bonus for the owners of existing sell orders provides an incentive for people to put their coins up for sale at a price which does not get filled instantly, increasing available liquidity on the exchange. The liquidity bonus for the owner of a matching sell order is taken from the amount paid by the new sell order. The liquidity bonus is 0.3% of the amount paid by the new sell order, rounded to the nearest .00000001 for divisible tokens or to the nearest whole number for indivisible tokens. The liquidity bonus percentage and/or calculation may change in the future.
-
-The following table shows examples of the liquidity bonus based on the new order's amount for sale and the existing order's minimum amount desired, for *divisible* coins. This table does not show the new order's minimum amount desired or the existing order's amount for sale, which are not subject to the liquidity bonus.
-
-|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder for Sale** | **Existing Order Remainder Desired** |
-|---:|---:|:---|---:|---:|:---|
-| 100.3 | 100.0 | 100.0 | 0.3 | 0.0 | 0.0 |
-| 100.0 | 100.0 | 99.70089731 | 0.29910269 | 0.0 | 0.29910269 |
-| 125.0 | 100.0 | 100.0 | 0.30 | 24.7 | 0.0 |
-| 50.0 | 100.0 | 49.85044865 | 0.14955135 | 0.0 | 50.14955135 |
-
-The following table shows examples of the liquidity bonus based on the new order's amount for sale and the existing order's minimum amount desired, for *indivisible* coins. This table does not show the new order's minimum amount desired or the existing order's amount for sale, which are not subject to the liquidity bonus.
-
-|**New Order Amt for Sale**|**Existing Order Min Amt Desired**|**Amt Transferred**|**Liquidity Bonus Paid**| **New Order Remainder for Sale** | **Existing Order Remainder Desired** |
-|---:|---:|---:|---:|---:|---:|
-| 1003 | 1000 | 1000 | 3 | 0 | 0 |
-| 1000 | 1000 | 997 | 3 | 0 | 3 |
-| 502 | 502 | 500 | 2 | 0 | 2 |
-| 500 | 1000 | 499 | 1 | 0 | 501 |
-| 500 | 500 | 499 | 1 | 0 | 1 |
-| 100 | 100 | 100 | 0 | 0 | 0 |
-| 125 | 100 | 100 | 0 | 25 | 0 |
-
-The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order plus the liquidity bonus amount until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. In other words, every order is a "sell" order (complete when all tokens are sold), and there are no "buy" orders (complete when all tokens are purchased). If a new order gets a more favourable price than they requested, they will receive more coins, not spend fewer coins.
+The coins from each matching order and the new order are exchanged between the corresponding addresses at the unit price specified by the matching order until the full amount for sale in the new order is transferred to the address of the matching sell order or there are no more matching orders. In other words, every order is a "sell" order (complete when all tokens are sold), and there are no "buy" orders (complete when all tokens are purchased). If a new order gets a more favourable price than they requested, they will receive more coins, not spend fewer coins.
 
 Notes on rounding, with me (the new order) purchasing from Bob (the existing order):
 
@@ -578,8 +699,8 @@ It is valid for the purchaser’s address to be the same as the seller’s addre
 
 An existing order matches the new order when all of the following conditions are met:
 
-1. the existing order's Currency id for sale is the same as the new order's Currency id desired
-1. the existing order's Currency id desired is the same as the new order's Currency id for sale
+1. the existing order's Tokens to list for sale is the same as the new order's Tokens desired in exchange
+1. the existing order's Tokens desired in exchange is the same as the new order's Tokens to list for sale
 1. the existing order's unit price is less than or equal to the reciprocal of the new order's unit price
 1. the existing order is still open (not completely sold or canceled)
 
@@ -593,43 +714,55 @@ If there are no matches for the new sell order or the aggregate amount desired i
 
 Say you want to publish an offer to sell 2.5 Mastercoins for 50 GoldCoins (hypothetical Omni Protocol coins which each represent one ounce of gold and described later in this document). For the sake of example, we'll assume that GoldCoins have currency identifier 3. Doing this takes 29 bytes:
 
-| **Field** | **Type** | **Example** |
-| ---- | ---- | ---- |
-| Transaction version |[Transaction version](#field-transaction-version) | 0 |
-| Transaction type | [Transaction type](#field-transaction-type) | 21|
-|Currency identifier for sale| [Currency identifier](#field-currency-identifier) |1 for Mastercoin|
-|Amount for sale|[Number of Coins](#field-number-of-coins)|250,000,000 (2.5 coins) |
-|Currency identifier desired| [Currency identifier](#field-currency-identifier) |3 for GoldCoin |
-|Amount desired|[Number of Coins](#field-number-of-coins)|5,000,000,000 (50.0 coins) |
-| Action | [Metadex Sell Offer sub-action](#field-metadex-sell-offer-sub-action) | 1 (ADD new funds for sale) |
+| **Field**                  | **Type**        | **Example**                        |
+| -------------------------- | --------------- | ---------------------------------- |
+| Transaction version        | [Transaction version](#field-transaction-version)  | 0                                  |
+| Transaction type           | [Transaction type](#field-transaction-type) | 25                                 |
+| Tokens to list for sale    | [Currency identifier](#field-currency-identifier) | 1 (Omni)            |
+| Amount to list for sale    | [Number of Coins](#field-number-of-coins)   | 250000000 (2.5 divisible tokens) |
+| Tokens desired in exchange | [Currency identifier](#field-currency-identifier) | 3 (GoldCoins)                      |
+| Amount desired in exchange | [Number of Coins](#field-number-of-coins)   | 5000000000 (50.0 divisible tokens) |
+
 
 Although the formatting of this message technically allows trading between any two currencies/properties, we currently require that either the currency id for sale or the currency id desired be Mastercoins (or Test Mastercoins), since those currencies are the universal token of the protocol and the only ones which can be traded for bitcoins on the distributed exchange (and thus exit the Omni ecosystem without trusting a centralized exchange). This provides each currency and property better liquidity than a multi-dimensional order book ever could, and it reduces the complexity of the software. If another currency becomes widely used in the Omni Protocol, we may allow other currencies (such as a USDCoin) to be used in a similar way, with a tiny amount of MSC being automatically purchased and burned with each trade (see the [section on fees](#fees)  above) when a trade is completed and neither currency being traded is Mastercoin.
 
-An offer to sell coins can be changed or cancelled by publishing additional transactions with [Metadex Sell offer sub-action](#field-metadex-sell-offer-sub-action) variations:
+### Cancel all orders of a currency pair at a specified price
 
-* [Action](#field-metadex-sell-offer-sub-action) = 1 (ADD) orders are merged (both in the database and the UI) when their unit prices are exactly the same.
+Description: Transaction type 26 cancels open orders, submitted by the address, for a given set of currencies at a given price. It is required that the token identifiers and price exactly match the order to be canceled.
 
-* [Action](#field-metadex-sell-offer-sub-action) = 2 (CANCEL-AT-PRICE) cancells open orders for a given set of currencies at a given price. It is required that the [currency identifiers](#field-currency-identifier) and price exactly match the order to be canceled.
+| **Field**                  | **Type**        | **Example**                        |
+| -------------------------- | --------------- | ---------------------------------- |
+| Transaction version        | [Transaction version](#field-transaction-version)  | 0                                  |
+| Transaction type           | [Transaction type](#field-transaction-type) | 26                                 |
+| Tokens listed for sale     | [Currency identifier](#field-currency-identifier) | 3 (Gold Coins)            |
+| Amount listed for sale     | [Number of Coins](#field-number-of-coins)   | 2500000000 (25.0 divisible tokens) |
+| Tokens desired in exchange | [Currency identifier](#field-currency-identifier) | 1 (Omni)                      |
+| Amount desired in exchange | [Number of Coins](#field-number-of-coins)   | 500000000 (5.0 divisible tokens)   |
 
-* [Action](#field-metadex-sell-offer-sub-action) = 3 (CANCEL-ALL-FOR-CURRENCY-PAIR) cancels all open orders for a given set of two currencies (one side of the order book).
+#### Cancel all orders of a currency pair
 
-* [Action](#field-metadex-sell-offer-sub-action) = 4 (CANCEL-EVERYTHING) can be used to cancel all open orders for all currencies within one ecosystem, if [Currency identifier for sale](#field-currency-identifier) and [Currency identifier desired](#field-currency-identifier) are within the same ecosystem, otherwise all open orders for all currencies of both ecosystems are cancelled.
+Description: Transaction type 27 cancels all open orders, submitted by the address, for a given pair of two currencies (one side of the order book) belonging to the address submitting the transaction.
 
-When using [Action](#field-metadex-sell-offer-sub-action) = 3 (CANCEL-ALL-FOR-CURRENCY-PAIR) the validity of the following fields is not tested:
-* [Amount for sale](#field-number-of-coins)
-* [Amount desired](#field-number-of-coins)
+| **Field**                  | **Type**        | **Example**                        |
+| -------------------------- | --------------- | ---------------------------------- |
+| Transaction version        | [Transaction version](#field-transaction-version)  | 0                                  |
+| Transaction type           | [Transaction type](#field-transaction-type) | 27                                 |
+| Tokens listed for sale     | [Currency identifier](#field-currency-identifier) | 3 (Gold Coins)            |
+| Tokens desired in exchange | [Currency identifier](#field-currency-identifier) | 1 (Omni)                      |
 
-When using [Action](#field-metadex-sell-offer-sub-action) = 4 (CANCEL-EVERYTHING) the validity of the following fields is not tested:
-* [Currency identifier for sale](#field-currency-identifier)
-* [Amount for sale](#field-number-of-coins)
-* [Currency identifier desired](#field-currency-identifier)
-* [Amount desired](#field-number-of-coins)
+The Tokens listed for sale and the Tokens desired in exchange must refer to existing smart properties, in the same ecosystem, in order for the transaction to be valid. The transaction is not valid if the address has no open orders for the given pair of currencies.
 
-Any time coins are added, whether merged with another order or not, the same matching process is run as for a new order as described above.
+#### Cancel all orders in an ecosystem
 
-With any changes, the amount reserved from the available balance for this address must be adjusted to reflect the new amount for sale. Note that the amount for sale as a result of the update is limited by the available balance at the time of the update plus the existing sell order amount not yet matched at the time of the update.
+Description: Transaction type 28 is used to cancel all open orders, submitted by the address, for all currencies in the specified ecosystem.
 
-The UI must indicate if the update was successful and how many coins were purchased before the update took effect.
+| **Field**                  | **Type**        | **Example**                        |
+| -------------------------- | --------------- | ---------------------------------- |
+| Transaction version        | [Transaction version](#field-transaction-version)  | 0                                  |
+| Transaction type           | [Transaction type](#field-transaction-type) | 28                                 |
+| Ecosystem                  | [Ecosystem](#field-ecosystem)  | 1 (production ecosystem)           |
+
+The Ecosystem must be 1 (production) or 2 (test) in order for the transaction to be valid.
 
 ## Smart Property
 
