@@ -2694,7 +2694,8 @@ escrow fund acts too quickly, it loses money when the bitcoin version of
 a security leads the real-world version, as would happen if someone was
 engaging in insider trading anonymously using the bitcoin version.
 
-== Appendix A – Storing Omni Protocol data in the blockchain
+[appendix]
+== Storing Omni Protocol data in the blockchain
 
 By Zathras, Copyright © 2013 The Mastercoin Foundation
 
@@ -2886,7 +2887,8 @@ sending address (if such an output exists) will be ignored as change
 * The reference address will be determined by the remaining output with
 the highest vout index
 
-== Appendix B – Regulatory and Legal Compliance - Know Your Jurisdiction
+[appendix]
+== Regulatory and Legal Compliance - Know Your Jurisdiction
 
 It should be clear by now that the Omni Protocol can be used for
 activities that may be regulated or even prohibited in certain
@@ -2913,7 +2915,8 @@ to consider how they may use Omni for good, and if they gain from its
 adoption, to use those funds for good. It will take a lot of work to
 make the good, outshine bad actors.
 
-== Appendix C – Financial Disclaimer
+[appendix]
+== Financial Disclaimer
 
 Placing your funds in experimental currencies is really, absurdly risky.
 This paper is not investment advice, and anyone predicting what will
@@ -2930,7 +2933,8 @@ Anyone who puts their rent money or life savings into an experiment of
 this type is very unwise, and is risking financial ruin from this or
 similarly other risky enterprise.
 
-== Appendix D - Webservice verification API
+[appendix]
+== Webservice verification API
 
 One of the large differences between Omni and Bitcoin is that there is
 no reference implementation available for Omni which you can use to test
@@ -2993,7 +2997,8 @@ a transaction that actually purchases 2 MSC. At that point his Purchase
 Offer has an bought_amount of 2 MSC. If he decides to sent an other 3
 MSC later this values gets updated to 5 MSC.
 
-== Appendix E - Understanding the cost of Omni protocol messages
+[appendix]
+== Understanding the cost of Omni protocol messages
 
 https://github.com/mastercoin-MSC/spec/issues/192[See this issue] for
 discussion on optimizing this cost.
