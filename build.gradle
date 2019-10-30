@@ -13,12 +13,17 @@ repositories {
     jcenter()
 }
 
+def buildDocDir = file('build/doc')
+
 asciidoctor {
   sourceDir file("$projectDir")
   sources {
     include 'README.adoc'
   }
-  outputDir  file('build/doc')
+  outputDir  buildDocDir
+  doLast {
+    file("${outputDir}/README.html").renameTo("${outputDir}/Omni-Specification.html")
+  }
 }
 
 asciidoctorPdf {
@@ -26,7 +31,10 @@ asciidoctorPdf {
   sources {
     include 'README.adoc'
   }
-  outputDir  file('build/doc')
+  outputDir  buildDocDir
+  doLast {
+    file("${outputDir}/README.pdf").renameTo("${outputDir}/Omni-Specification.pdf")
+  }
 }
 
 task renderOmniSpecification(dependsOn: [asciidoctor, asciidoctorPdf])
