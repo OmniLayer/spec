@@ -2949,7 +2949,7 @@ calls.
 
 [source,json]
 ----
-[{address: 1KZmDQGzGJWYmPP9X3b7TA9dY91KBXgaG4, balance: 20.1}, {address: 1Q1sFqsi8S5DxV5hz6sWLamGBp9To93iG7, balance: 3.1}, etc..]
+[{"address": "1KZmDQGzGJWYmPP9X3b7TA9dY91KBXgaG4", "balance": 20.1}, {"address": "1Q1sFqsi8S5DxV5hz6sWLamGBp9To93iG7", "balance": 3.1}, etc..]
 ----
 
 You supply this URL a currency_id, initially 1 or 2, and it should
@@ -2963,7 +2963,7 @@ can be used to spot the offending transaction.
 
 [source,json]
 ----
-{address: 1KZmDQGzGJWYmPP9X3b7TA9dY91KBXgaG4, transactions: [{tx_hash: 5f01def181b761f1d03bcd20590c5729a47b11c68955b364add9253d7aec5eb9, valid: true, accepted_amount: nil, bought_amount: nil}, {tx_hash: 130c5175d4f3e9add03bd1d115a87b26e613293fbe3815b970f8fc830f018ebc, valid: false, accepted_amount: nil, bought_amount: nil}, etc..]}
+{"address": "1KZmDQGzGJWYmPP9X3b7TA9dY91KBXgaG4", "transactions": [{"tx_hash": "5f01def181b761f1d03bcd20590c5729a47b11c68955b364add9253d7aec5eb9", "valid": true, "accepted_amount": null, "bought_amount": null}, {"tx_hash": "130c5175d4f3e9add03bd1d115a87b26e613293fbe3815b970f8fc830f018ebc", "valid": false, "accepted_amount": null, "bought_amount": null}, etc..]}
 ----
 
 This URL takes an address and currency_id as arguments and should return
