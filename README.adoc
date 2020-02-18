@@ -249,20 +249,17 @@ because support for them is not guaranteed in the future, and the Omni
 Protocol doesn't need them to embed data in the blockchain.
 
 The Omni Protocol was originally specified to embed data in the blockchain
-using fake bitcoin addresses (Class A transactions), but we’ve since come up
-with a more blockchain friendly method which embeds data in a bitcoin
-multi-signature transaction (Class B). Once bitcoin miners start
-supporting the new OP_RETURN opcode as part of version 0.9 of the
-Bitcoin reference client, Omni Protocol will be able to use that opcode
-to make the Omni Protocol data completely prune-able (Class C) see
-description by Gavin Andresen here:
-https://bitcoinfoundation.org/blog/?p=290
+using fake bitcoin addresses (Class A transactions), upgraded to a more
+blockchain-friendly method which embeds data in a bitcoin
+multi-signature transaction (Class B), and currently embeds data using
+the OP_RETURN opcode (for most transactions) making most Omni Protocol data
+completely prune-able (Class C).
 
 Class C transactions are most preferred due to the Provably Prune-able
 Outputs avoiding issues of "`bloat`" and "`pollution`" of the block
 chain.
 
-The technical details for both Class A and Class B transactions can be
+The technical details for Class A, Class B, and Class C transactions can be
 found in Appendix A.
 
 === Special Considerations to Avoid Invalid Transactions
@@ -2711,8 +2708,12 @@ Omni software should support the decoding of Class A, Class B, and Class C trans
 All three transaction classes have (at least) the following three elements in common:
 
 * A sending Bitcoin address
-* A recipient or _reference_ address.
-* A transaction _payload_: the Transaction Definition (see section 8, Transaction Definitions) that varies with each transaction type. (In this specification, it is often referred to as "the transaction data", but I propose revising this document to use the word _payload_ more consistently as that terminology is used in the source code and elsewhere.)
+* A recipient or _reference_ address (for transactions that require it)
+* A transaction _payload_: the Transaction Definition (see section 8, Transaction Definitions)
+that varies with each transaction type. (In this specification,
+it is often referred to as "the transaction data",
+but I propose revising this document to use the word _payload_ more
+consistently as that terminology is used in the source code and elsewhere.)
 
 The major difference between Class A, B, and C transactions is where/how the transaction payload is stored:
 
@@ -2720,11 +2721,9 @@ The major difference between Class A, B, and C transactions is where/how the tra
 * Class B -- payload stored in redeemable multisignature output
 * Class C -- payload stored in OP_RETURN output
 
-Note that for all transaction classes, we have some unused "`padding`"
+Class A and Class B transactions have some unused "`padding`"
 bytes at the end of most messages. Those bytes are undefined (they are
 ignored, so they can have any value).
-
-(Sean question: is this a good idea? Should we move to requiring they be zero to eliminate possibly malleability and to possibly allow using the space in the future?)
 
 === Class A transactions ('`original`' method)
 
@@ -2896,16 +2895,23 @@ sending address (if such an output exists) will be ignored as change
 * The reference address will be determined by the remaining output with
 the highest vout index
 
-NOTE: Class B transactions are deprecated. Client implementations should generate only Class C transactions, but may need to be able to read Class A or Class B transactions.
+NOTE: Class B transactions are deprecated, except for transactions where the payload is too large to fit in an OP_RETURN. Client implementations should generate Class C transactions when they can fit in a single OP_RETURN output, Class B transactions for larger (but typically infrequent) transactions, and need to be able to read Class A or Class B transactions.
 
 
 === Class C transactions (‘OP_RETURN’ method)
 
-* payloads are embedded in OP_RETURN outputs with "omni" as four ASCII bytes (hex: 6f6d6e69) being the marker prefix
-* multiple push operations are allowed and simply ignored (but this is not recommended?)
-* there can be more than one OP_RETURN output and payload per transaction. (But this is not allowed/relayed by Bitcoin Core) If there are multiple, they are combined.
+* payloads are embedded in OP_RETURN outputs with "omni" as four ASCII
+bytes (hex: 6f6d6e69) being the marker prefix
 * Output to Exodus address no longer required
-* Any other changes that we missed Dexx?
+
+The Bitcoin script opcode https://en.bitcoin.it/wiki/OP_RETURN[OP_RETURN] marks a
+transaction output as unspendable (to avoid UTXO-set bloat) and allows
+embedding data in that transaction output.
+
+==== Maximum Payload Size
+
+The current maximum payload size in accordance with Bitcoin consensus and
+relay rules is 76 bytes (80 bytes minus 4 bytes for the "omni" marker prefix.)
 
 ==== Examples
 
@@ -2920,7 +2926,14 @@ In these examples `+` is used as a concatenation operator.
 
 ===== More complicated cases
 
-The Omni protocol (and Omni Core implementation?) allow more complicated transactions, but these are not recommended and are not allowed/relayed in BTC/Bitcoin Core.
+The Omni Core implementation technically allows more complicated transactions,
+with multiple OP_RETURN outputs and/or multiple data pushes for each OP_RETURN,
+but these transactions are non-standard, not relayed by Bitcoin Core, and not recommended.
+
+* multiple push operations are allowed and simply ignored.
+* there can be more than one OP_RETURN output and payload per transaction.
+If there are multiple, they are combined.
+
 
 [source]
 ----
