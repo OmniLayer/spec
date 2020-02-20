@@ -4,7 +4,7 @@ Omni Team
 v0.5, June 30, 2015: Omni Protocol rename version
 :numbered:
 :toc:
-:toclevels: 1
+:toclevels: 2
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT
 gmail DOT com)
@@ -12,6 +12,9 @@ gmail DOT com)
 * David Johnston (https://github.com/DavidJohnstonCEO)
 * Ron Gross (https://github.com/ripper234)
 * Marv Schneider (https://github.com/marv-engine)
+* Zathras
+* Dexx (https://github.com/dexX7)
+* Sean Gilligan (https://github.com/msgilligan)
 
 With input by Peter Todd (https://github.com/petertodd)
 
@@ -244,30 +247,27 @@ Bitcoin has some little-known advanced features (such as scripting)
 which many people imagine will enable it to perform fancy new tricks
 someday. The Omni Protocol uses exactly NONE of those advanced features,
 because support for them is not guaranteed in the future, and the Omni
-Protocol doesn’t need them to embed data in the block chain.
+Protocol doesn't need them to embed data in the blockchain.
 
-The Omni Protocol was originally specified to embed data in the block
-chain using fake bitcoin addresses (Class A), but we’ve since come up
-with a more blockchain friendly method which embeds data in a bitcoin
-multi-signature transaction (Class B). Once bitcoin miners start
-supporting the new OP_RETURN opcode as part of version 0.9 of the
-Bitcoin reference client, Omni Protocol will be able to use that opcode
-to make the Omni Protocol data completely prune-able (Class C) see
-description here by Gavin Andresen here:
-https://bitcoinfoundation.org/blog/?p=290
+The Omni Protocol was originally specified to embed data in the blockchain
+using fake bitcoin addresses (Class A transactions), upgraded to a more
+blockchain-friendly method which embeds data in a bitcoin
+multi-signature transaction (Class B), and currently embeds data using
+the OP_RETURN opcode (for most transactions) making most Omni Protocol data
+completely prune-able (Class C).
 
 Class C transactions are most preferred due to the Provably Prune-able
 Outputs avoiding issues of "`bloat`" and "`pollution`" of the block
 chain.
 
-The technical details for both Class A and Class B transactions can be
+The technical details for Class A, Class B, and Class C transactions can be
 found in Appendix A.
 
 === Special Considerations to Avoid Invalid Transactions
 
 Not every bitcoin wallet lets you choose which address bitcoins come
 from when you make a payment, and Omni transactions must all come from
-the address which holds the Mastercoins being used. If a bitcoin wallet
+the address which holds the Omni currency being used. If a Bitcoin wallet
 contains bitcoins stored in multiple addresses, the user (or Omni
 Protocol software) must first ensure that the address which is going to
 send the Omni transaction has sufficient balance in bitcoins to create
@@ -277,10 +277,10 @@ successfully from that address.
 Wallets which do not allow you to consolidate to one address and send
 from that address (such as online web wallet providers) will not work
 for Omni unless they are modified to do so. For this reason, *attempting
-to purchase Mastercoins from an online web wallet will likely result in
-the permanent loss of those Mastercoins.*
+to purchase Omni or Omni currency from an online web wallet will likely result in
+the permanent loss of those coins.*
 
-Other than for these hosted wallets, a bitcoin address can also be
+Other than for these hosted wallets, a Bitcoin address can also be
 treated as an Omni address, capable of storing and using any Omni
 Protocol currency.
 
@@ -2697,26 +2697,36 @@ engaging in insider trading anonymously using the bitcoin version.
 [appendix]
 == Storing Omni Protocol data in the blockchain
 
-By Zathras, Copyright © 2013 The Mastercoin Foundation
-
-The following appendix serves to detail the different approaches to
+This appendix details the different approaches to
 storing Omni transaction data in the Bitcoin blockchain along with their
-validity requirements and use cases.
-
-This appendix will not discuss the varying types of Omni Protocol
-transactions or what the transaction data contains (these are defined in
-the main body of the Omni Protocol Specification) and will focus solely
-on transaction data storage.
+validity requirements and use cases. The main body of the Omni Protocol Specification discusses the varying
+types of Omni Protocol transactions or what the transaction data contains.
 
 For the purposes of a simplified overview, parties wishing to develop
-Omni software should support the decoding of both Class A and Class B
-transactions, but only need support encoding of Class B transactions.
+Omni software should support the decoding of Class A, Class B, and Class C transactions,
+but only needs to support encoding of Class C transactions (and certain large transactions may still require encoding
+as Class B.)
 
-Note that for all transaction classes, we have some unused "`padding`"
+All three transaction classes have (at least) the following three elements in common:
+
+* A sending Bitcoin address
+* A recipient or _reference_ address (for transactions that require it)
+* A transaction _payload_: the Transaction Definition (see section 8, Transaction Definitions)
+that varies with each transaction type. (In this specification,
+_payload_ is often referred to as "the transaction data",
+but in future drafts the word _payload_ will be used more consistently.)
+
+The major difference between Class A, B, and C transactions is where/how the transaction payload is stored:
+
+* Class A -- payload stored in fake Bitcoin address
+* Class B -- payload stored in redeemable multisignature output
+* Class C -- payload stored in OP_RETURN output
+
+Class A and Class B transactions have some unused "`padding`"
 bytes at the end of most messages. Those bytes are undefined (they are
 ignored, so they can have any value).
 
-=== Class A transactions (also known as the '`original`' method)
+=== Class A transactions ('`original`' method)
 
 Class A transactions were the first class of Omni Protocol transaction
 and store data in the blockchain by utilizing fake Bitcoin addresses to
@@ -2773,15 +2783,16 @@ interests of Bitcoin to avoid UTXO bloat to minimize the memory
 requirement for client implementations.
 
 Class B transactions were developed to address this issue by using
-provably redeemable outputs. Class A transactions are thus considered
+provably redeemable outputs. Class A (and B) transactions are thus considered
 deprecated and are supported for backwards compatibility only.
 
 NOTE: Class A transactions are restricted to the '`simple send`'
 transaction type only. All other Omni transaction types are supported by
-Class B transactions only. Client implementations should utilize Class B
-for all transaction types, including '`simple send`'.
+Class B and Class C transactions only. Client implementations should utilize
+Class C transactions for all transaction types that will fit in an `OP_RETURN` output,
+falling back to Class B for larger (and less common) transactions.
 
-=== Class B transactions (also known as the '`multisig`' method)
+=== Class B transactions ('`multisig`' method)
 
 Class B transactions attempt to address the UTXO '`bloat`' issue by
 storing data in the blockchain by utilizing '`1-of-n`' multisignature
@@ -2887,6 +2898,83 @@ sending address (if such an output exists) will be ignored as change
 * The reference address will be determined by the remaining output with
 the highest vout index
 
+NOTE: Class B transactions are deprecated, except for transactions where the payload is too large to fit in an OP_RETURN. Client implementations should generate Class C transactions when they can fit in a single OP_RETURN output, Class B transactions for larger (but typically infrequent) transactions, and need to be able to read Class A or Class B transactions.
+
+
+=== Class C transactions (‘OP_RETURN’ method)
+
+* payloads are embedded in OP_RETURN outputs with "omni" as four ASCII
+bytes (hex: 6f6d6e69) being the marker prefix
+* Output to Exodus address no longer required
+
+The Bitcoin script opcode https://en.bitcoin.it/wiki/OP_RETURN[OP_RETURN] marks a
+transaction output as unspendable (to avoid UTXO-set bloat) and allows
+embedding data in that transaction output.
+
+==== Maximum Payload Size
+
+The current maximum payload size in accordance with Bitcoin consensus and
+relay rules is 76 bytes (80 bytes minus 4 bytes for the "omni" marker prefix.)
+
+==== Examples
+
+In these examples `+` is used as a concatenation operator.
+
+===== Usual case
+
+[source]
+----
+ OP_RETURN 6f6d6e69 + <payload>
+----
+
+===== More complicated cases
+
+The Omni Core implementation technically allows more complicated transactions,
+with multiple OP_RETURN outputs and/or multiple data pushes for each OP_RETURN,
+but these transactions are non-standard, not relayed by Bitcoin Core, and not recommended.
+
+* multiple push operations are allowed and simply ignored.
+* there can be more than one OP_RETURN output and payload per transaction.
+If there are multiple, they are combined.
+
+
+[source]
+----
+166a146f6d6e69000000000000001f0000000df8475800
+----
+
+Decoded:
+[source]
+----
+16 <- push 22 byte
+6a <- opcode OP_RETURN
+14 <- push 20 byte
+6f6d6e69000000000000001f0000000df8475800 <- 20 byte payload with marker 6f6d6e69
+----
+
+But also allowed:
+[source]
+----
+OP_RETURN (push) [6f6d6e69] (push) [aaaa] (push) [bbbbcc]
+OP_RETURN (push) [6f6d6e69][dddd]
+OP_RETURN (push) [ffffffffff0101]
+OP_RETURN (push) [6f6d6e69] (push) [eeee] (push) [ffgg]
+----
+
+Resulting in a payload with:
+[source]
+----
+aaaabbbbccddddeeeeffgg
+----
+The outputs with prefix are considered, the prefix removed, all pushes combined and then all payloads combined.
+
+==== Unit Tests
+
+These are the C++ unit tests from Omni Core. We're not sure if they should be left in the specification, but here they are for now:
+
+* https://github.com/OmniLayer/omnicore/blob/master/src/omnicore/test/parsing_c_tests.cpp[parsing_c_tests.cpp]
+* https://github.com/OmniLayer/omnicore/blob/master/src/omnicore/test/encoding_c_tests.cpp[encoding_c_tests.cpp]
+
 [appendix]
 == Regulatory and Legal Compliance - Know Your Jurisdiction
 
@@ -2973,10 +3061,10 @@ for this address and whether this implementation considers a given
 transaction valid or not.
 
 In all likeliness this will capture most of the discrepancies. If this
-doesn’t proof enough we can supply addional information like the amount
+doesn’t provide enough proof, we can supply additional information like the amount
 transferred per transaction in the future.
 
-For Simple Send transactions accepted_amount and bought_amount can be
+For Simple Send transactions `accepted_amount` and `bought_amount` can be
 null values. These values are only used for Distributed Exchange
 transactions. The accepted amount should contain the amount that was
 accepted when a Purchase Offer got added to a block.
