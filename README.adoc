@@ -14,6 +14,7 @@ gmail DOT com)
 * Marv Schneider (https://github.com/marv-engine)
 * Zathras
 * Dexx (https://github.com/dexX7)
+* Sean Gilligan (https://github.com/msgilligan)
 
 With input by Peter Todd (https://github.com/petertodd)
 
@@ -2696,14 +2697,15 @@ engaging in insider trading anonymously using the bitcoin version.
 [appendix]
 == Storing Omni Protocol data in the blockchain
 
-(Sean: This section should not be an appendix, but part of the main document.)
-
-This appendix serves details the different approaches to
+This appendix details the different approaches to
 storing Omni transaction data in the Bitcoin blockchain along with their
-validity requirements and use cases. The main body of the Omni Protocol Specification discuss the varying types of Omni Protocol transactions or what the transaction data contains.
+validity requirements and use cases. The main body of the Omni Protocol Specification discusses the varying
+types of Omni Protocol transactions or what the transaction data contains.
 
 For the purposes of a simplified overview, parties wishing to develop
-Omni software should support the decoding of Class A, Class B, and Class C transactions, but only need support encoding of Class C transactions.
+Omni software should support the decoding of Class A, Class B, and Class C transactions,
+but only needs to support encoding of Class C transactions (and certain large transactions may still require encoding
+as Class B.)
 
 All three transaction classes have (at least) the following three elements in common:
 
@@ -2711,9 +2713,8 @@ All three transaction classes have (at least) the following three elements in co
 * A recipient or _reference_ address (for transactions that require it)
 * A transaction _payload_: the Transaction Definition (see section 8, Transaction Definitions)
 that varies with each transaction type. (In this specification,
-it is often referred to as "the transaction data",
-but I propose revising this document to use the word _payload_ more
-consistently as that terminology is used in the source code and elsewhere.)
+_payload_ is often referred to as "the transaction data",
+but in future drafts the word _payload_ will be used more consistently.)
 
 The major difference between Class A, B, and C transactions is where/how the transaction payload is stored:
 
@@ -2787,7 +2788,9 @@ deprecated and are supported for backwards compatibility only.
 
 NOTE: Class A transactions are restricted to the '`simple send`'
 transaction type only. All other Omni transaction types are supported by
-Class B and Class C transactions only. Client implementations should utilize Class C transactions for all transaction types, including '`simple send`'.
+Class B and Class C transactions only. Client implementations should utilize
+Class C transactions for all transaction types that will fit in an `OP_RETURN` output,
+falling back to Class B for larger (and less common) transactions.
 
 === Class B transactions ('`multisig`' method)
 
@@ -3058,10 +3061,10 @@ for this address and whether this implementation considers a given
 transaction valid or not.
 
 In all likeliness this will capture most of the discrepancies. If this
-doesn’t proof enough we can supply additonal information like the amount
+doesn’t provide enough proof, we can supply additional information like the amount
 transferred per transaction in the future.
 
-For Simple Send transactions accepted_amount and bought_amount can be
+For Simple Send transactions `accepted_amount` and `bought_amount` can be
 null values. These values are only used for Distributed Exchange
 transactions. The accepted amount should contain the amount that was
 accepted when a Purchase Offer got added to a block.
