@@ -1,7 +1,7 @@
 
-= Omni Protocol Specification
+= Omni Protocol Specification v0.6
 Omni Team
-v0.5, June 30, 2015: Omni Protocol rename version
+v0.6, March 26, 2020: Class C transactions
 :numbered:
 :toc:
 :toclevels: 2
@@ -122,6 +122,7 @@ clear there are lots of use cases for "`send to owners`", and that we
 don’t encourage illegal behavior!
 . Version 0.4.5.11 released 8 Aug 2014 (completed tx21 description)
 . Version 0.5 released 28 Jun 2015 (rename to Omni Protocol)
+. Version 0.6 released 26 Mar 2020 (Add Class C transactions, final version before major reformat)
 
 * Pre-github versions of this document (prior to version 0.3.5 /
 previously 1.2) can be found at
