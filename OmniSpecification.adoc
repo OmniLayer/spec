@@ -42,15 +42,17 @@ This section will provide an overview of the Omni Layer and how it interacts wit
 
 The basic format of an Omni transaction, independent of how it is encoded.
 
-=== Class 'C' Transactions
+=== Class 'A' Transactions
 
-Specification of Class 'C' (`OP_RETURN`) transactions.
+Deprecated for new transactions, but necessary for calculation of Omni Consensus.
 
 === Class 'B' Transactions
 
-Still required for large transactions so documented in main-body of spec. Class 'A' transactions will be in an appendix.
+Still required for large transactions.
 
+=== Class 'C' Transactions
 
+Use Class 'C' (`OP_RETURN`) transactions for all new transactions that are small enough.
 
 == Transaction Definitions
 
@@ -88,16 +90,12 @@ Omni Consensus:: The current state of all accounts in the Omni Layer.
 - [[[satoshi]]] Nakamoto, Satoshi, "Bitcoin: A Peer-to-Peer Electronic Cash System", 2008, https://bitcoin.org/bitcoin.pdf
 
 [appendix]
-== Class A Transactions
-
-[appendix]
 == Relevant Omni History
 
 Previously Mastercoin, MSC, etc.
 
 [appendix]
 == Regulatory and Legal Compliance - Know Your Jurisdiction
-
 
 [appendix]
 == Financial Disclaimer
