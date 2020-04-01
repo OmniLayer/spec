@@ -1,0 +1,108 @@
+
+= Omni Protocol Specification
+Omni Team
+v0.7, May 1, 2020: Omni Protocol rename version
+:numbered:
+:toc:
+:toclevels: 2
+
+* JR Willett (https://github.com/dacoinminster and jr DOT willett AT
+gmail DOT com)
+* Maran Hidskes (https://github.com/maran)
+* David Johnston (https://github.com/DavidJohnstonCEO)
+* Ron Gross (https://github.com/ripper234)
+* Marv Schneider (https://github.com/marv-engine)
+* Zathras
+* Dexx (https://github.com/dexX7)
+* Sean Gilligan (https://github.com/msgilligan)
+
+With input by Peter Todd (https://github.com/petertodd)
+
+== Introduction
+
+NOTE: This is the work-in-progress *Version 0.7* of the Omni Specification. It is currently a template/outline/table-of-contents of a major rewrite. The current version of the specification is in the https://github.com/OmniLayer/spec/blob/master/README.adoc[README].
+
+This document specifies the behavior of the Omni Protocol as implemented in the *Omni Core* node software.
+
+This introduction will introduce the Omni Layer and Omni Protocol and explain the purpose of the specification and its relationship to the *Omni Core* client and other implementing software.
+
+Introduction to the *OLE* process and a link to the OLE repository.
+
+== Architectural Overview
+
+This section will provide an overview of the Omni Layer and how it interacts with the Bitcoin network and blockchain. It will explain core concepts like the fact that the Bitcoin network will accept and record invalid Omni transactions and that Omni transactions must be validated (or invalidated and ignored) by the Omni consensus engine in Omni Core.
+
+== The Omni Crowdsale: Initial Token Distribution
+
+== Development Omni Distribution
+
+== Embedding Omni Transactions in the Blockchain
+
+=== Omni Payload Format
+
+The basic format of an Omni transaction, independent of how it is encoded.
+
+=== Class 'A' Transactions
+
+Deprecated for new transactions, but necessary for calculation of Omni Consensus.
+
+=== Class 'B' Transactions
+
+Still required for large transactions.
+
+=== Class 'C' Transactions
+
+Use Class 'C' (`OP_RETURN`) transactions for all new transactions that are small enough.
+
+== Transaction Definitions
+
+
+=== Transferring coins
+
+
+=== Distributed Exchange
+
+
+=== Tokens (Smart Properties)
+
+
+=== Token (Smart Property) Administration
+
+
+== Handling Blockchain Reorganizations
+
+== Fees
+
+== Unlocking New Features
+
+
+[glossary]
+== Glossary
+
+[glossary]
+Exodus Address:: `1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P`. A very special Bitcoin address that is used by Omni for multiple purposes.
+Omni Consensus:: The current state of all accounts in the Omni Layer.
+
+[bibliography]
+== Bibliography
+
+[bibliography]
+- [[[satoshi]]] Nakamoto, Satoshi, "Bitcoin: A Peer-to-Peer Electronic Cash System", 2008, https://bitcoin.org/bitcoin.pdf
+
+[appendix]
+== Relevant Omni History
+
+Previously Mastercoin, MSC, etc.
+
+[appendix]
+== Regulatory and Legal Compliance - Know Your Jurisdiction
+
+[appendix]
+== Financial Disclaimer
+
+[appendix]
+== Webservice verification API
+
+[appendix]
+== Understanding the cost of Omni protocol messages
+
