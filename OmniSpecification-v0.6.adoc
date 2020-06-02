@@ -2705,7 +2705,7 @@ types of Omni Protocol transactions or what the transaction data contains.
 
 For the purposes of a simplified overview, parties wishing to develop
 Omni software should support the decoding of Class A, Class B, and Class C transactions,
-but only needs to support encoding of Class C transactions (and certain large transactions may still require encoding
+but only need to support encoding of Class C transactions (and certain large transactions may still require encoding
 as Class B.)
 
 All three transaction classes have (at least) the following three elements in common:
