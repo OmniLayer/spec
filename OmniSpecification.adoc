@@ -113,9 +113,9 @@ V = 1 - 0.5 ^ Y
 ++++
 +
 Where:
-[center]
-* `V` = Dev OMNI Percent Vested
-* `Y` = Years since OMNI crowdsale
+|====
+| `V` = Dev OMNI Percent Vested | `Y` = Years since OMNI crowdsale
+|====
 
 . As Dev OMNI vest, 50% of them are sent out as bonuses to people who won
 Omni bounties, in proportion to how much bounty money they won
