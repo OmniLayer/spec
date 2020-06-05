@@ -5,6 +5,7 @@ v0.7, June 1, 2020: Restructured/reformatted
 :numbered:
 :toc:
 :toclevels: 2
+:stem:
 
 * JR Willett (https://github.com/dacoinminster and jr DOT willett AT
 gmail DOT com)
@@ -104,8 +105,18 @@ year after the initial Exodus Address period closed (date the Exodus
 Address closed - August 31st 2013, although transactions up till block
 255365 were still accepted to account for slower propagation of
 transactions still sent on the 31st of August), 75% by a year later,
-87.5% by a year later, and so on:
-image:images/reward-mastercoin-formula.png[Dev OMNI]
+87.5% by a year later, and so on, according to the following formula:
++
+[stem]
+++++
+V = 1 - 0.5 ^ Y
+++++
++
+Where:
+[center]
+* `V` = Dev OMNI Percent Vested
+* `Y` = Years since OMNI crowdsale
+
 . As Dev OMNI vest, 50% of them are sent out as bonuses to people who won
 Omni bounties, in proportion to how much bounty money they won
 (bitcoins). The other 50% are used for expenses such as retention
