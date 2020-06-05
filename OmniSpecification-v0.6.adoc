@@ -388,7 +388,7 @@ are based on the total before any fees are deducted. For instance, the
 total - they do not affect each other.
 
 You can read more about this fee structure on our blog:
-http://blog.mastercoin.org/2014/06/11/mastercoin-is-for-burning/
+https://blog.omni.foundation/2014/06/11/mastercoin-is-for-burning/
 
 === Unlocking features
 
@@ -1264,6 +1264,7 @@ amount not yet matched at the time of the update.
 The UI must indicate if the update was successful and how many coins
 were purchased before the update took effect.
 
+[#smart-property]
 === Smart Property
 
 The Omni Protocol supports the creation of property tokens to be used
@@ -2843,21 +2844,22 @@ EXAMPLE: The following provides example output for an obfuscated Omni
 packet (where and XX is the last byte reserved for ECDSA point validity
 manipulation):
 
-REFERENCE ADDRESS
+[cols="1,3",frame="all"]
+|===
 
-\{1CdighsfdfRcj4ytQSskZgQXbUEamuMUNF }
+| *Reference address*
+| {1CdighsfdfRcj4ytQSskZgQXbUEamuMUNF}
 
-SHA256 HASH (S TIMES) OF ADDRESS
+| *SHA256 hash (S times) of address*
+| {1D9A3DE5C2E22BF89A1E41E6FEDAB54582F8A0C3AE14394A59366293DD130C}59
 
-\{1D9A3DE5C2E22BF89A1E41E6FEDAB54582F8A0C3AE14394A59366293DD130C }59
+| *Cleartext packet*
+| 02{0100000000000000010000000002faf0800000000000000000000000000000}XX
 
-CLEARTEXT OMNI PACKET
+| *Obfuscated packet*
+| 02{1C9A3DE5C2E22BF89B1E41E6FED84FB502F8A0C3AE14394A59366293DD130C}XX
 
-02\{ 0100000000000000010000000002faf0800000000000000000000000000000 }XX
-
-OBFUSCATED OMNI PACKET
-
-02\{ 1C9A3DE5C2E22BF89B1E41E6FED84FB502F8A0C3AE14394A59366293DD130C }XX
+|===
 
 Once the obfuscated Omni packet is prepared, the key identifier (02) is
 prefixed and a random byte compressed public key is then run across a

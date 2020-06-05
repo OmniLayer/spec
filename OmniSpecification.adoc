@@ -26,9 +26,7 @@ This document specifies the behavior of the Omni Protocol as implemented in the 
 
 This introduction will introduce the Omni Layer and Omni Protocol and explain the purpose of the specification and its relationship to the *Omni Core* client and other implementing software.
 
-Introduction to the *OLE* process and a link to the OLE repository.
-
-== Updating the Specification
+== Specification Update Process
 
 We are currently restructuring and reformatting the specification. This process is occurring on Github. See the https://github.com/OmniLayer/spec/blob/master/README.adoc[README] for details on how to participate.
 
@@ -44,6 +42,7 @@ This section will provide an overview of the Omni Layer and how it interacts wit
 
 NOTE:: This section is forthcoming.
 
+[#sec-initial-token-distribution-via-the-exodus-address]
 == The Omni Crowdsale: Initial Token Distribution
 
 Perhaps you have heard of the "`Genesis Block`" which launched the
@@ -195,6 +194,7 @@ treated as an Omni address, capable of storing and using any Omni
 Protocol currency.
 
 
+[#sec-omni-payload-format]
 === Omni Payload Format
 
 The section describes the binary format of an Omni transaction, independent of how it is encoded into a Bitcoin transaction.
@@ -263,6 +263,7 @@ Identifier]
 * Size: 32-bit unsigned integer, 4 bytes
 * Valid values: 0 to 4,294,967,295
 
+[#field-integer-one-byte]
 ===== Field: Integer-one byte
 
 * Description: used as a multiplier or in other calculations
@@ -334,18 +335,21 @@ replace or append an existing link:#smart-property[Smart Property]
 ** 2: Reject
 ** 3: Contact
 
+[#field-string-255-byte-null-terminated]
 ===== Field: String 255 byte null-terminated
 
 * Description: a variable length string terminated with a \0 byte
 * Size: variable, up to 255 bytes, plus the null terminator
 * Valid values: Unicode encoded with UTF-8
 
+[#field-time-period-in-blocks]
 ===== Field: Time period in blocks
 
 * Description: number of blocks during which an action can be performed
 * Size: 8-bit unsigned integer, 1 byte
 * Valid values: 1 to 255
 
+[#field-utc-datetime]
 ===== Field: UTC Datetime
 
 * Description: Datetime, assuming UTC timezone (the same timezone used
@@ -362,6 +366,7 @@ protocol
 * Size: 32-bit unsigned integer, 4 bytes
 * Valid values: 1 to 31,536,000 (365.0 days)
 
+[#field-sell-offer-sub-action]
 ===== Field: Sell offer sub-action
 
 * Description: the specific action to be applied to the sell offer by
@@ -372,6 +377,7 @@ this transaction
 ** 2: Update
 ** 3: Cancel
 
+[#field-metadex-sell-offer-sub-action]
 ===== Field: Metadex Sell offer sub-action
 
 * Description: the specific action to be applied to the sell offer by
@@ -393,28 +399,28 @@ version]
 * Current Valid values:
 ** 0: link:#tt-simple-send[Simple Send]
 ** 3: link:#tt-send-to-owners[Send To Owners]
-** 20: link:#sell-mastercoins-for-bitcoins[Sell Coins for Bitcoins
+** 20: link:#tt-sell-omni-for-bitcoins[Sell OMNI for bitcoins
 (currency trade offer)]
 ** 21:
-link:#sell-omni-protocol-coins-for-another-omni-protocol-currency[Offer/Accept
+link:#tt-sell-omni-protocol-coins-for-another-omni-protocol-currency[Offer/Accept
 Omni Protocol Coins for Another Omni Protocol Currency (currency trade
 offer)]
-** 22: link:#purchase-mastercoins-with-bitcoins[Purchase Coins with
+** 22: link:#tt-purchase-omni-with-bitcoins[Purchase OMNI with
 Bitcoins (accept currency trade offer)]
-** 50: link:#new-property-creation-with-fixed-number-of-tokens[Create a
+** 50: link:#tt-new-property-creation-with-fixed-number-of-tokens[Create a
 Property with fixed number of tokens]
 ** 51:
-link:#new-property-creation-via-crowdsale-with-variable-number-of-tokens[Create
+link:#tt-new-property-creation-via-crowdsale-with-variable-number-of-tokens[Create
 a Property via Crowdsale with Variable number of Tokens]
-** 52: link:#promote-a-property[Promote a Property]
-** 53: link:#close-a-crowdsale-manually[Close a Crowdsale Manually]
-** 54: link:#new-property-with-managed-number-of-tokens[Create a Managed
+** 52: link:#tt-promote-a-property[Promote a Property]
+** 53: link:#tt-close-a-crowdsale-manually[Close a Crowdsale Manually]
+** 54: link:#tt-new-property-with-managed-number-of-tokens[Create a Managed
 Property with Grants and Revocations]
-** 55: link:#granting-tokens-for-a-managed-property[Grant Property
+** 55: link:#tt-granting-tokens-for-a-managed-property[Grant Property
 Tokens]
-** 56: link:#revoking-tokens-for-a-managed-property[Revoke Property
+** 56: link:#tt-revoking-tokens-for-a-managed-property[Revoke Property
 Tokens]
-** 70: link:#change-issuer-on-record-for-a-property[Change Property
+** 70: link:#tt-change-issuer-on-record-for-a-property[Change Property
 Issuer on Record]
 
 [#field-transaction-version]
@@ -710,9 +716,8 @@ property.
 ==== Transfer Coins (Simple Send)
 
 Description: Transaction type 0 transfers coins in the specified
-currency from the sending address to the reference address, defined in
-link:#appendix-a-storing-omni-protocol-data-in-the-blockchain[Appendix
-A]. This transaction can not be used to transfer bitcoins.
+currency from the sending address to the _reference address_, defined in
+link:##sec-omni-payload-format[Omni Payload Format]. This transaction can not be used to transfer bitcoins.
 
 In addition to the validity constraints on the message field datatypes,
 the transaction is invalid if any of the following conditions is true: *
@@ -812,7 +817,7 @@ Miner Tokens
 The protocol will split up the 1000 Quantum Miner tokens and send them
 to the other holders of those tokens, according to how many tokens they
 have. When using currencies other than OMNI, a small fee will be
-deducted (see link:#fees[fees] above). The sender is also charged a
+deducted (see link:#sec-fees[fees] above). The sender is also charged a
 transfer fee based on the number of addresses that receive any of the
 1000 Quantum Miner tokens (as described earlier).
 
@@ -836,6 +841,7 @@ reflecting both the one-sided nature of bitcoin/OMNI exchange as
 well as the additional anti-spam fees and race conditions inherent in
 the system.
 
+[#tt-sell-omni-for-bitcoins]
 ==== Sell OMNI for Bitcoins
 
 Description: Transaction type 20 posts the terms of an offer to sell
@@ -855,7 +861,7 @@ the sell offer is published, any coins received by the address are added
 to its then current available balance, and are not included in the
 amount for sale by this sell offer. The seller could update the sell
 offer to include these newly acquired coins, see
-link:#change-a-coin-sell-offer[Change a Coin Sell Offer] below.
+link:#tt-change-a-coin-sell-offer[Change a Coin Sell Offer] below.
 
 The unit price of the sell offer is computed from two of the fields in
 the transaction message: the "`Amount for sale`" divided by the "`Amount
@@ -867,7 +873,7 @@ while that address has _any_ active offer that accepts Bitcoins.
 Currently, this includes an active Sell OMNI for Bitcoins offer
 (one that has not been canceled or fully accepted and full payment
 received) and an active
-link:#new-property-creation-via-crowdsale-with-variable-number-of-tokens[New
+link:#tt-new-property-creation-via-crowdsale-with-variable-number-of-tokens[New
 Property Creation via Crowdsale with Variable number of Tokens] that
 accepts Bitcoins.
 
@@ -916,6 +922,7 @@ treated as Action=1 (New offer) unless there is already an offer
 outstanding from this address for the same Currency identifier, in which
 case it is treated as Action = 2 (Update offer).
 
+[#tt-change-a-coin-sell-offer]
 ===== Change a Coin Sell Offer
 
 An offer to sell coins can be changed by using Action = 2 (Update) until
@@ -949,7 +956,7 @@ buyer fails to send payment.
 
 A currency sell offer can be canceled by using Action = 3 (Cancel) until
 the offer has been fully accepted by valid purchase offers
-(link:#purchase-mastercoins-with-bitcoins[Purchase OMNI with
+(link:#tt-purchase-omni-with-bitcoins[Purchase OMNI with
 Bitcoins]). When a sell offer is canceled, the associated coins are no
 longer reserved.
 
@@ -969,6 +976,7 @@ cancels any portion of the offer which has not been accepted, and it
 prevents accepted coins from being relisted if the buyer fails to send
 payment.
 
+[#tt-purchase-omni-with-bitcoins]
 ==== Purchase OMNI with Bitcoins
 
 Description: Transaction type 22 posts acceptance of an offer to sell
@@ -1041,6 +1049,7 @@ identifier] |1 (OMNI)
 |130,000,000 (1.3 coins)
 |===
 
+[#tt-sell-omni-protocol-coins-for-another-omni-protocol-currency]
 ==== Sell Omni Protocol Coins for Another Omni Protocol Currency
 
 Description: Transaction type 21 is used to both publish and accept an
@@ -1058,7 +1067,7 @@ sell order is published, any coins received by the address are added to
 its then current available balance, and are not included in the amount
 for sale by this sell order. The seller could update the sell order to
 include these newly acquired coins, see
-link:#change-a-transaction-type-21-coin-sell-order[Change a Transaction
+link:#tt-change-a-coin-sell-offer[Change a Transaction
 Type 21 Coin Sell Order] below.
 
 The new sell order’s unit price is computed from two of the fields in
@@ -1241,7 +1250,7 @@ the complexity of the software. If another currency becomes widely used
 in the Omni Protocol, we may allow other currencies (such as a USDCoin)
 to be used in a similar way, with a tiny amount of MSC being
 automatically purchased and burned with each trade (see the
-link:#fees[section on fees] above) when a trade is completed and neither
+link:#sec-fees[section on fees] above) when a trade is completed and neither
 currency being traded is OMNI.
 
 An offer to sell coins can be changed or cancelled by publishing
@@ -1292,6 +1301,7 @@ amount not yet matched at the time of the update.
 The UI must indicate if the update was successful and how many coins
 were purchased before the update took effect.
 
+[#smart-property]
 === Tokens (Smart Properties)
 
 The Omni Protocol supports the creation of property tokens to be used
@@ -1335,8 +1345,8 @@ that the issuer is abandoning a property entirely: * set Previous
 Property ID to that property’s id, * set Number Properties to zero, and
 * use one of the "`replace`" values for
 link:#field-property-type[Property Type] (see Transaction types
-link:#new-property-creation-with-fixed-number-of-tokens[50] and
-link:#new-property-creation-via-crowdsale-with-variable-number-of-tokens[51],
+link:#tt-new-property-creation-with-fixed-number-of-tokens[50] and
+link:#tt-new-property-creation-via-crowdsale-with-variable-number-of-tokens[51],
 below).
 
 A property can be replaced and appended multiple times, even abandoning
@@ -1390,9 +1400,10 @@ can still send their restricted tokens to another approved address using
 simple send, but they cannot receive new coins or use the coins in any
 other way. This prevents tokens from effectively being destroyed when
 addresses are removed from the approved list. To create a list of
-addresses, see link:#create-a-list-of-addresses[Create a List of
-Addresses] later in this document.
+addresses, the "Create a List of
+Addresses" transaction was proposed and withdrawn (see OLE-099).
 
+[#tt-new-property-creation-with-fixed-number-of-tokens]
 ==== New Property Creation with Fixed number of Tokens
 
 Description: Transaction type 50 is used to create a new Smart Property
@@ -1454,6 +1465,7 @@ null-terminated] |"`\0`" (1 byte)
 |1,000,000 (indivisible tokens)
 |===
 
+[#tt-new-property-creation-via-crowdsale-with-variable-number-of-tokens]
 ==== New Property Creation via Crowdsale with Variable number of Tokens
 
 Description: Transaction type 51 is used to initiate a crowdsale which
@@ -1465,13 +1477,13 @@ Effective with version 1 of Transaction type 51 and block #(TBD), a
 single crowdsale is able to accept multiple currencies, including
 bitcoins (currency id 0), for purchases of a Smart Property in a single
 crowdsale. See
-link:#accepting-multiple-currencies-in-a-crowdsale[Accepting Multiple
+link:#sec-accepting-multiple-currencies-in-a-crowdsale[Accepting Multiple
 Currencies in a Crowdsale] below.
 
 The crowdsale is active until any of the following conditions occurs,
 which causes the crowdsale to be closed permanently: * there is a block
 with a blocktime greater than or equal to the crowdsale’s "`Deadline`"
-value * the crowdsale is link:#close-a-crowdsale-manually[manually
+value * the crowdsale is link:#tt-close-a-crowdsale-manually[manually
 closed] * the maximum number of tokens that can be issued by a crowdsale
 has been credited (92,233,720,368.54775807 divisible tokens or
 9,223,372,036,854,775,807 indivisible tokens, see field
@@ -1480,7 +1492,7 @@ link:#field-number-of-coins[Number of Coins]).
 An address may have only one crowdsale active at any given time,
 eliminating the need for participants to specify which crowdsale from
 that address they are participating in when they purchase. See
-link:#participating-in-a-crowdsale[Participating in a crowdsale] below.
+link:#sec-participating-in-a-crowdsale[Participating in a crowdsale] below.
 
 Tokens credited to each crowdsale participant and the crowdsale owner
 are immediately added to the available balance belonging to the
@@ -1503,7 +1515,7 @@ deadline.
 The early bird bonus percentage for crowdsale purchasers of new smart
 properties is calculated the same way as was used in the original
 distribution of OMNI by the Exodus Address (see
-link:#initial-token-distribution-via-the-exodus-address[Initial Token
+link:#sec-initial-token-distribution-via-the-exodus-address[Initial Token
 Distribution via the "`Exodus Address`"]):
 
 EBpercentage = ( ("`Deadline`" value in seconds - transaction timestamp
@@ -1627,6 +1639,7 @@ of Coins] |100 indivisible tokens
 |12
 |===
 
+[#sec-accepting-multiple-currencies-in-a-crowdsale]
 ==== Accepting Multiple Currencies in a Crowdsale
 
 A single crowdsale can accept multiple currencies for participation in
@@ -1654,11 +1667,12 @@ Transaction type 51 messages that can be applied to an active crowdsale.
 These messages must be able to enable, change or stop acceptance of any
 valid currency id.
 
+[#sec-participating-in-a-crowdsale]
 ==== Participating in a Crowdsale
 
 Participating in a crowdsale is accomplished by sending coins of one of
 the desired currencies to the crowdsale owner’s address with the
-link:#transfer-coins-simple-send[Simple Send] transaction or a bitcoin
+link:#tt-simple-send[Simple Send] transaction or a bitcoin
 Send transaction if the crowdsale accepts bitcoins (currency id 0) for
 purchases. Use multiple Sends to make multiple purchases in the
 crowdsale. In order to participate in the crowdsale, the currency id
@@ -1666,7 +1680,7 @@ must match one of the "`Currency identifier desired`" values being
 accepted in the crowdsale and the Send message must be confirmed before
 any of the following conditions occurs: * there is a block with a
 blocktime greater than or equal to the crowdsale’s "`Deadline`" value *
-the crowdsale is link:#close-a-crowdsale-manually[manually closed] * the
+the crowdsale is link:#tt-close-a-crowdsale-manually[manually closed] * the
 maximum number of tokens that can be issued by a crowdsale has been
 generated (92,233,720,368.54775807 divisible tokens or
 9,223,372,036,854,775,807 indivisible tokens, see field
@@ -1719,9 +1733,10 @@ addresses and can be spent or otherwise used by that address.
 belonging to the crowdsale owner’s address and can be spent or otherwise
 used by that address.
 * When accepting currencies other than OMNI, a small fee will be
-deducted (see link:#fees[fees] above) from the coins issued to crowdsale
+deducted (see link:#sec-fees[fees] above) from the coins issued to crowdsale
 participants.
 
+[#tt-promote-a-property]
 ==== Promote a property
 
 Say that having created your "`Quantum Miner`" smart property (which was
@@ -1764,6 +1779,7 @@ will be important.
 In the Test OMNI ecosystem, test MSC are destroyed instead of real
 MSC.
 
+[#tt-close-a-crowdsale-manually]
 ==== Close a Crowdsale Manually
 
 Since crowdsales are generally open-ended, it leaves the potential that
@@ -1791,9 +1807,10 @@ version] |0
 Note that attempts to participate in a closed crowdsale will result in
 no investment in that crowdsale and no tokens from that crowdsale will
 be credited as a result of these attempts. See
-link:#particpating-in-a-crowdsale[Participating in a Crowdsale] for
+link:#sec-participating-in-a-crowdsale[Participating in a Crowdsale] for
 details.
 
+[#tt-new-property-with-managed-number-of-tokens]
 ==== New Property with Managed Number of Tokens
 
 This feature is supported since block number 323230.
@@ -1805,8 +1822,8 @@ property.
 Creating a managed smart property does not automatically grant any
 tokens to the address that broadcasts the transaction. Instead two
 additional transaction types exist to actively manage the size of the
-token pool: link:#granting-tokens-for-a-managed-property[Grant Tokens]
-and link:#revoking-tokens-for-a-managed-property[Revoke Tokens].
+token pool: link:#tt-granting-tokens-for-a-managed-property[Grant Tokens]
+and link:#tt-revoking-tokens-for-a-managed-property[Revoke Tokens].
 
 In addition to the validity constraints for each message field type, the
 following conditions must be met in order for the transaction to be
@@ -1852,18 +1869,19 @@ null-terminated] |"`tinyurl.com/kwejgoig\0`" (21 bytes)
 null-terminated] |"`\0`" (1 byte)
 |===
 
+[#tt-granting-tokens-for-a-managed-property]
 ==== Granting Tokens for a Managed Property
 
 This feature is supported since block number 323230.
 
 Description: Properties issued with a
-link:#new-property-with-managed-number-of-tokens[Property with Managed
+link:#tt-new-property-with-managed-number-of-tokens[Property with Managed
 Number of Tokens] transaction have no tokens by default. After issuance,
 tokens may be added to the balance of a referenced address by
 broadcasting a this type of transaction.
 
 It is invalid to attempt to grant tokens on any property that was not
-broadcast as a link:#new-property-with-managed-number-of-tokens[Property
+broadcast as a link:#tt-new-property-with-managed-number-of-tokens[Property
 with Managed Number of Tokens].
 
 It is invalid to attempt to broadcast a token grant on any property from
@@ -1896,17 +1914,18 @@ version] |0
 null-terminated] |"`First Milestone Reached!`" (24 byte)
 |===
 
+[#tt-revoking-tokens-for-a-managed-property]
 ==== Revoking Tokens for a Managed Property
 
 This feature is supported since block number 323230.
 
 Description: Properties issued with a
-link:#new-property-with-managed-number-of-tokens[Property with Managed
+link:#tt-new-property-with-managed-number-of-tokens[Property with Managed
 Number of Tokens] transaction may have tokens voluntarily revoked from
 the balance of any address that has a positive token balance.
 
 It is invalid to attempt to revoke tokens on any property that was not
-broadcast as a link:#new-property-with-managed-number-of-tokens[Property
+broadcast as a link:#tt-new-property-with-managed-number-of-tokens[Property
 with Managed Number of Tokens].
 
 It is invalid to attempt to broadcast a token revoke on any property for
@@ -1949,13 +1968,14 @@ recognized as the address which originally broadcast the transaction
 that reserved the currency ID of the Smart Property in question until
 explicitly changed. The transactions which create an implicit Issuer on
 Record are: * 50:
-link:#new-property-creation-with-fixed-number-of-tokens[Create a
+link:#tt-new-property-creation-with-fixed-number-of-tokens[Create a
 Property with fixed number of tokens] * 51:
-link:#new-property-creation-via-crowdsale-with-variable-number-of-tokens[Create
+link:#tt-new-property-creation-via-crowdsale-with-variable-number-of-tokens[Create
 a Property via Crowdsale with Variable number of Tokens] * 54:
-link:#new-property-with-managed-number-of-tokens[Create a Managed
+link:#tt-new-property-with-managed-number-of-tokens[Create a Managed
 Property with Grants and Revocations]
 
+[#tt-change-issuer-on-record-for-a-property]
 ==== Change Issuer on Record for a Smart Property
 
 Description: Issuers on Record may broadcast a transaction which will
@@ -2021,6 +2041,7 @@ the earlier transactions. In this way, if the earlier transaction is
 invalidated (by a reorg), the dependent transaction will also be
 invalidated.
 
+[#sec-fees]
 == Fees
 
 There are two broad categories of transactions which have no fees (other
@@ -2088,7 +2109,7 @@ are based on the total before any fees are deducted. For instance, the
 total - they do not affect each other.
 
 You can read more about this fee structure on our blog:
-http://blog.mastercoin.org/2014/06/11/mastercoin-is-for-burning/
+https://blog.omni.foundation/2014/06/11/mastercoin-is-for-burning/
 
 == Unlocking New Features
 
@@ -2118,6 +2139,8 @@ block #290630
 
 [glossary]
 Exodus Address:: `1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P`. A very special Bitcoin address that is used by Omni for multiple purposes.
+Omni:: When written with only the first letter capitalized, Omni refers to the protocol, the ecosystem, or the Omni Foundation.
+OMNI:: When written in all-uppercase, OMNI refers to the OMNI token (the Omni smart property with ID of `1`)
 Omni Consensus:: The current state of all accounts in the Omni Layer.
 
 [bibliography]
