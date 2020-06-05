@@ -18,23 +18,17 @@ def buildDocDir = file('build/doc')
 asciidoctor {
   sourceDir file("$projectDir")
   sources {
-    include 'README.adoc'
+    include 'OmniSpecification.adoc'
   }
   outputDir  buildDocDir
-  doLast {
-    file("${outputDir}/README.html").renameTo("${outputDir}/Omni-Specification.html")
-  }
 }
 
 asciidoctorPdf {
   sourceDir file("$projectDir")
   sources {
-    include 'README.adoc'
+    include 'OmniSpecification.adoc'
   }
   outputDir  buildDocDir
-  doLast {
-    file("${outputDir}/README.pdf").renameTo("${outputDir}/Omni-Specification.pdf")
-  }
 }
 
 task renderOmniSpecification(dependsOn: [asciidoctor, asciidoctorPdf])
