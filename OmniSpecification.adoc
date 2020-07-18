@@ -197,7 +197,7 @@ Protocol currency.
 [#sec-omni-payload-format]
 === Omni Payload Format
 
-The section describes the binary format of an Omni transaction, independent of how it is encoded into a Bitcoin transaction.
+The section describes the binary format of an Omni transaction, independent of how it is encoded into a Bitcoin transaction.  Some fields are optional.
 
 ==== Transaction versioning
 
