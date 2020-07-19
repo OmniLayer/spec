@@ -197,7 +197,7 @@ Protocol currency.
 [#sec-omni-payload-format]
 === Omni Payload Format
 
-The section describes the binary format of an Omni transaction, independent of how it is encoded into a Bitcoin transaction.
+The section describes the binary format of an Omni transaction, independent of how it is encoded into a Bitcoin transaction.  Some fields are optional.
 
 ==== Transaction versioning
 
@@ -720,12 +720,13 @@ currency from the sending address to the _reference address_, defined in
 link:##sec-omni-payload-format[Omni Payload Format]. This transaction can not be used to transfer bitcoins.
 
 In addition to the validity constraints on the message field datatypes,
-the transaction is invalid if any of the following conditions is true: *
-the sending address has zero coins in its available balance for the
-specified currency identifier * the amount to transfer exceeds the
-number owned and available by the sending address * the specified
-currency identifier is non-existent * the specified currency identifier
-is 0 (bitcoin)
+the transaction is invalid if any of the following conditions is true: 
+
+* the sending address has zero coins in its available balance for the
+specified currency identifier 
+* the amount to transfer exceeds the number owned and available by the sending address 
+* the specified currency identifier is non-existent 
+* the specified currency identifier is 0 (bitcoin)
 
 A Simple Send to a non-existent address will destroy the coins in
 question, just like it would with bitcoin.
