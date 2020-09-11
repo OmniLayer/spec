@@ -2155,6 +2155,36 @@ Omni Consensus:: The current state of all accounts in the Omni Layer.
 
 Previously Mastercoin, MSC, etc.
 
+
+[appendix]
+== Significant Block Heights
+
+[cols=">1,>1,7,2",options="header",]
+|===
+|Block Height | Feature ID | Description | Constant
+
+| 0 | - | Bitcoin Genesis Block | -
+| 249,498 | - | Omni Genesis Block (Start of Crowdsale) | `GENESIS_BLOCK`
+| 255,365 | - | End of Omni (MSC) Crowdsale | `LAST_EXODUS_BLOCK`
+| 249,498 | - | | `MSC_SEND_BLOCK`
+| 290,630 | - | | `MSC_DEX_BLOCK`
+| 297110 | - | | `MSC_SP_BLOCK`
+| 323230 | - | | `MSC_MANUALSP_BLOCK`
+| 342650 | - | | `MSC_STO_BLOCK`
+| 394,500 | 4 | Remove grant side effects | `GRANTEFFECTS_FEATURE_BLOCK`
+| 395,000 | 1 | Class C transaction encoding | `NULLDATA_BLOCK`
+| 395,000 | 5 | DEx integer math update | `DEXMATH_FEATURE_BLOCK`
+| 395,000 | 6 | Send All transactions | `MSC_SEND_ALL_BLOCK`
+| 395,000 | 7 | Disable crowdsale ecosystem crossovers | `SPCROWDCROSSOVER_FEATURE_BLOCK`
+| 400,000 | 2 | Distributed Meta Token Exchange | `MSC_METADEX_BLOCK`
+| 438,500 | 8 | Allow trading all pairs on the Distributed Exchange | `TRADEALLPAIRS_FEATURE_BLOCK`
+| 499,200 | 14 | Activate the waiting period for enabling freezing | ??
+| 627,250 | 15 | Activate trading of any token on the distributed exchange | ??
+
+|===
+
+Source Code Reference: https://github.com/OmniLayer/omnicore/blob/develop/src/omnicore/rules.cpp
+
 [appendix]
 == Regulatory and Legal Compliance - Know Your Jurisdiction
 
